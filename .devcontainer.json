@@ -1,0 +1,11 @@
+{
+    "image": "matthewcpp/framework64-n64-modernsdk",
+    "runArgs": [
+        "--net=host"
+    ],
+    "extensions": [
+        "ms-vscode.cpptools",
+        "coolchyni.beyond-debug",
+        "ms-vscode.cmake-tools"
+    ]
+}

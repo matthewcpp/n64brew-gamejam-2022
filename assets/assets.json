@@ -1,0 +1,60 @@
+{
+    "meshes": [
+        {
+            "src": "n64_logo_model/n64_logo.gltf"
+        },
+        {
+            "src": "us_ar33/us_ar33.gltf"
+        }
+    ],
+    "images": [
+        {
+            "src": "crosshair.png",
+            "hslices": 1,
+            "vslices": 1,
+            "resize": "16x16"
+        }
+    ],
+    "levels": [
+        {
+            "src": "spooky_level/spooky_level.gltf",
+            "typeMap": 0,
+            "layerMap": 0
+        }
+    ],
+    "musicBanks": [
+        {
+            "name": "music",
+            "dir": "music"
+        }
+    ],
+    "soundBanks": [
+        {
+            "name": "sounds",
+            "dir": "sounds"
+        }
+    ],
+    "typeMaps": [
+        {
+            "start": 0
+        }
+    ],
+    "layerMaps": [
+        {
+            "default": 1
+        }
+    ],
+    "skinnedMeshes": [
+        {
+            "src": "zombie/zombie.gltf",
+            "animations": [
+                "Walk",
+                "Run",
+                "Hit",
+                "Death",
+                "Attack",
+                "Idle"
+            ]
+        }
+    ]
+}

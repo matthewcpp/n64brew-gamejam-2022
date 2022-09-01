@@ -1,0 +1,15 @@
+{
+    "cmake.buildDirectory": "${workspaceFolder}/build_${variant:platform}",
+    "cmake.configureOnOpen": false,
+    "files.associations": {
+        "nusys.h": "c",
+        "scene_spooky_level.h": "c",
+        "mesh.h": "c",
+        "renderer.h": "c",
+        "material.h": "c",
+        "color.h": "c",
+        "texture.h": "c",
+        "assets.h": "c",
+        "sound_bank_sounds.h": "c"
+    }
+}
