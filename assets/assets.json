@@ -8,6 +8,9 @@
         },
         {
             "src": "shotgun/shotgun.gltf"
+        },
+        {
+            "src": "shotgun_shell/shotgun_shell.gltf"
         }
     ],
     "images": [

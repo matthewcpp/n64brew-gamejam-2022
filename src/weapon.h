@@ -21,6 +21,7 @@ typedef struct {
     Vec3 default_position;
     Vec3 lowered_position;
     Vec3 default_scale;
+    Vec3 ejection_port_pos;
     int gunshot_sound;
     int reload_sound;
     Vec3 casing_pos;

@@ -20,6 +20,7 @@ typedef struct {
     float time_to_next_fire;
     Weapon* weapon;
     fw64Transform weapon_transform;
+    fw64Transform casing_transform;
     WeaponControllerState state;
     float transition_time;
     WeaponTransitionFunc transition_callback;

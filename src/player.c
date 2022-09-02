@@ -68,6 +68,10 @@ void player_draw_weapon(Player* player) {
     fw64_renderer_set_camera(renderer, &player->weapon_camera);
     fw64_renderer_util_clear_viewport(renderer, &player->weapon_camera, FW64_RENDERER_FLAG_CLEAR_DEPTH);
     fw64_renderer_draw_static_mesh(renderer, &player->weapon_controller.weapon_transform, player->weapon.mesh);
+
+    if (player->weapon_controller.time_to_next_fire > 0.0f && player->weapon.casing) {
+        fw64_renderer_draw_static_mesh(renderer, &player->weapon_controller.casing_transform, player->weapon.casing);
+    }
 }
 
 void player_set_weapon(Player* player, WeaponType weapon_type) {

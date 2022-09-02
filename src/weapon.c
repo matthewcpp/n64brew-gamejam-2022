@@ -39,7 +39,7 @@ void weapon_init_shotgun(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocato
 
     weapon->type = WEAPON_TYPE_SHOTGUN;
     weapon->mesh = fw64_mesh_load(assets, FW64_ASSET_mesh_shotgun, allocator);
-    weapon->casing = NULL;
+    weapon->casing = fw64_mesh_load(assets, FW64_ASSET_mesh_shotgun_shell, allocator);
     weapon->muzzle_flash = NULL;
     weapon->fire_rate = 1.6f;
     weapon->gunshot_sound = sound_bank_sounds_shotgun_shot_and_reload;
@@ -48,4 +48,5 @@ void weapon_init_shotgun(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocato
     vec3_set(&weapon->default_position, 3.49f, -4.16f, -8.40f);
     vec3_set(&weapon->lowered_position, 3.49f, -14.0f, -8.40f);
     vec3_set_all(&weapon->default_scale, 0.02f);
+    vec3_set(&weapon->ejection_port_pos, 4.54f, -2.64f, -6.41f);
 }

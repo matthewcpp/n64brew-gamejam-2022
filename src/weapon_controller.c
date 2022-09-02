@@ -16,6 +16,24 @@ void weapon_controller_init(WeaponController* controller, fw64Engine* engine, in
     controller->transition_time = 0.0f;
 
     fw64_transform_init(&controller->weapon_transform);
+    fw64_transform_init(&controller->casing_transform);
+}
+
+/** shell casing ejection is modeled via a simple quadratic equation*/
+static void weapon_controller_update_casing(WeaponController* controller) {
+    float fly_time = controller->weapon->fire_rate - controller->time_to_next_fire;
+
+    float x = fly_time;
+    float y = (-((0.5f * x - 1.5f) * (0.5f * x - 1.5f)) + 2.0f) * 0.5f;
+
+    float x_scale = 16.0f;
+    float y_scale = 8.5f;
+
+    controller->casing_transform.position = controller->weapon->ejection_port_pos;
+    controller->casing_transform.position.x += x * x_scale;
+    controller->casing_transform.position.x += y * y_scale;
+
+    fw64_transform_update_matrix(&controller->casing_transform);
 }
 
 static void weapon_controller_update_holding(WeaponController* controller) {
@@ -24,6 +42,7 @@ static void weapon_controller_update_holding(WeaponController* controller) {
 
     if (controller->time_to_next_fire > 0.0f) {
         controller->time_to_next_fire -= controller->engine->time->time_delta;
+        weapon_controller_update_casing(controller);
     }
 
     if (controller->time_to_next_fire <= 0.0f && fw64_input_controller_button_down(controller->engine->input, controller->controller_index, controller->trigger_button)) {
@@ -86,6 +105,7 @@ void weapon_controller_update(WeaponController* controller) {
 
 void weapon_controller_set_weapon(WeaponController* controller, Weapon* weapon) {
     controller->weapon = weapon;
+    controller->time_to_next_fire = 0.0f; // i think this is OK?
 
     // TODO: does this need to be investigated more?
     if (controller->state == WEAPON_CONTROLLER_HOLDING) {
@@ -96,20 +116,27 @@ void weapon_controller_set_weapon(WeaponController* controller, Weapon* weapon) 
     }
     
     controller->weapon_transform.scale = weapon->default_scale;
-
     fw64_transform_update_matrix(&controller->weapon_transform);
+
+    if (weapon->casing) {
+        controller->casing_transform.scale = weapon->default_scale;
+        fw64_transform_update_matrix(&controller->casing_transform);
+    }
 }
 
 static void weapon_controller_fire(WeaponController* controller) {
     fw64_audio_play_sound(controller->engine->audio, controller->weapon->gunshot_sound);
-
     controller->time_to_next_fire = controller->weapon->fire_rate;
+
+    controller->casing_transform.position = controller->weapon->ejection_port_pos;
+    fw64_transform_update_matrix(&controller->casing_transform);
 }
 
 static int weapon_controller_start_transition(WeaponController* controller, WeaponControllerState target_state, WeaponTransitionFunc callback, void* arg) {
     if (controller->state == WEAPON_CONTROLLER_LOWERING || controller->state == WEAPON_CONTROLLER_RAISING)
         return 0;
 
+    controller->time_to_next_fire = 0.0f; // stop casing from rendering
     controller->state = target_state;
     controller->transition_callback = callback;
     controller->transition_arg = arg;

@@ -155,7 +155,7 @@ void zombie_set_new_state(Zombie* zombie, ZombieState new_state) {
         case ZOMBIE_STATE_HIT_REACTION:
             animation = zombie_animation_Hit;
             loop = 0;
-            speed = 1.75f;
+            speed = 2.35f;
         break;
 
         case ZOMBIE_STATE_DEATH:
