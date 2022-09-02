@@ -5,6 +5,9 @@
         },
         {
             "src": "us_ar33/us_ar33.gltf"
+        },
+        {
+            "src": "shotgun/shotgun.gltf"
         }
     ],
     "images": [
