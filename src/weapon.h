@@ -19,8 +19,10 @@ typedef struct {
     fw64Mesh* muzzle_flash;
     fw64Texture* crosshair;
     Vec3 default_position;
+    Vec3 lowered_position;
     Vec3 default_scale;
     int gunshot_sound;
+    int reload_sound;
     Vec3 casing_pos;
     float fire_rate;
     int mag_size;
@@ -28,6 +30,10 @@ typedef struct {
     Vec3 recoil_pos;
 } Weapon;
 
+/** 
+ * initializes the weapon to an empty state i.e WEAPON_TYPE_NONE
+ * This should be called before any of the other weapon_init_xxx functions!
+*/
 void weapon_init(Weapon* weapon);
 void weapon_init_ar15(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator);
 void weapon_init_shotgun(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator);
