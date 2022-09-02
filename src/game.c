@@ -6,15 +6,12 @@
 
 #define ROTATION_SPEED 90.0f
 
-static void init_weapon(Game* game);
-
 void game_init(Game* game, fw64Engine* engine) {
     game->engine = engine;
     game->scene = fw64_scene_load(engine->assets, FW64_ASSET_scene_spooky_level, NULL);
-    init_weapon(game);
 
     player_init(&game->player, engine, game->scene);
-    player_set_weapon(&game->player, &game->us_ar33);
+    player_set_weapon(&game->player, WEAPON_TYPE_AR15);
 
     ui_init(&game->ui, engine, &game->player);
 
@@ -40,8 +37,8 @@ void game_init(Game* game, fw64Engine* engine) {
 }
 
 void game_update(Game* game){
-    if (fw64_audio_get_music_status(game->engine->audio) == FW64_AUDIO_STOPPED)
-        fw64_audio_play_music(game->engine->audio, 0);
+    //if (fw64_audio_get_music_status(game->engine->audio) == FW64_AUDIO_STOPPED)
+    //    fw64_audio_play_music(game->engine->audio, 0);
 
     player_update(&game->player);
     boo_update(&game->boo);
@@ -60,15 +57,4 @@ void game_draw(Game* game) {
     fw64_renderer_set_anti_aliasing_enabled(renderer, 0);
     ui_draw(&game->ui);
     fw64_renderer_end(renderer, FW64_RENDERER_FLAG_SWAP);
-}
-
-void init_weapon(Game* game) {
-    Weapon* weapon = &game->us_ar33;
-
-    weapon->mesh = fw64_mesh_load(game->engine->assets, FW64_ASSET_mesh_us_ar33, NULL);
-    vec3_set(&weapon->position, 2.58f, -3.01f, -6.74f);
-    vec3_set_all(&weapon->scale, 0.1f);
-    quat_ident(&weapon->rotation);
-
-    weapon->crosshair_sprite = fw64_texture_create_from_image(fw64_image_load(game->engine->assets, FW64_ASSET_image_crosshair, NULL), NULL);
 }

@@ -134,6 +134,7 @@ void zombie_set_new_state(Zombie* zombie, ZombieState new_state) {
 
     int animation;
     int loop;
+    float speed = 1.0f;
 
     switch (zombie->state) {
         case ZOMBIE_STATE_IDLE:
@@ -154,6 +155,7 @@ void zombie_set_new_state(Zombie* zombie, ZombieState new_state) {
         case ZOMBIE_STATE_HIT_REACTION:
             animation = zombie_animation_Hit;
             loop = 0;
+            speed = 1.75f;
         break;
 
         case ZOMBIE_STATE_DEATH:
@@ -168,6 +170,7 @@ void zombie_set_new_state(Zombie* zombie, ZombieState new_state) {
 
     fw64_animation_controller_set_animation(&zombie->animation_controller, animation);
     zombie->animation_controller.loop = loop;
+    zombie->animation_controller.speed = speed;
     fw64_animation_controller_play(&zombie->animation_controller);
 }
 
