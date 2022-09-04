@@ -25,5 +25,8 @@ void boo_update(Boo* boo) {
         case BOO_WAITING:
             boo_update_waiting(boo);
             break;
+
+        case BOO_APPEARING:
+            break;
     }
 }

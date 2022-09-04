@@ -3,6 +3,7 @@
 #include "framework64/engine.h"
 
 #include "weapon.h"
+#include "level.h"
 
 typedef enum {
     WEAPON_CONTROLLER_HOLDING,
@@ -15,6 +16,7 @@ typedef void(*WeaponTransitionFunc)(Weapon*, WeaponControllerState, void*);
 
 typedef struct {
     fw64Engine* engine;
+    fw64Level* level;
     int controller_index;
     int trigger_button;
     float time_to_next_fire;
@@ -27,7 +29,7 @@ typedef struct {
     void* transition_arg;
 } WeaponController;
 
-void weapon_controller_init(WeaponController* controller, fw64Engine* engine, int controller_index);
+void weapon_controller_init(WeaponController* controller, fw64Engine* engine, fw64Level* level, int controller_index);
 void weapon_controller_update(WeaponController* controller);
 void weapon_controller_set_weapon(WeaponController* controller, Weapon* weapon);
 int weapon_controller_raise_weapon(WeaponController* controller, WeaponTransitionFunc callback , void* arg);

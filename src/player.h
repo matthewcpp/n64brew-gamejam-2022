@@ -7,6 +7,7 @@
 #include "framework64/vec3.h"
 #include "fps_camera.h"
 
+#include "level.h"
 #include "weapon_controller.h"
 
 typedef struct {
@@ -16,11 +17,11 @@ typedef struct {
     WeaponController weapon_controller;
 
     fw64Engine* engine;
-    fw64Scene* scene;
+    fw64Level* level;
 
 } Player;
 
-void player_init(Player* player, fw64Engine* engine, fw64Scene* scene);
+void player_init(Player* player, fw64Engine* engine, fw64Level* level);
 void player_update(Player* player);
 void player_draw(Player* player);
 void player_draw_weapon(Player* player);

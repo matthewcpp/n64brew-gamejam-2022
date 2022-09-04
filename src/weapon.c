@@ -23,7 +23,7 @@ void weapon_init_ar15(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* 
 
     weapon->type = WEAPON_TYPE_AR15;
     weapon->mesh = fw64_mesh_load(assets, FW64_ASSET_mesh_us_ar33, allocator);
-    weapon->casing = NULL;
+    weapon->casing = fw64_mesh_load(assets, FW64_ASSET_mesh_9mm_round, allocator);;
     weapon->muzzle_flash = NULL;
     weapon->fire_rate = 0.333;
     weapon->gunshot_sound = sound_bank_sounds_rifle_shot_1;
@@ -32,6 +32,7 @@ void weapon_init_ar15(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* 
     vec3_set(&weapon->default_position, 2.58f, -3.01f, -6.74f);
     vec3_set(&weapon->lowered_position, 2.58f, -9.25f, -6.74f);
     vec3_set_all(&weapon->default_scale, 0.1f);
+    vec3_set(&weapon->ejection_port_pos, 2.8f, -2.13f, -5.74f);
 }
 
 void weapon_init_shotgun(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator) {

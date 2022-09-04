@@ -8,14 +8,18 @@
 
 void game_init(Game* game, fw64Engine* engine) {
     game->engine = engine;
-    game->scene = fw64_scene_load(engine->assets, FW64_ASSET_scene_spooky_level, NULL);
 
-    player_init(&game->player, engine, game->scene);
+    fw64_level_init(&game->level);
+    game->level.scene = fw64_scene_load(engine->assets, FW64_ASSET_scene_spooky_level, NULL);
+
+    player_init(&game->player, engine, &game->level);
     player_set_weapon(&game->player, WEAPON_TYPE_AR15);
+
+    zombie_spawner_init(&game->zombie_spawner, engine, &game->level, &game->player.camera.camera.transform);
 
     ui_init(&game->ui, engine, &game->player);
 
-    boo_init(&game->boo, engine, &game->player, game->scene);
+    boo_init(&game->boo, engine, &game->player, game->level.scene);
 
     fw64Renderer* renderer = game->engine->renderer;
     fw64_renderer_set_clear_color(renderer, 20, 4, 40);
@@ -27,13 +31,6 @@ void game_init(Game* game, fw64Engine* engine) {
 
     fw64SoundBank* sound = fw64_sound_bank_load(engine->assets, FW64_ASSET_soundbank_sounds, NULL);
     fw64_audio_set_sound_bank(engine->audio, sound);
-
-    fw64AnimationData* animation_data = fw64_animation_data_load(game->engine->assets, FW64_ASSET_animation_data_zombie, NULL);
-    fw64Mesh* zombie_mesh = fw64_mesh_load(game->engine->assets, FW64_ASSET_mesh_zombie, NULL);
-    fw64Node* zombie_node = fw64_scene_get_node(game->scene, FW64_scene_spooky_level_node_Zombie_Spawn);
-
-    zombie_init(&game->zombie, engine, zombie_node, zombie_mesh, animation_data);
-    zombie_set_target(&game->zombie, &game->player.camera.camera.transform);
 }
 
 void game_update(Game* game){
@@ -42,7 +39,7 @@ void game_update(Game* game){
 
     player_update(&game->player);
     boo_update(&game->boo);
-    zombie_update(&game->zombie);
+    zombie_spawner_update(&game->zombie_spawner);
 }
 
 void game_draw(Game* game) {
@@ -51,7 +48,7 @@ void game_draw(Game* game) {
     fw64_renderer_set_anti_aliasing_enabled(renderer, 1);
     fw64_renderer_begin(renderer, FW64_RENDERER_MODE_TRIANGLES,  FW64_RENDERER_FLAG_CLEAR);
     player_draw(&game->player);
-    zombie_draw(&game->zombie);
+    zombie_spawner_draw(&game->zombie_spawner);
     player_draw_weapon(&game->player);
 
     fw64_renderer_set_anti_aliasing_enabled(renderer, 0);

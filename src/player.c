@@ -4,9 +4,9 @@
 #include "framework64/util/renderer_util.h"
 #include "sound_bank_sounds.h"
 
-void player_init(Player* player, fw64Engine* engine, fw64Scene* scene) {
+void player_init(Player* player, fw64Engine* engine, fw64Level* level) {
     player->engine = engine;
-    player->scene = scene;
+    player->level = level;
 
     fw64_fps_camera_init(&player->camera, engine->input);
     player->camera.camera.transform.position.z = 45.0f;
@@ -26,7 +26,7 @@ void player_init(Player* player, fw64Engine* engine, fw64Scene* scene) {
     fw64_camera_update_projection_matrix(&player->weapon_camera);
 
     weapon_init(&player->weapon);
-    weapon_controller_init(&player->weapon_controller, engine, 0);
+    weapon_controller_init(&player->weapon_controller, engine, level, 0);
 }
 
 static void player_next_weapon_func(Weapon* current_weapon, WeaponControllerState complete_state, void* arg) {
@@ -55,7 +55,7 @@ void player_draw(Player* player) {
 
     fw64_renderer_set_fog_enabled(renderer, 0);
     fw64_renderer_set_camera(renderer, &player->camera.camera);
-    fw64_scene_draw_frustrum(player->scene, renderer, &frustum);
+    fw64_scene_draw_frustrum(player->level->scene, renderer, &frustum);
 }
 
 void player_draw_weapon(Player* player) {
@@ -83,6 +83,9 @@ void player_set_weapon(Player* player, WeaponType weapon_type) {
         case WEAPON_TYPE_SHOTGUN:
             weapon_init_shotgun(&player->weapon, player->engine->assets, NULL);
         break;
+
+        case WEAPON_TYPE_NONE:
+            break;
     }
 
     weapon_controller_set_weapon(&player->weapon_controller, &player->weapon);

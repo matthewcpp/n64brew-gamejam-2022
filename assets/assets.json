@@ -11,6 +11,9 @@
         },
         {
             "src": "shotgun_shell/shotgun_shell.gltf"
+        },
+        {
+            "src": "9mm_round/9mm_round.gltf"
         }
     ],
     "images": [
@@ -47,7 +50,8 @@
     ],
     "layerMaps": [
         {
-            "default": 1
+            "default": 1,
+            "zombies": 2
         }
     ],
     "skinnedMeshes": [
@@ -59,7 +63,8 @@
                 "Hit",
                 "Death",
                 "Attack",
-                "Idle"
+                "Idle",
+                "FlyBack"
             ]
         }
     ]
