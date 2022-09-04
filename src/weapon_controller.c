@@ -3,12 +3,15 @@
 #include "framework64/math.h"
 #include "framework64/n64/controller_button.h"
 
+#include "zombie.h"
+
 #define WEAPON_CONTROLLER_TRANSITION_SPEED 0.75f
 
 static void weapon_controller_fire(WeaponController* controller);
 
-void weapon_controller_init(WeaponController* controller, fw64Engine* engine, int controller_index) {
+void weapon_controller_init(WeaponController* controller, fw64Engine* engine, fw64Level* level, int controller_index) {
     controller->engine = engine;
+    controller->level = level;
     controller->controller_index = controller_index;
     controller->trigger_button = FW64_N64_CONTROLLER_BUTTON_Z;
     controller->weapon = NULL;
@@ -100,6 +103,9 @@ void weapon_controller_update(WeaponController* controller) {
         case WEAPON_CONTROLLER_RAISING:
             weapon_controller_update_raising(controller);
             break;
+
+        case WEAPON_CONTROLLER_LOWERED:
+            break;
     }
 }
 
@@ -119,7 +125,11 @@ void weapon_controller_set_weapon(WeaponController* controller, Weapon* weapon) 
     fw64_transform_update_matrix(&controller->weapon_transform);
 
     if (weapon->casing) {
-        controller->casing_transform.scale = weapon->default_scale;
+        if (weapon->type == WEAPON_TYPE_AR15) // temp fix
+            vec3_set_all(&controller->casing_transform.scale, 0.02f);
+        else
+            controller->casing_transform.scale = weapon->default_scale;
+
         fw64_transform_update_matrix(&controller->casing_transform);
     }
 }
@@ -130,6 +140,20 @@ static void weapon_controller_fire(WeaponController* controller) {
 
     controller->casing_transform.position = controller->weapon->ejection_port_pos;
     fw64_transform_update_matrix(&controller->casing_transform);
+
+    // temp implementation for now need to raycast etc
+    uint32_t dynamic_node_count = fw64_level_get_dynamic_node_count(controller->level);
+    for (uint32_t i = 0; i < dynamic_node_count; i++) {
+        fw64Node* dynamic_node = fw64_level_get_dynamic_node(controller->level, i);
+
+        if (dynamic_node->layer_mask & ZOMBIE_LAYER) {
+            Zombie* zombie = (Zombie*)dynamic_node->data;
+            if (zombie->state == ZOMBIE_STATE_RUNNING || zombie->state == ZOMBIE_STATE_WALKING) {
+                zombie_hit(zombie, controller->weapon->type);
+                break;
+            }
+        }
+    }
 }
 
 static int weapon_controller_start_transition(WeaponController* controller, WeaponControllerState target_state, WeaponTransitionFunc callback, void* arg) {

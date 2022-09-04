@@ -5,23 +5,25 @@
 #define ZOMBIE_WALK_SPEED 5.0f
 #define ZOMBIE_RUN_SPEED 15.0f
 #define ZOMBIE_VISION_DISTANCE 45.0f
-
-static void zombie_set_new_state(Zombie* zombie, ZombieState new_state);
+;
 static void zombie_move(Zombie* zombie, float speed);
 
-void zombie_init(Zombie* zombie, fw64Engine* engine, fw64Node* node, fw64Mesh* mesh, fw64AnimationData* animation_data) {
+void zombie_init(Zombie* zombie, fw64Engine* engine, fw64Level* level, fw64Mesh* mesh, fw64AnimationData* animation_data) {
     zombie->engine = engine;
-    zombie->node = node;
+    zombie->level = level;
     zombie->mesh = mesh;
     zombie->target = NULL;
-    zombie->previous_state = ZOMBIE_STATE_IDLE;
-    zombie->state = ZOMBIE_STATE_IDLE;
+    zombie->previous_state = ZOMBIE_STATE_INACTIVE;
+    zombie->state = ZOMBIE_STATE_INACTIVE;
     zombie->health = 3;
 
-    vec3_set_all(&zombie->node->transform.scale, ZOMBIE_SCALE);
-    fw64_node_update(zombie->node);
+    fw64_node_init(&zombie->node);
+    zombie->node.layer_mask = ZOMBIE_LAYER;
+    zombie->node.data = zombie;
+    vec3_set_all(&zombie->node.transform.scale, ZOMBIE_SCALE);
+    fw64_node_update(&zombie->node);
     fw64_animation_controller_init(&zombie->animation_controller, animation_data, zombie_animation_Idle, NULL);
-    zombie_set_new_state(zombie, ZOMBIE_STATE_IDLE);
+    fw64_level_add_dyanmic_node(level, &zombie->node);
 }
 
 static void zombie_update_idle(Zombie* zombie) {
@@ -30,7 +32,7 @@ static void zombie_update_idle(Zombie* zombie) {
 
     Vec3 target_xz = zombie->target->position;
     target_xz.y = 0.0f;
-    Vec3 zombie_xz = zombie->node->transform.position;
+    Vec3 zombie_xz = zombie->node.transform.position;
     zombie_xz.y = 0.0f;
 
     if (vec3_distance_squared(&zombie_xz, &target_xz) <= (ZOMBIE_VISION_DISTANCE * ZOMBIE_VISION_DISTANCE)) {
@@ -43,34 +45,16 @@ static void zombie_update_idle(Zombie* zombie) {
 void zombie_move(Zombie* zombie, float speed) {
     Vec3 target_xz = zombie->target->position;
     target_xz.y = 0.0f;
-    Vec3 zombie_xz = zombie->node->transform.position;
+    Vec3 zombie_xz = zombie->node.transform.position;
     zombie_xz.y = 0.0f;
 
     Vec3 direction_to_target;
 
     vec3_subtract(&direction_to_target, &target_xz, &zombie_xz);
     vec3_normalize(&direction_to_target);
-    vec3_add_and_scale(&zombie->node->transform.position, &zombie->node->transform.position, &direction_to_target, speed * zombie->engine->time->time_delta);
+    vec3_add_and_scale(&zombie->node.transform.position, &zombie->node.transform.position, &direction_to_target, speed * zombie->engine->time->time_delta);
     
-    fw64_node_update(zombie->node);
-}
-
-static void zombie_update_running(Zombie* zombie) {
-    zombie_move(zombie, ZOMBIE_RUN_SPEED);
-
-    // temp
-    if (fw64_input_controller_button_pressed(zombie->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_Z)) {
-        zombie_hit(zombie);
-    }
-}
-
-static void zombie_update_walking(Zombie* zombie) {
-    zombie_move(zombie, ZOMBIE_WALK_SPEED);
-
-    // temp
-    if (fw64_input_controller_button_pressed(zombie->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_Z)) {
-        zombie_hit(zombie);
-    }
+    fw64_node_update(&zombie->node);
 }
 
 static void zombie_update_hit_reaction(Zombie* zombie) {
@@ -79,17 +63,26 @@ static void zombie_update_hit_reaction(Zombie* zombie) {
     }
 }
 
-static void zombie_update_death(Zombie* zombie) {
+static void zombie_update_moving(Zombie* zombie) {
+    zombie_move(zombie, zombie->state == ZOMBIE_STATE_WALKING ? ZOMBIE_WALK_SPEED : ZOMBIE_RUN_SPEED);
+}
+
+static void zombie_update_dying(Zombie* zombie) {
     if (zombie->animation_controller.state == FW64_ANIMATION_STATE_STOPPED) {
         zombie_set_new_state(zombie, ZOMBIE_STATE_DEAD);
     }
 }
 
-void zombie_hit(Zombie* zombie) {
-    zombie-> health -= 1;
+void zombie_hit(Zombie* zombie, WeaponType weapon_type) {
+    if (weapon_type == WEAPON_TYPE_SHOTGUN) {
+        zombie_set_new_state(zombie, ZOMBIE_FLYING_BACK);
+        return;
+    }
 
-    if (zombie->health == 0) {
-        zombie_set_new_state(zombie, ZOMBIE_STATE_DEATH);
+    zombie->health -= 1;
+
+    if (zombie->health <= 0) {
+        zombie_set_new_state(zombie, ZOMBIE_STATE_FALLING_DOWN);
         return;
     }
 
@@ -107,21 +100,20 @@ void zombie_update(Zombie* zombie) {
         break;
 
         case ZOMBIE_STATE_RUNNING:
-            zombie_update_running(zombie);
-        break;
-
         case ZOMBIE_STATE_WALKING:
-            zombie_update_walking(zombie);
+            zombie_update_moving(zombie);
         break;
 
         case ZOMBIE_STATE_HIT_REACTION:
             zombie_update_hit_reaction(zombie);
         break;
 
-        case ZOMBIE_STATE_DEATH:
-            zombie_update_death(zombie);
+        case ZOMBIE_STATE_FALLING_DOWN:
+        case ZOMBIE_FLYING_BACK:
+            zombie_update_dying(zombie);
         break;
 
+        case ZOMBIE_STATE_INACTIVE:
         case ZOMBIE_STATE_DEAD:
             return;
         break;
@@ -158,11 +150,17 @@ void zombie_set_new_state(Zombie* zombie, ZombieState new_state) {
             speed = 2.35f;
         break;
 
-        case ZOMBIE_STATE_DEATH:
+        case ZOMBIE_STATE_FALLING_DOWN:
             animation = zombie_animation_Death;
             loop = 0;
         break;
 
+        case ZOMBIE_FLYING_BACK:
+            animation = zombie_animation_FlyBack;
+            loop = 0;
+        break;
+
+        case ZOMBIE_STATE_INACTIVE:
         case ZOMBIE_STATE_DEAD:
             return;
         break;
@@ -175,7 +173,7 @@ void zombie_set_new_state(Zombie* zombie, ZombieState new_state) {
 }
 
 void zombie_draw(Zombie* zombie) {
-    fw64_renderer_draw_animated_mesh(zombie->engine->renderer, zombie->mesh, &zombie->animation_controller, &zombie->node->transform);
+    fw64_renderer_draw_animated_mesh(zombie->engine->renderer, zombie->mesh, &zombie->animation_controller, &zombie->node.transform);
 }
 
 void zombie_set_target(Zombie* zombie, fw64Transform* target) {

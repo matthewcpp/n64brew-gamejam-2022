@@ -7,17 +7,17 @@
 #include "player.h"
 #include "ui.h"
 #include "boo.h"
-#include "zombie.h"
-#include "framework64/scene.h"
+#include "zombie_spawner.h"
+
+#include "level.h"
 
 typedef struct {
     fw64Engine* engine;
-    fw64Scene* scene;
     Player player;
     UI ui;
     Boo boo;
-    Weapon us_ar33;
-    Zombie zombie;
+    ZombieSpawner zombie_spawner;
+    fw64Level level;
 } Game;
 
 #ifdef __cplusplus
