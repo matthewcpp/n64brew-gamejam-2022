@@ -15,7 +15,7 @@ void zombie_init(Zombie* zombie, fw64Engine* engine, fw64Level* level, fw64Mesh*
     zombie->target = NULL;
     zombie->previous_state = ZOMBIE_STATE_INACTIVE;
     zombie->state = ZOMBIE_STATE_INACTIVE;
-    zombie->health = 3;
+    zombie->health = ZOMBIE_MAX_HEALTH;
     zombie->rotation = (rand() % 360) * (M_PI / 180.0f);
     zombie->rotation_speed = 90.0f * (M_PI / 180.0f); //90 deg/sec max turn speed. not used yet
 

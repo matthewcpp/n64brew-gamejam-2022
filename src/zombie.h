@@ -8,6 +8,8 @@
 #include "level.h"
 #include "weapon.h"
 
+#define ZOMBIE_MAX_HEALTH 3
+
 typedef enum {
     ZOMBIE_STATE_INACTIVE,
     ZOMBIE_STATE_DEAD,
