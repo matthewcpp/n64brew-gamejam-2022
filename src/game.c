@@ -38,7 +38,7 @@ void game_update(Game* game){
     //    fw64_audio_play_music(game->engine->audio, 0);
 
     player_update(&game->player);
-    boo_update(&game->boo);
+    //boo_update(&game->boo);
     zombie_spawner_update(&game->zombie_spawner);
 }
 
