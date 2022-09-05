@@ -16,11 +16,15 @@ void zombie_init(Zombie* zombie, fw64Engine* engine, fw64Level* level, fw64Mesh*
     zombie->previous_state = ZOMBIE_STATE_INACTIVE;
     zombie->state = ZOMBIE_STATE_INACTIVE;
     zombie->health = 3;
+    zombie->rotation = (rand() % 360) * (M_PI / 180.0f);
+    zombie->rotation_speed = 90.0f * (M_PI / 180.0f); //90 deg/sec max turn speed. not used yet
 
     fw64_node_init(&zombie->node);
     zombie->node.layer_mask = ZOMBIE_LAYER;
     zombie->node.data = zombie;
     vec3_set_all(&zombie->node.transform.scale, ZOMBIE_SCALE);
+    fw64_node_set_mesh(&zombie->node, zombie->mesh);
+    fw64_node_set_box_collider(&zombie->node, &zombie->collider);
     fw64_node_update(&zombie->node);
     fw64_animation_controller_init(&zombie->animation_controller, animation_data, zombie_animation_Idle, NULL);
     fw64_level_add_dyanmic_node(level, &zombie->node);
@@ -52,8 +56,22 @@ void zombie_move(Zombie* zombie, float speed) {
 
     vec3_subtract(&direction_to_target, &target_xz, &zombie_xz);
     vec3_normalize(&direction_to_target);
-    vec3_add_and_scale(&zombie->node.transform.position, &zombie->node.transform.position, &direction_to_target, speed * zombie->engine->time->time_delta);
+
+    //atan2 return from -pi to + pi.
+    //so there's a spot where the function is not continuous, which is annoying
+    float zombie_new_direction = atan2(-direction_to_target.z, direction_to_target.x) + (M_PI / 2.0f);
+    float zombie_dir_delta = (zombie_new_direction - zombie->rotation);
+    zombie->rotation += zombie_dir_delta;
+    if(zombie->rotation > M_PI) {
+        zombie->rotation -= 2.0f * M_PI;
+    } else if (zombie->rotation < (-M_PI)) {
+        zombie->rotation += 2.0f * M_PI;
+    }
+    //float zombie_direction_delta = abs(zombie_new_direction - zombie->rotation);
+    quat_set_axis_angle(&zombie->node.transform.rotation, 0, 1, 0, zombie->rotation);
     
+    
+    vec3_add_and_scale(&zombie->node.transform.position, &zombie->node.transform.position, &direction_to_target, speed * zombie->engine->time->time_delta);
     fw64_node_update(&zombie->node);
 }
 
@@ -76,6 +94,7 @@ static void zombie_update_dying(Zombie* zombie) {
 void zombie_hit(Zombie* zombie, WeaponType weapon_type) {
     if (weapon_type == WEAPON_TYPE_SHOTGUN) {
         zombie_set_new_state(zombie, ZOMBIE_FLYING_BACK);
+        zombie->health -= 3;
         return;
     }
 

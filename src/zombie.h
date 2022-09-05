@@ -25,11 +25,14 @@ typedef struct {
     fw64Mesh* mesh;
     fw64Level* level;
     fw64Node node;
+    fw64Collider collider;
     fw64AnimationController animation_controller;
     fw64Transform* target;
     ZombieState previous_state;
     ZombieState state;
     int health;
+    float rotation; //radians about the y axis. stored to easily update
+    float rotation_speed; // max rotation speed in rads;
 } Zombie;
 
 void zombie_init(Zombie* zombie, fw64Engine* engine, fw64Level* level, fw64Mesh* mesh, fw64AnimationData* animation_data);
