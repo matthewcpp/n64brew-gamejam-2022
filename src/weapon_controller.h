@@ -4,6 +4,7 @@
 
 #include "weapon.h"
 #include "level.h"
+#include "ray.h"
 
 typedef enum {
     WEAPON_CONTROLLER_HOLDING,
@@ -17,6 +18,7 @@ typedef void(*WeaponTransitionFunc)(Weapon*, WeaponControllerState, void*);
 typedef struct {
     fw64Engine* engine;
     fw64Level* level;
+    Ray* aim;
     int controller_index;
     int trigger_button;
     float time_to_next_fire;

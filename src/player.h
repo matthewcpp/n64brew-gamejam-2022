@@ -9,13 +9,14 @@
 
 #include "level.h"
 #include "weapon_controller.h"
+#include "ray.h"
 
 typedef struct {
     fw64FpsCamera camera;
     fw64Camera weapon_camera;
     Weapon weapon;
     WeaponController weapon_controller;
-
+    Ray aim;    
     fw64Engine* engine;
     fw64Level* level;
 

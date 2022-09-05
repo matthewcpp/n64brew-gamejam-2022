@@ -148,10 +148,19 @@ static void weapon_controller_fire(WeaponController* controller) {
 
         if (dynamic_node->layer_mask & ZOMBIE_LAYER) {
             Zombie* zombie = (Zombie*)dynamic_node->data;
-            if (zombie->state == ZOMBIE_STATE_RUNNING || zombie->state == ZOMBIE_STATE_WALKING) {
-                zombie_hit(zombie, controller->weapon->type);
-                break;
-            }
+            if (zombie->health > 0 && zombie->state != ZOMBIE_FLYING_BACK) {
+                Vec3 out_hitpoint;
+                float out_distance;
+                int bounding_hit = fw64_collision_test_ray_box( controller->aim->position,
+                                                                &controller->aim->direction,
+                                                                &zombie->node.collider->bounding,
+                                                                &out_hitpoint,
+                                                                &out_distance);
+                if(bounding_hit) {                    
+                    zombie_hit(zombie, controller->weapon->type);
+                    break;
+                } 
+            }          
         }
     }
 }

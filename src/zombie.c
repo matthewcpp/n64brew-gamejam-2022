@@ -70,8 +70,9 @@ void zombie_move(Zombie* zombie, float speed) {
     //float zombie_direction_delta = abs(zombie_new_direction - zombie->rotation);
     quat_set_axis_angle(&zombie->node.transform.rotation, 0, 1, 0, zombie->rotation);
     
+    float displacement = min(speed,speed * zombie->engine->time->time_delta); //cap displacement at 1 second's worth. hacky debug tool.
     
-    vec3_add_and_scale(&zombie->node.transform.position, &zombie->node.transform.position, &direction_to_target, speed * zombie->engine->time->time_delta);
+    vec3_add_and_scale(&zombie->node.transform.position, &zombie->node.transform.position, &direction_to_target, displacement);
     fw64_node_update(&zombie->node);
 }
 

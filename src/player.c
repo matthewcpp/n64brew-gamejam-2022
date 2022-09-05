@@ -16,6 +16,12 @@ void player_init(Player* player, fw64Engine* engine, fw64Level* level) {
     player->camera.camera.far = 225.0f;
     fw64_camera_update_projection_matrix(&player->camera.camera);
 
+    player->aim.position = &player->camera.camera.transform.position;
+    vec3_zero(&player->aim.direction);
+    player->aim.direction.x = player->camera.rotation.x;
+    player->aim.direction.y = player->camera.rotation.y;
+    player->aim.infinite = 1; //boolean true
+
     fw64_camera_init(&player->weapon_camera);
     vec3_zero(&player->weapon_camera.transform.position);
     fw64_camera_update_view_matrix(&player->weapon_camera);
@@ -27,6 +33,16 @@ void player_init(Player* player, fw64Engine* engine, fw64Level* level) {
 
     weapon_init(&player->weapon);
     weapon_controller_init(&player->weapon_controller, engine, level, 0);
+    player->weapon_controller.aim = &player->aim;
+}
+
+void player_aim_update(Player* player) {
+
+    Quat q;
+    quat_from_euler(&q, player->camera.rotation.x, player->camera.rotation.y, 0.0f);
+
+    Vec3 forward = { 0.0f, 0.0f, -1.0f };
+    quat_transform_vec3(&player->aim.direction, &q, &forward);
 }
 
 static void player_next_weapon_func(Weapon* current_weapon, WeaponControllerState complete_state, void* arg) {
@@ -42,6 +58,7 @@ static void player_next_weapon_func(Weapon* current_weapon, WeaponControllerStat
 
 void player_update(Player* player) {
     fw64_fps_camera_update(&player->camera, player->engine->time->time_delta);
+    player_aim_update(player); // should be updated after fps camera
     weapon_controller_update(&player->weapon_controller);
 
     if (fw64_input_controller_button_pressed(player->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_R))
