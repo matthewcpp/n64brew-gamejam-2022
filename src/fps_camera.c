@@ -3,7 +3,7 @@
 #include "framework64/n64/controller_button.h"
 
 #define DEFAULT_MOVEMENT_SPEED 8.0f
-#define DEFAULT_TURN_SPEED 90.0f
+#define DEFAULT_TURN_SPEED 180.0f
 #define STICK_THRESHOLD 0.15
 
 void fw64_fps_camera_init(fw64FpsCamera* fps, fw64Input* input){
@@ -76,11 +76,11 @@ static void move_camera(fw64FpsCamera* fps, float time_delta, Vec2* stick) {
 
 static void tilt_camera(fw64FpsCamera* fps, float time_delta, Vec2* stick) {
     if (stick->x > STICK_THRESHOLD) {
-        fps->rotation.y -= fps->turn_speed * time_delta;
+        fps->rotation.y -= fps->turn_speed * stick->x * time_delta;
     }
 
     if (stick->x < -STICK_THRESHOLD) {
-        fps->rotation.y += fps->turn_speed * time_delta;
+        fps->rotation.y += fps->turn_speed * -(stick->x) * time_delta;
     }
 
     if (fw64_input_controller_button_down(fps->_input, fps->player_index, FW64_N64_CONTROLLER_BUTTON_C_UP)) {
