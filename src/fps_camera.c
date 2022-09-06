@@ -3,15 +3,16 @@
 #include "framework64/n64/controller_button.h"
 
 #define DEFAULT_MOVEMENT_SPEED 8.0f
-#define DEFAULT_TURN_SPEED 180.0f
+#define DEFAULT_X_TURN_SPEED 180.0f
+#define DEFAULT_Y_TURN_SPEED 90.0f
 #define STICK_THRESHOLD 0.15
 
 void fw64_fps_camera_init(fw64FpsCamera* fps, fw64Input* input){
     fps->_input = input;
 
     fps->movement_speed = DEFAULT_MOVEMENT_SPEED;
-    fps->turn_speed = DEFAULT_TURN_SPEED;
-
+    fps->turn_speed.x = DEFAULT_X_TURN_SPEED;
+    fps->turn_speed.y = DEFAULT_Y_TURN_SPEED;
     fps->player_index = 0;
 
     fw64_camera_init(&fps->camera);
@@ -76,22 +77,22 @@ static void move_camera(fw64FpsCamera* fps, float time_delta, Vec2* stick) {
 
 static void tilt_camera(fw64FpsCamera* fps, float time_delta, Vec2* stick) {
     if (stick->x > STICK_THRESHOLD) {
-        fps->rotation.y -= fps->turn_speed * stick->x * time_delta;
+        fps->rotation.y -= fps->turn_speed.x * stick->x * time_delta;
     }
 
     if (stick->x < -STICK_THRESHOLD) {
-        fps->rotation.y += fps->turn_speed * -(stick->x) * time_delta;
+        fps->rotation.y += fps->turn_speed.x * -(stick->x) * time_delta;
     }
 
     if (fw64_input_controller_button_down(fps->_input, fps->player_index, FW64_N64_CONTROLLER_BUTTON_C_UP)) {
-        fps->rotation.x += fps->turn_speed * time_delta;
+        fps->rotation.x += fps->turn_speed.y * time_delta;
 
         if (fps->rotation.x > 90.0f)
             fps->rotation.x = 90.0f;
     }
 
     if (fw64_input_controller_button_down(fps->_input, fps->player_index, FW64_N64_CONTROLLER_BUTTON_C_DOWN)) {
-        fps->rotation.x -= fps->turn_speed * time_delta;
+        fps->rotation.x -= fps->turn_speed.y * time_delta;
 
         if (fps->rotation.x < -90.0f)
             fps->rotation.x = -90.0f;
