@@ -9,11 +9,11 @@
 
 static void weapon_controller_fire(WeaponController* controller);
 
-void weapon_controller_init(WeaponController* controller, fw64Engine* engine, fw64Level* level, int controller_index) {
+void weapon_controller_init(WeaponController* controller, fw64Engine* engine, fw64Level* level, InputMapping* input_map, int controller_index) {
     controller->engine = engine;
     controller->level = level;
     controller->controller_index = controller_index;
-    controller->trigger_button = FW64_N64_CONTROLLER_BUTTON_Z;
+    controller->input_map = input_map;
     controller->weapon = NULL;
     controller->state = WEAPON_CONTROLLER_HOLDING;
     controller->transition_time = 0.0f;
@@ -48,7 +48,7 @@ static void weapon_controller_update_holding(WeaponController* controller) {
         weapon_controller_update_casing(controller);
     }
 
-    if (controller->time_to_next_fire <= 0.0f && fw64_input_controller_button_down(controller->engine->input, controller->controller_index, controller->trigger_button)) {
+    if (controller->time_to_next_fire <= 0.0f && mapped_input_controller_read(controller->input_map, controller->controller_index, INPUT_MAP_WEAPON_FIRE, NULL)) {
         weapon_controller_fire(controller);
     }
 }
