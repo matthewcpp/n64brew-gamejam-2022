@@ -3,15 +3,16 @@
 #include "framework64/n64/controller_button.h"
 
 #define DEFAULT_MOVEMENT_SPEED 8.0f
-#define DEFAULT_TURN_SPEED 180.0f
+#define DEFAULT_X_TURN_SPEED 180.0f
+#define DEFAULT_Y_TURN_SPEED 90.0f
 #define STICK_THRESHOLD 0.15
 
-void fw64_fps_camera_init(fw64FpsCamera* fps, fw64Input* input){
-    fps->_input = input;
+void fw64_fps_camera_init(fw64FpsCamera* fps, InputMapping* input_map){
+    fps->input_map = input_map;
 
     fps->movement_speed = DEFAULT_MOVEMENT_SPEED;
-    fps->turn_speed = DEFAULT_TURN_SPEED;
-
+    fps->turn_speed.x = DEFAULT_X_TURN_SPEED;
+    fps->turn_speed.y = DEFAULT_Y_TURN_SPEED;
     fps->player_index = 0;
 
     fw64_camera_init(&fps->camera);
@@ -45,28 +46,28 @@ static void fps_cam_left(fw64FpsCamera* fps, Vec3* out) {
 }
 
 static void move_camera(fw64FpsCamera* fps, float time_delta, Vec2* stick) {
-    if (fw64_input_controller_button_down(fps->_input, fps->player_index, FW64_N64_CONTROLLER_BUTTON_C_RIGHT)) {
+    if(mapped_input_controller_read(fps->input_map, fps->player_index, INPUT_MAP_MOVE_RIGHT, stick) >= 1) {
         Vec3 move;
         fps_cam_right(fps, &move);
         vec3_scale(&move, &move, fps->movement_speed * time_delta);
         vec3_add(&fps->camera.transform.position, &fps->camera.transform.position, &move);
     }
 
-    if (fw64_input_controller_button_down(fps->_input, fps->player_index, FW64_N64_CONTROLLER_BUTTON_C_LEFT)) {
+    if (mapped_input_controller_read(fps->input_map, fps->player_index, INPUT_MAP_MOVE_LEFT, stick) >= 1) {
         Vec3 move;
         fps_cam_left(fps, &move);
         vec3_scale(&move, &move, fps->movement_speed * time_delta);
         vec3_add(&fps->camera.transform.position, &fps->camera.transform.position, &move);
     }
 
-    if (stick->y > STICK_THRESHOLD) {
+    if (mapped_input_controller_read(fps->input_map, fps->player_index, INPUT_MAP_MOVE_FORWARD, stick) >= 1) {
         Vec3 move;
         fps_cam_forward(fps, &move);
         vec3_scale(&move, &move, fps->movement_speed * time_delta * stick->y);
         vec3_add(&fps->camera.transform.position, &fps->camera.transform.position, &move);
     }
 
-    if (stick->y < -STICK_THRESHOLD) {
+    if (mapped_input_controller_read(fps->input_map, fps->player_index, INPUT_MAP_MOVE_BACKWARD, stick) >= 1) {
         Vec3 move;
         fps_cam_back(fps, &move);
         vec3_scale(&move, &move, fps->movement_speed * time_delta * -stick->y);
@@ -75,23 +76,25 @@ static void move_camera(fw64FpsCamera* fps, float time_delta, Vec2* stick) {
 }
 
 static void tilt_camera(fw64FpsCamera* fps, float time_delta, Vec2* stick) {
-    if (stick->x > STICK_THRESHOLD) {
-        fps->rotation.y -= fps->turn_speed * stick->x * time_delta;
+    if (mapped_input_controller_read(fps->input_map, fps->player_index, INPUT_MAP_LOOK_RIGHT, stick) >= 1) {
+        float delta = fps->turn_speed.y * time_delta;
+        if(stick->x > fps->input_map->threshold.x || stick->x < -fps->input_map->threshold.x)
+            delta *= stick->x;
+        fps->rotation.y -= delta;
+    } else if (mapped_input_controller_read(fps->input_map, fps->player_index, INPUT_MAP_LOOK_LEFT, stick) >= 1) {
+        float delta = fps->turn_speed.y * time_delta;
+        if(stick->x > fps->input_map->threshold.x || stick->x < -fps->input_map->threshold.x)
+            delta *= stick->x;
+        fps->rotation.y += delta;
     }
 
-    if (stick->x < -STICK_THRESHOLD) {
-        fps->rotation.y += fps->turn_speed * -(stick->x) * time_delta;
-    }
-
-    if (fw64_input_controller_button_down(fps->_input, fps->player_index, FW64_N64_CONTROLLER_BUTTON_C_UP)) {
-        fps->rotation.x += fps->turn_speed * time_delta;
+    if (mapped_input_controller_read(fps->input_map, fps->player_index, INPUT_MAP_LOOK_UP, stick) >= 1) {
+        fps->rotation.x += fps->turn_speed.x * time_delta;
 
         if (fps->rotation.x > 90.0f)
             fps->rotation.x = 90.0f;
-    }
-
-    if (fw64_input_controller_button_down(fps->_input, fps->player_index, FW64_N64_CONTROLLER_BUTTON_C_DOWN)) {
-        fps->rotation.x -= fps->turn_speed * time_delta;
+    } else if (mapped_input_controller_read(fps->input_map, fps->player_index, INPUT_MAP_LOOK_DOWN, stick) >= 1) {
+        fps->rotation.x -= fps->turn_speed.x * time_delta;
 
         if (fps->rotation.x < -90.0f)
             fps->rotation.x = -90.0f;
@@ -100,9 +103,14 @@ static void tilt_camera(fw64FpsCamera* fps, float time_delta, Vec2* stick) {
 
 void fw64_fps_camera_update(fw64FpsCamera* fps, float time_delta) {
     Vec2 stick;
-    fw64_input_controller_stick(fps->_input, fps->player_index, &stick);
+    stick.x = 0;
+    stick.y = 0;
+    //fw64_input_controller_stick(fps->_input, fps->player_index, &stick);
 
     move_camera(fps, time_delta, &stick);
+    
+    stick.x = 0;
+    stick.y = 0;
     tilt_camera(fps, time_delta, &stick);
 
     Quat q;

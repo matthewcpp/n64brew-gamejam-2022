@@ -4,6 +4,7 @@ set(src_files
     game.h game.c
     fps_camera.h fps_camera.c
     level.h level.c
+	mapped_input.h mapped_input.c
     player.h player.c
     ray.h
 	ui.h ui.c

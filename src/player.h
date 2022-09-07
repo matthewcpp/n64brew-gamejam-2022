@@ -10,8 +10,10 @@
 #include "level.h"
 #include "weapon_controller.h"
 #include "ray.h"
+#include "mapped_input.h"
 
 typedef struct {
+    InputMapping input_map;
     fw64FpsCamera camera;
     fw64Camera weapon_camera;
     Weapon weapon;

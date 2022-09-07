@@ -8,7 +8,9 @@ void player_init(Player* player, fw64Engine* engine, fw64Level* level) {
     player->engine = engine;
     player->level = level;
 
-    fw64_fps_camera_init(&player->camera, engine->input);
+    mapped_input_init(&player->input_map, engine->input);
+
+    fw64_fps_camera_init(&player->camera, &player->input_map);
     player->camera.camera.transform.position.z = 45.0f;
     player->camera.camera.transform.position.y = 5.0f;
     player->camera.movement_speed = 40.0f;
@@ -32,7 +34,7 @@ void player_init(Player* player, fw64Engine* engine, fw64Level* level) {
     fw64_camera_update_projection_matrix(&player->weapon_camera);
 
     weapon_init(&player->weapon);
-    weapon_controller_init(&player->weapon_controller, engine, level, 0);
+    weapon_controller_init(&player->weapon_controller, engine, level, &player->input_map, 0);
     player->weapon_controller.aim = &player->aim;
 }
 
@@ -61,8 +63,9 @@ void player_update(Player* player) {
     player_aim_update(player); // should be updated after fps camera
     weapon_controller_update(&player->weapon_controller);
 
-    if (fw64_input_controller_button_pressed(player->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_R))
+    if(mapped_input_controller_read(&player->input_map, 0, INPUT_MAP_WEAPON_SWAP, NULL)) {
         weapon_controller_lower_weapon(&player->weapon_controller, player_next_weapon_func, player);
+    }
 }
 
 void player_draw(Player* player) {
