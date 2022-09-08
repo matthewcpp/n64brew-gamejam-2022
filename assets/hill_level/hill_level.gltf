@@ -8,8 +8,8 @@
         {
             "name" : "Scene",
             "nodes" : [
-                37,
-                38
+                38,
+                39
             ]
         }
     ],
@@ -62,8 +62,30 @@
             ]
         },
         {
+            "name" : "Box",
+            "rotation" : [
+                1,
+                0,
+                0,
+                0
+            ],
+            "scale" : [
+                -19.912569046020508,
+                -4.392988204956055,
+                -1
+            ],
+            "translation" : [
+                0,
+                4,
+                0
+            ]
+        },
+        {
+            "children" : [
+                4
+            ],
             "extras" : {
-                "layers" : "wall"
+                "layers" : "wall back"
             },
             "mesh" : 2,
             "name" : "Back Gate"
@@ -89,10 +111,10 @@
         },
         {
             "children" : [
-                5
+                6
             ],
             "extras" : {
-                "layers" : "obstacles"
+                "layers" : "obstacles tree"
             },
             "mesh" : 3,
             "name" : "big church tree 1",
@@ -128,10 +150,10 @@
         },
         {
             "children" : [
-                7
+                8
             ],
             "extras" : {
-                "layers" : "obstacles"
+                "layers" : "obstacles tree"
             },
             "mesh" : 4,
             "name" : "big church tree 2",
@@ -147,7 +169,7 @@
             ]
         },
         {
-            "name" : "Box",
+            "name" : "Box.012",
             "rotation" : [
                 0,
                 1,
@@ -167,7 +189,7 @@
         },
         {
             "children" : [
-                9
+                10
             ],
             "extras" : {
                 "layers" : "obstacles"
@@ -208,7 +230,7 @@
         },
         {
             "children" : [
-                12
+                13
             ],
             "extras" : {
                 "layers" : "wall"
@@ -236,7 +258,7 @@
         },
         {
             "children" : [
-                14
+                15
             ],
             "extras" : {
                 "layers" : "wall"
@@ -259,7 +281,7 @@
         },
         {
             "children" : [
-                16
+                17
             ],
             "extras" : {
                 "layers" : "wall"
@@ -287,7 +309,7 @@
         },
         {
             "children" : [
-                18
+                19
             ],
             "extras" : {
                 "layers" : "wall"
@@ -342,22 +364,22 @@
         {
             "name" : "Box.007",
             "scale" : [
-                7.679999828338623,
+                5.50150728225708,
                 14,
                 102
             ],
             "translation" : [
-                -25,
+                -23,
                 12,
                 -99
             ]
         },
         {
             "children" : [
-                23
+                24
             ],
             "extras" : {
-                "layers" : "wall"
+                "layers" : "wall left"
             },
             "mesh" : 12,
             "name" : "Left Ramp Wall"
@@ -372,7 +394,7 @@
             "translation" : [
                 0,
                 4,
-                -11
+                -14
             ]
         },
         {
@@ -390,10 +412,10 @@
         },
         {
             "children" : [
-                26
+                27
             ],
             "extras" : {
-                "layers" : "wall"
+                "layers" : "wall right"
             },
             "mesh" : 13,
             "name" : "Right Ramp Wall"
@@ -453,10 +475,10 @@
         },
         {
             "children" : [
-                30
+                31
             ],
             "extras" : {
-                "layers" : "obstacles"
+                "layers" : "obstacles tree"
             },
             "mesh" : 3,
             "name" : "tree 1",
@@ -498,10 +520,10 @@
         },
         {
             "children" : [
-                32
+                33
             ],
             "extras" : {
-                "layers" : "obstacles"
+                "layers" : "obstacles tree"
             },
             "mesh" : 4,
             "name" : "tree 2",
@@ -551,34 +573,34 @@
         {
             "children" : [
                 3,
-                4,
-                6,
-                8,
-                10,
+                5,
+                7,
+                9,
                 11,
-                13,
-                15,
-                17,
-                19,
+                12,
+                14,
+                16,
+                18,
                 20,
                 21,
                 22,
-                24,
+                23,
                 25,
-                27,
+                26,
                 28,
                 29,
-                31,
-                33,
+                30,
+                32,
                 34,
-                35
+                35,
+                36
             ],
             "name" : "Scene"
         },
         {
             "children" : [
                 1,
-                36
+                37
             ],
             "name" : "Church Hill"
         },
@@ -1252,7 +1274,7 @@
         {
             "bufferView" : 21,
             "componentType" : 5126,
-            "count" : 63,
+            "count" : 59,
             "max" : [
                 17.499998092651367,
                 28.044296264648438,
@@ -1268,13 +1290,13 @@
         {
             "bufferView" : 22,
             "componentType" : 5126,
-            "count" : 63,
+            "count" : 59,
             "type" : "VEC3"
         },
         {
             "bufferView" : 23,
             "componentType" : 5126,
-            "count" : 63,
+            "count" : 59,
             "type" : "VEC2"
         },
         {
@@ -1820,23 +1842,38 @@
         },
         {
             "buffer" : 0,
-            "byteLength" : 756,
+            "byteLength" : 708,
             "byteOffset" : 10124
         },
         {
             "buffer" : 0,
-            "byteLength" : 756,
-            "byteOffset" : 10880
+            "byteLength" : 708,
+            "byteOffset" : 10832
         },
         {
             "buffer" : 0,
-            "byteLength" : 504,
-            "byteOffset" : 11636
+            "byteLength" : 472,
+            "byteOffset" : 11540
         },
         {
             "buffer" : 0,
             "byteLength" : 198,
-            "byteOffset" : 12140
+            "byteOffset" : 12012
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 48,
+            "byteOffset" : 12212
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 48,
+            "byteOffset" : 12260
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 32,
+            "byteOffset" : 12308
         },
         {
             "buffer" : 0,
@@ -1900,38 +1937,38 @@
         },
         {
             "buffer" : 0,
-            "byteLength" : 48,
+            "byteLength" : 96,
             "byteOffset" : 12852
         },
         {
             "buffer" : 0,
-            "byteLength" : 48,
-            "byteOffset" : 12900
-        },
-        {
-            "buffer" : 0,
-            "byteLength" : 32,
+            "byteLength" : 96,
             "byteOffset" : 12948
         },
         {
             "buffer" : 0,
-            "byteLength" : 96,
-            "byteOffset" : 12980
-        },
-        {
-            "buffer" : 0,
-            "byteLength" : 96,
-            "byteOffset" : 13076
-        },
-        {
-            "buffer" : 0,
             "byteLength" : 64,
-            "byteOffset" : 13172
+            "byteOffset" : 13044
         },
         {
             "buffer" : 0,
             "byteLength" : 24,
-            "byteOffset" : 13236
+            "byteOffset" : 13108
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 48,
+            "byteOffset" : 13132
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 48,
+            "byteOffset" : 13180
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 32,
+            "byteOffset" : 13228
         },
         {
             "buffer" : 0,
@@ -1965,118 +2002,103 @@
         },
         {
             "buffer" : 0,
-            "byteLength" : 48,
+            "byteLength" : 960,
             "byteOffset" : 13516
         },
         {
             "buffer" : 0,
-            "byteLength" : 48,
-            "byteOffset" : 13564
-        },
-        {
-            "buffer" : 0,
-            "byteLength" : 32,
-            "byteOffset" : 13612
-        },
-        {
-            "buffer" : 0,
             "byteLength" : 960,
-            "byteOffset" : 13644
-        },
-        {
-            "buffer" : 0,
-            "byteLength" : 960,
-            "byteOffset" : 14604
+            "byteOffset" : 14476
         },
         {
             "buffer" : 0,
             "byteLength" : 640,
-            "byteOffset" : 15564
+            "byteOffset" : 15436
         },
         {
             "buffer" : 0,
             "byteLength" : 240,
-            "byteOffset" : 16204
+            "byteOffset" : 16076
         },
         {
             "buffer" : 0,
             "byteLength" : 864,
-            "byteOffset" : 16444
+            "byteOffset" : 16316
         },
         {
             "buffer" : 0,
             "byteLength" : 864,
-            "byteOffset" : 17308
+            "byteOffset" : 17180
         },
         {
             "buffer" : 0,
             "byteLength" : 576,
-            "byteOffset" : 18172
+            "byteOffset" : 18044
         },
         {
             "buffer" : 0,
             "byteLength" : 216,
-            "byteOffset" : 18748
+            "byteOffset" : 18620
         },
         {
             "buffer" : 0,
             "byteLength" : 576,
-            "byteOffset" : 18964
+            "byteOffset" : 18836
         },
         {
             "buffer" : 0,
             "byteLength" : 576,
-            "byteOffset" : 19540
+            "byteOffset" : 19412
         },
         {
             "buffer" : 0,
             "byteLength" : 384,
-            "byteOffset" : 20116
+            "byteOffset" : 19988
         },
         {
             "buffer" : 0,
             "byteLength" : 144,
-            "byteOffset" : 20500
+            "byteOffset" : 20372
         },
         {
             "buffer" : 0,
             "byteLength" : 2016,
-            "byteOffset" : 20644
+            "byteOffset" : 20516
         },
         {
             "buffer" : 0,
             "byteLength" : 2016,
-            "byteOffset" : 22660
+            "byteOffset" : 22532
         },
         {
             "buffer" : 0,
             "byteLength" : 1344,
-            "byteOffset" : 24676
+            "byteOffset" : 24548
         },
         {
             "buffer" : 0,
             "byteLength" : 504,
-            "byteOffset" : 26020
+            "byteOffset" : 25892
         },
         {
             "buffer" : 0,
             "byteLength" : 864,
-            "byteOffset" : 26524
+            "byteOffset" : 26396
         },
         {
             "buffer" : 0,
             "byteLength" : 864,
-            "byteOffset" : 27388
+            "byteOffset" : 27260
         },
         {
             "buffer" : 0,
             "byteLength" : 576,
-            "byteOffset" : 28252
+            "byteOffset" : 28124
         },
         {
             "buffer" : 0,
             "byteLength" : 216,
-            "byteOffset" : 28828
+            "byteOffset" : 28700
         }
     ],
     "samplers" : [
@@ -2087,7 +2109,7 @@
     ],
     "buffers" : [
         {
-            "byteLength" : 29044,
+            "byteLength" : 28916,
             "uri" : "hill_level.bin"
         }
     ]

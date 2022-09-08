@@ -45,11 +45,15 @@
         }
     ],
     "layers": {
-            "default": 1,
-            "zombies": 2,
-            "wall": 3,
-            "ground": 4,
-            "obstacles": 5
+            "default": 0,
+            "zombies": 1,
+            "wall": 2,
+            "ground": 3,
+            "obstacles": 4,
+            "tree": 5,
+            "left": 6,
+            "right": 7,
+            "back": 8
     },
     "skinnedMeshes": [
         {
