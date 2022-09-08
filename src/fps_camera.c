@@ -46,33 +46,42 @@ static void fps_cam_left(fw64FpsCamera* fps, Vec3* out) {
 }
 
 static void move_camera(fw64FpsCamera* fps, float time_delta, Vec2* stick) {
+    int did_move = 0;
+    Vec3 move = {0.0f, 0.0f, 0.0f};
+
     if(mapped_input_controller_read(fps->input_map, fps->player_index, INPUT_MAP_MOVE_RIGHT, stick) >= 1) {
-        Vec3 move;
-        fps_cam_right(fps, &move);
-        vec3_scale(&move, &move, fps->movement_speed * time_delta);
-        vec3_add(&fps->camera.transform.position, &fps->camera.transform.position, &move);
+        controller_cam_right(controller, &move);
+        vec3_scale(&move, &move, controller->movement_speed * time_delta);
+        did_move = 1;
     }
 
     if (mapped_input_controller_read(fps->input_map, fps->player_index, INPUT_MAP_MOVE_LEFT, stick) >= 1) {
-        Vec3 move;
-        fps_cam_left(fps, &move);
-        vec3_scale(&move, &move, fps->movement_speed * time_delta);
-        vec3_add(&fps->camera.transform.position, &fps->camera.transform.position, &move);
+        controller_cam_left(controller, &move);
+        vec3_scale(&move, &move, controller->movement_speed * time_delta);
+        did_move = 1;
     }
 
     if (mapped_input_controller_read(fps->input_map, fps->player_index, INPUT_MAP_MOVE_FORWARD, stick) >= 1) {
-        Vec3 move;
-        fps_cam_forward(fps, &move);
-        vec3_scale(&move, &move, fps->movement_speed * time_delta * stick->y);
-        vec3_add(&fps->camera.transform.position, &fps->camera.transform.position, &move);
+        controller_cam_forward(controller, &move);
+        vec3_scale(&move, &move, controller->movement_speed * time_delta * stick->y);
+        did_move = 1;
     }
 
     if (mapped_input_controller_read(fps->input_map, fps->player_index, INPUT_MAP_MOVE_BACKWARD, stick) >= 1) {
-        Vec3 move;
-        fps_cam_back(fps, &move);
-        vec3_scale(&move, &move, fps->movement_speed * time_delta * -stick->y);
-        vec3_add(&fps->camera.transform.position, &fps->camera.transform.position, &move);
+        controller_cam_back(controller, &move);
+        vec3_scale(&move, &move, controller->movement_speed * time_delta * -stick->y);
+        did_move = 1;
     }
+
+    if (!did_move)
+        return;
+
+    fw64IntersectMovingBoxQuery query;
+    if (fw64_level_moving_box_intersection(controller->level, &controller->collider->bounding, &move, controller->collision_mask, &query)) {
+        vec3_scale(&move, &move, query.results[0].tfirst - 0.01f);
+    }
+
+    vec3_add(&controller->camera.transform.position, &controller->camera.transform.position, &move);
 }
 
 static void tilt_camera(fw64FpsCamera* fps, float time_delta, Vec2* stick) {

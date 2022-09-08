@@ -17,17 +17,18 @@ void player_init(Player* player, fw64Engine* engine, fw64Level* level, fw64Alloc
     setup_player_node(player);
     mapped_input_init(&player->input_map, engine->input);
 
-    movement_controller_init(&player->movement, engine->input, level, player->node->collider);
-    
+    movement_controller_init(&player->movement, &player->input_map, level, player->node->collider);
+    player->movement.height = 5.0f;
+    player->movement.collision_mask = FW64_layer_obstacles | FW64_layer_wall;
     player->movement.movement_speed = 40.0f;
     player->movement.camera.near = 1.0f;
     player->movement.camera.far = 225.0f;
     fw64_camera_update_projection_matrix(&player->movement.camera);
 
-    player->aim.position = &player->camera.camera.transform.position;
+    player->aim.position = &player->movement.camera.transform.position;
     vec3_zero(&player->aim.direction);
-    player->aim.direction.x = player->camera.rotation.x;
-    player->aim.direction.y = player->camera.rotation.y;
+    player->aim.direction.x = player->movement.rotation.x;
+    player->aim.direction.y = player->movement.rotation.y;
     player->aim.infinite = 1; //boolean true
 
     fw64_camera_init(&player->weapon_camera);
@@ -69,7 +70,7 @@ void setup_player_node(Player* player) {
 void player_aim_update(Player* player) {
 
     Quat q;
-    quat_from_euler(&q, player->camera.rotation.x, player->camera.rotation.y, 0.0f);
+    quat_from_euler(&q, player->movement.rotation.x, player->movement.rotation.y, 0.0f);
 
     Vec3 forward = { 0.0f, 0.0f, -1.0f };
     quat_transform_vec3(&player->aim.direction, &q, &forward);
