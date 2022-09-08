@@ -79,12 +79,14 @@ static void move_camera(MovementController* controller, float time_delta, Vec2* 
         did_move = 1;
     }
 
+
+    // note this is just prelimary...will probably need to get more fancy in the future.
     if (!did_move)
         return;
 
     fw64IntersectMovingBoxQuery query;
     if (fw64_level_moving_box_intersection(controller->level, &controller->collider->bounding, &move, controller->collision_mask, &query)) {
-        vec3_scale(&move, &move, query.results[0].tlast - 0.1);
+        vec3_scale(&move, &move, query.results[0].tfirst - 0.1);
     }
 
     vec3_add(&controller->camera.transform.position, &controller->camera.transform.position, &move);
