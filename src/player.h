@@ -5,7 +5,7 @@
 #include "framework64/quat.h"
 #include "framework64/scene.h"
 #include "framework64/vec3.h"
-#include "fps_camera.h"
+#include "movement_controller.h"
 
 #include "level.h"
 #include "weapon_controller.h"
@@ -13,20 +13,23 @@
 #include "mapped_input.h"
 
 typedef struct {
+    MovementController movement;
     InputMapping input_map;
-    fw64FpsCamera camera;
     fw64Camera weapon_camera;
     Weapon weapon;
     WeaponController weapon_controller;
     Ray aim;    
     fw64Engine* engine;
+    fw64Allocator* allocator;
     fw64Level* level;
-
+    fw64Node* node;
 } Player;
 
-void player_init(Player* player, fw64Engine* engine, fw64Level* level);
+void player_init(Player* player, fw64Engine* engine, fw64Level* level, fw64Allocator* allocator);
+void player_uninit(Player* player);
 void player_update(Player* player);
 void player_draw(Player* player);
 void player_draw_weapon(Player* player);
 
 void player_set_weapon(Player* player, WeaponType weapon_type);
+void player_set_position(Player* player, Vec3* position);

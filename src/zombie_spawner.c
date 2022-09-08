@@ -1,7 +1,7 @@
 #include "zombie_spawner.h"
 
-#include "assets.h"
-#include "scene_spooky_level.h"
+#include "assets/assets.h"
+#include "assets/scene_spooky_level.h"
 
 static void spawn_next_zombie(ZombieSpawner* spawner);
 
@@ -25,6 +25,7 @@ void zombie_spawner_init(ZombieSpawner* spawner, fw64Engine* engine, fw64Level* 
 
 void spawn_next_zombie(ZombieSpawner* spawner) {
     Zombie* zombie = &spawner->zombies[spawner->next_index];
+    zombie->health = 3;
     zombie->node.transform.position = spawner->spawner_node->transform.position;
     fw64_node_update(&zombie->node);
     zombie_set_new_state(zombie, spawner->next_index == 0 ? ZOMBIE_STATE_WALKING : ZOMBIE_STATE_RUNNING);

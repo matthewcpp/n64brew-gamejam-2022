@@ -1,6 +1,5 @@
 #include "zombie.h"
-#include "zombie_animation.h"
-#include "framework64/n64/controller_button.h"
+#include "assets/zombie_animation.h"
 
 #define ZOMBIE_SCALE 0.025f
 #define ZOMBIE_WALK_SPEED 5.0f

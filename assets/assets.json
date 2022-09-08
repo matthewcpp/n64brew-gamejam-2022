@@ -26,9 +26,10 @@
     ],
     "levels": [
         {
-            "src": "spooky_level/spooky_level.gltf",
-            "typeMap": 0,
-            "layerMap": 0
+            "src": "spooky_level/spooky_level.gltf"
+        },
+        {
+            "src": "hill_level/hill_level.gltf"
         }
     ],
     "musicBanks": [
@@ -43,17 +44,13 @@
             "dir": "sounds"
         }
     ],
-    "typeMaps": [
-        {
-            "start": 0
-        }
-    ],
-    "layerMaps": [
-        {
+    "layers": {
             "default": 1,
-            "zombies": 2
-        }
-    ],
+            "zombies": 2,
+            "wall": 3,
+            "ground": 4,
+            "obstacles": 5
+    },
     "skinnedMeshes": [
         {
             "src": "zombie/zombie.gltf",

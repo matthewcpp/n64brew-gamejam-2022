@@ -1,7 +1,7 @@
 #include "weapon.h"
 
-#include "assets.h"
-#include "sound_bank_sounds.h"
+#include "assets/assets.h"
+#include "assets/sound_bank_sounds.h"
 
 #include <string.h>
 
