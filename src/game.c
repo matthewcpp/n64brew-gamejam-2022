@@ -1,6 +1,6 @@
 #include "game.h"
-#include "assets.h"
-#include "scene_spooky_level.h"
+#include "assets/assets.h"
+#include "assets/scene_spooky_level.h"
 
 #include "framework64/n64/controller_button.h"
 
@@ -9,17 +9,15 @@
 void game_init(Game* game, fw64Engine* engine) {
     game->engine = engine;
 
-    fw64_level_init(&game->level);
+    fw64_level_init(&game->level, engine);
     game->level.scene = fw64_scene_load(engine->assets, FW64_ASSET_scene_spooky_level, NULL);
 
-    player_init(&game->player, engine, &game->level);
+    player_init(&game->player, engine, &game->level, fw64_default_allocator());
     player_set_weapon(&game->player, WEAPON_TYPE_AR15);
 
-    zombie_spawner_init(&game->zombie_spawner, engine, &game->level, &game->player.camera.camera.transform);
+    zombie_spawner_init(&game->zombie_spawner, engine, &game->level, &game->player.movement.camera.transform);
 
     ui_init(&game->ui, engine, &game->player);
-
-    boo_init(&game->boo, engine, &game->player, game->level.scene);
 
     fw64Renderer* renderer = game->engine->renderer;
     fw64_renderer_set_clear_color(renderer, 20, 4, 40);
@@ -38,7 +36,6 @@ void game_update(Game* game){
     //    fw64_audio_play_music(game->engine->audio, 0);
 
     player_update(&game->player);
-    //boo_update(&game->boo);
     zombie_spawner_update(&game->zombie_spawner);
 }
 

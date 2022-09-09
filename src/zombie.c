@@ -1,6 +1,8 @@
 #include "zombie.h"
-#include "zombie_animation.h"
-#include "framework64/n64/controller_button.h"
+#include "assets/zombie_animation.h"
+
+#include "framework64/math.h"
+#include "framework64/random.h"
 
 #define ZOMBIE_SCALE 0.025f
 #define ZOMBIE_WALK_SPEED 5.0f
@@ -19,7 +21,7 @@ void zombie_init(Zombie* zombie, fw64Engine* engine, fw64Level* level, fw64Mesh*
     zombie->state = ZOMBIE_STATE_INACTIVE;
     zombie->health = ZOMBIE_MAX_HEALTH;
     vec3_zero(&zombie->velocity);
-    zombie->rotation = (rand() % 360) * (M_PI / 180.0f);
+    zombie->rotation = (fw64_random_int() % 360) * (M_PI / 180.0f);
     zombie->rotation_speed = 90.0f * (M_PI / 180.0f); //90 deg/sec max turn speed. not used yet
     zombie->max_speed = 0.0f;
     fw64_node_init(&zombie->node);
@@ -216,7 +218,7 @@ void zombie_clear_behavior(Zombie* zombie, SteeringBehavior behavior) {
 
 void zombie_apply_behavior(Zombie* zombie, SteeringBehavior behavior) {
     Vec3 behavior_velocity;
-    float displacement = min(zombie->max_speed, zombie->max_speed * zombie->engine->time->time_delta); //cap displacement at 1 second's worth. hacky debug tool.
+    float displacement = fw64_minf(zombie->max_speed, zombie->max_speed * zombie->engine->time->time_delta); //cap displacement at 1 second's worth. hacky debug tool.
     Vec3 position = zombie->node.transform.position;
     Vec3 target = zombie->target->position;
     position.y = 0;
