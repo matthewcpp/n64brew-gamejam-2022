@@ -1,4 +1,4 @@
-#include "hill_level.h"
+#include "church_hill.h"
 
 #include "assets/assets.h"
 #include "assets/scene_church_hill.h"
@@ -9,11 +9,13 @@ static void setup_sound_trigger(HillLevel* hill_level, fw64Scene* scene, int tri
 void hill_level_init(HillLevel* hill_level, fw64Engine* engine) {
     hill_level->engine = engine;
 
+    hill_level->allocator = fw64_default_allocator();
+
     fw64_renderer_set_clear_color(engine->renderer, 20, 4, 40);
 
     fw64_level_init(&hill_level->level, engine);
-    fw64Scene* scene = fw64_level_load_chunk(&hill_level->level, engine->assets, FW64_ASSET_scene_church_hill, NULL);
-    player_init(&hill_level->player, engine, &hill_level->level, fw64_default_allocator());
+    fw64Scene* scene = fw64_level_load_chunk(&hill_level->level, engine->assets, FW64_ASSET_scene_church_hill, hill_level->allocator);
+    player_init(&hill_level->player, engine, &hill_level->level, hill_level->allocator);
     fw64_level_add_dyanmic_node(&hill_level->level, hill_level->player.node);
 
     fw64Node* start_node = fw64_scene_get_node(scene, FW64_scene_church_hill_node_Player_Start);
@@ -22,11 +24,18 @@ void hill_level_init(HillLevel* hill_level, fw64Engine* engine) {
     
     ui_init(&hill_level->ui, engine, &hill_level->player);
 
-    fw64SoundBank* sound = fw64_sound_bank_load(engine->assets, FW64_ASSET_soundbank_sounds, NULL);
-    fw64_audio_set_sound_bank(engine->audio, sound);
+    hill_level->sound = fw64_sound_bank_load(engine->assets, FW64_ASSET_soundbank_sounds, hill_level->allocator);
+    fw64_audio_set_sound_bank(engine->audio, hill_level->sound);
 
     setup_sound_trigger(hill_level, scene, HILL_LEVEL_TRIGGER_CROW, FW64_scene_church_hill_node_CrowTrigger);
     setup_sound_trigger(hill_level, scene, HILL_LEVEL_TRIGGER_HOWL, FW64_scene_church_hill_node_HowlTrigger);
+}
+
+void hill_level_uninit(HillLevel* hill_level) {
+    player_uninit(&hill_level->player);
+    ui_uninit(&hill_level->ui);
+    fw64_level_delete(&hill_level->level);
+    fw64_sound_bank_delete(hill_level->engine->assets, hill_level->sound, hill_level->allocator);
 }
 
 static void play_triggered_audio_sound(TriggerBox* trigger_box, void* arg) {

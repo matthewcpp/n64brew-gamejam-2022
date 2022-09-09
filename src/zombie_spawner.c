@@ -5,22 +5,28 @@
 
 static void spawn_next_zombie(ZombieSpawner* spawner);
 
-void zombie_spawner_init(ZombieSpawner* spawner, fw64Engine* engine, fw64Level* level, fw64Transform* target) {
+void zombie_spawner_init(ZombieSpawner* spawner, fw64Engine* engine, fw64Level* level, fw64Transform* target, fw64Allocator* allocator) {
     spawner->engine = engine;
     spawner->level = level;
+    spawner->allocator = allocator;
     spawner->spawner_node = fw64_scene_get_node(level->scene, FW64_scene_spooky_level_node_Zombie_Spawn);
     spawner->next_index = 0;
 
-    fw64AnimationData* animation_data = fw64_animation_data_load(engine->assets, FW64_ASSET_animation_data_zombie, NULL);
-    fw64Mesh* zombie_mesh = fw64_mesh_load(engine->assets, FW64_ASSET_mesh_zombie, NULL);
+    spawner->animation_data = fw64_animation_data_load(engine->assets, FW64_ASSET_animation_data_zombie, allocator);
+    spawner->zombie_mesh = fw64_mesh_load(engine->assets, FW64_ASSET_mesh_zombie, allocator);
 
     for (int i = 0; i < ZOMBIE_SPAWNER_COUNT; i++) {
         Zombie* zombie = &spawner->zombies[i];
-        zombie_init(zombie, engine, level, zombie_mesh, animation_data);
+        zombie_init(zombie, engine, level, spawner->zombie_mesh, spawner->animation_data);
         zombie_set_target(zombie, target);
     }
 
     spawn_next_zombie(spawner);
+}
+
+void zombie_spawner_uninit(ZombieSpawner* spawner) {
+    fw64_mesh_delete(spawner->engine->assets, spawner->zombie_mesh, spawner->allocator);
+    fw64_animation_data_delete(spawner->animation_data, spawner->allocator);
 }
 
 void spawn_next_zombie(ZombieSpawner* spawner) {

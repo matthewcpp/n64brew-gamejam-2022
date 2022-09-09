@@ -1,4 +1,4 @@
-set(common_files
+set(core_files
 	behaviors.h behaviors.c
 	mapped_input.h mapped_input.c
     player.h player.c
@@ -8,23 +8,27 @@ set(common_files
     weapon_controller.h weapon_controller.c
     trigger.h trigger.c
     zombie.h zombie.c
+    zombie_spawner.h zombie_spawner.c
     ui.h ui.c
+)
+
+set(level_files
+    levels/church_hill.h levels/church_hill.c
+    levels/test.h levels/test.c
+)
+
+set(game_state_files
+    states/game_states.h
+
+    states/level_select.h states/level_select.c
+    states/playing.h states/playing.c
 )
 
 set(main_game_files
     game.h game.c
-    zombie_spawner.h zombie_spawner.c
-)
-
-set(hill_test_files
-    hill_test/game.h hill_test/game.c
-    hill_test/hill_level.h hill_test/hill_level.c
+    game_data.h game_data.c
 )
 
 create_game(
     TARGET spooky
-    SOURCES ${main_game_files} ${common_files})
-
-create_game(
-    TARGET hill_test
-    SOURCES ${hill_test_files} ${common_files})
+    SOURCES ${main_game_files} ${core_files} ${level_files} ${game_state_files} ${main_game_files})

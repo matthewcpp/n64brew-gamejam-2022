@@ -18,6 +18,7 @@ typedef struct {
 } fw64Level;
 
 void fw64_level_init(fw64Level* level, fw64Engine* engine);
+void fw64_level_delete(fw64Level* level);
 fw64Scene* fw64_level_load_chunk(fw64Level* level, fw64AssetDatabase* assets, int handle, fw64Allocator* allocator);
 
 int fw64_level_raycast(fw64Level* level, Vec3* origin, Vec3* direction, uint32_t mask, fw64RaycastHit* hit);

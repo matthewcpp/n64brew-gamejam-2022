@@ -17,8 +17,11 @@ typedef struct {
     Player player;
     UI ui;
     TriggerBox triggers[HILL_LEVEL_TRIGGER_COUNT];
+    fw64Allocator* allocator;
+    fw64SoundBank* sound;
 } HillLevel;
 
 void hill_level_init(HillLevel* hill_level, fw64Engine* engine);
+void hill_level_uninit(HillLevel* hill_level);
 void hill_level_update(HillLevel* hill_level);
 void hill_level_draw(HillLevel* hill_level);

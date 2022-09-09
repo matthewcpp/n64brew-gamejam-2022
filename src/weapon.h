@@ -36,5 +36,6 @@ typedef struct {
  * This should be called before any of the other weapon_init_xxx functions!
 */
 void weapon_init(Weapon* weapon);
+void weapon_uninit(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator);
 void weapon_init_ar15(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator);
 void weapon_init_shotgun(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator);

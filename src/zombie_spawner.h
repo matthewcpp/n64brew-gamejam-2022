@@ -11,11 +11,15 @@
 typedef struct {
     fw64Engine* engine;
     fw64Level* level;
+    fw64Allocator* allocator;
     fw64Node* spawner_node;
     Zombie zombies[ZOMBIE_SPAWNER_COUNT];
     int next_index;
+    fw64Mesh* zombie_mesh;
+    fw64AnimationData* animation_data;
 } ZombieSpawner;
 
-void zombie_spawner_init(ZombieSpawner* spawner, fw64Engine* engine, fw64Level* level, fw64Transform* target);
+void zombie_spawner_init(ZombieSpawner* spawner, fw64Engine* engine, fw64Level* level, fw64Transform* target, fw64Allocator* allocator);
+void zombie_spawner_uninit(ZombieSpawner* spawner);
 void zombie_spawner_update(ZombieSpawner* spawner);
 void zombie_spawner_draw(ZombieSpawner* spawner);

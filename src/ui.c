@@ -5,6 +5,10 @@ void ui_init(UI* ui, fw64Engine* engine, Player* player) {
     ui->player = player;
 }
 
+void ui_uninit(UI* ui) {
+    
+}
+
 static void ui_draw_player_weapon_crosshair(UI* ui) {
     fw64Renderer* renderer = ui->engine->renderer;
     fw64Texture* crosshair = ui->player->weapon.crosshair;

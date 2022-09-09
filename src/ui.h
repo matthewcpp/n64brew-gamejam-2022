@@ -10,4 +10,5 @@ typedef struct {
 } UI;
 
 void ui_init(UI* ui, fw64Engine* engine, Player* player);
+void ui_uninit(UI* ui);
 void ui_draw(UI* ui);

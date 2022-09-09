@@ -1,21 +1,24 @@
 #pragma once
 
-#include "framework64/camera.h"
 #include "framework64/engine.h"
-#include "framework64/node.h"
 
-#include "player.h"
-#include "ui.h"
-#include "zombie_spawner.h"
+#include "game_data.h"
 
-#include "level.h"
+#include "states/playing.h"
+#include "states/level_select.h"
+
+typedef union
+{
+    LevelSelect level_select;
+    Playing playing;
+} GameStates;
+
 
 typedef struct {
     fw64Engine* engine;
-    Player player;
-    UI ui;
-    ZombieSpawner zombie_spawner;
-    fw64Level level;
+    GameData game_data;
+    GameState current_state;
+    GameStates states;
 } Game;
 
 #ifdef __cplusplus

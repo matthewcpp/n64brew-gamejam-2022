@@ -7,6 +7,10 @@ void fw64_level_init(fw64Level* level, fw64Engine* engine) {
     level->engine = engine;
 }
 
+void fw64_level_delete(fw64Level* level) {
+    fw64_scene_delete(level->engine->assets, level->scene, fw64_scene_get_allocator(level->scene));
+}
+
 fw64Scene* fw64_level_load_chunk(fw64Level* level, fw64AssetDatabase* assets, int handle, fw64Allocator* allocator) {
     level->scene = fw64_scene_load(assets, handle, allocator);
 

@@ -44,6 +44,15 @@
             "dir": "sounds"
         }
     ],
+    "fonts": [
+        {
+            "src": "Consolas.ttf",
+            "size": 12,
+            "name": "level_select",
+            "imageFormat": "rgba32",
+            "sourceString": "abcdefghijklmnopqrstuvwxyz 0123456789_-.>"
+        }
+    ],
     "layers": {
             "default": 0,
             "zombies": 1,

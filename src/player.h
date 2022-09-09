@@ -15,12 +15,13 @@
 typedef struct {
     MovementController movement;
     InputMapping input_map;
-    fw64Camera weapon_camera;
+    fw64Camera weapon_camera; // todo: move to weapon controller?
     Weapon weapon;
     WeaponController weapon_controller;
     Ray aim;    
     fw64Engine* engine;
     fw64Allocator* allocator;
+    fw64Allocator* weapon_allocator; 
     fw64Level* level;
     fw64Node* node;
 } Player;

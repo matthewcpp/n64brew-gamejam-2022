@@ -13,6 +13,7 @@ void player_init(Player* player, fw64Engine* engine, fw64Level* level, fw64Alloc
     player->engine = engine;
     player->level = level;
     player->allocator = allocator;
+    player->weapon_allocator = allocator; // todo need to figure this out
 
     setup_player_node(player);
     mapped_input_init(&player->input_map, engine->input);
@@ -47,6 +48,8 @@ void player_init(Player* player, fw64Engine* engine, fw64Level* level, fw64Alloc
 
 void player_uninit(Player* player) {
     fw64Allocator* allocator = player->allocator;
+
+    weapon_uninit(&player->weapon, player->engine->assets, player->weapon_allocator);
 
     allocator->free(allocator, player->node->collider);
     allocator->free(allocator, player->node);
@@ -122,11 +125,11 @@ void player_draw_weapon(Player* player) {
 void player_set_weapon(Player* player, WeaponType weapon_type) {
     switch(weapon_type) {
         case WEAPON_TYPE_AR15:
-            weapon_init_ar15(&player->weapon, player->engine->assets, NULL);
+            weapon_init_ar15(&player->weapon, player->engine->assets, player->weapon_allocator);
         break;
 
         case WEAPON_TYPE_SHOTGUN:
-            weapon_init_shotgun(&player->weapon, player->engine->assets, NULL);
+            weapon_init_shotgun(&player->weapon, player->engine->assets, player->weapon_allocator);
         break;
 
         case WEAPON_TYPE_NONE:

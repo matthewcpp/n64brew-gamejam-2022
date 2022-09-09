@@ -9,13 +9,17 @@ void weapon_init(Weapon* weapon) {
     memset(weapon, 0, sizeof(Weapon));
 }
 
-void weapon_reomve_existing(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator) {
+static void weapon_reomve_existing(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator) {
     if (weapon->mesh)
         fw64_mesh_delete(assets, weapon->mesh, allocator);
     if (weapon->casing)
         fw64_mesh_delete(assets, weapon->casing, allocator);
     if (weapon->muzzle_flash)
         fw64_mesh_delete(assets, weapon->muzzle_flash, allocator);
+}
+
+void weapon_uninit(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator) {
+    weapon_reomve_existing(weapon, assets, allocator);
 }
 
 void weapon_init_ar15(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator) {

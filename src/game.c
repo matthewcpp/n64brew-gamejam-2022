@@ -1,54 +1,84 @@
 #include "game.h"
-#include "assets/assets.h"
-#include "assets/scene_spooky_level.h"
+#include "game.h"
 
-#include "framework64/n64/controller_button.h"
-
-#define ROTATION_SPEED 90.0f
+static void game_transition_state(Game* game);
 
 void game_init(Game* game, fw64Engine* engine) {
     game->engine = engine;
+    game_data_init(&game->game_data);
 
-    fw64_level_init(&game->level, engine);
-    game->level.scene = fw64_scene_load(engine->assets, FW64_ASSET_scene_spooky_level, NULL);
+    game->current_state = GAME_STATE_NONE;
 
-    player_init(&game->player, engine, &game->level, fw64_default_allocator());
-    player_set_weapon(&game->player, WEAPON_TYPE_AR15);
+    // Set this to the state you want to being at
+    game->game_data.transition_to_state = GAME_STATE_LEVEL_SELECT;
 
-    zombie_spawner_init(&game->zombie_spawner, engine, &game->level, &game->player.movement.camera.transform);
+    // you can optionally set this to the level you want to begin at
+    game->game_data.transition_to_level = LEVEL_NONE;
 
-    ui_init(&game->ui, engine, &game->player);
-
-    fw64Renderer* renderer = game->engine->renderer;
-    fw64_renderer_set_clear_color(renderer, 20, 4, 40);
-    fw64_renderer_set_fog_color(renderer, 20, 4, 40);
-    fw64_renderer_set_fog_positions(renderer, 0.45, 0.9f);
-
-    fw64MusicBank* music = fw64_music_bank_load(engine->assets, FW64_ASSET_musicbank_music, NULL);
-    fw64_audio_set_music_bank(engine->audio, music);
-
-    fw64SoundBank* sound = fw64_sound_bank_load(engine->assets, FW64_ASSET_soundbank_sounds, NULL);
-    fw64_audio_set_sound_bank(engine->audio, sound);
+    game_transition_state(game);
 }
 
-void game_update(Game* game){
-    //if (fw64_audio_get_music_status(game->engine->audio) == FW64_AUDIO_STOPPED)
-    //    fw64_audio_play_music(game->engine->audio, 0);
+void game_update(Game* game) {
+    if (game->game_data.transition_to_state) {
+        game_transition_state(game);
+    }
 
-    player_update(&game->player);
-    zombie_spawner_update(&game->zombie_spawner);
+    switch(game->current_state) {
+        case GAME_STATE_LEVEL_SELECT:
+            game_state_level_select_update(&game->states.level_select);
+            break;
+
+        case GAME_STATE_PLAYING:
+            game_state_playing_update(&game->states.playing);
+            break;
+
+        case GAME_STATE_NONE:
+            break;
+    }
 }
 
 void game_draw(Game* game) {
-    fw64Renderer* renderer = game->engine->renderer;
+    switch(game->current_state) {
+        case GAME_STATE_LEVEL_SELECT:
+            game_state_level_select_draw(&game->states.level_select);
+            break;
 
-    fw64_renderer_set_anti_aliasing_enabled(renderer, 1);
-    fw64_renderer_begin(renderer, FW64_RENDERER_MODE_TRIANGLES,  FW64_RENDERER_FLAG_CLEAR);
-    player_draw(&game->player);
-    zombie_spawner_draw(&game->zombie_spawner);
-    player_draw_weapon(&game->player);
+        case GAME_STATE_PLAYING:
+            game_state_playing_draw(&game->states.playing);
+            break;
 
-    fw64_renderer_set_anti_aliasing_enabled(renderer, 0);
-    ui_draw(&game->ui);
-    fw64_renderer_end(renderer, FW64_RENDERER_FLAG_SWAP);
+        case GAME_STATE_NONE:
+            break;
+    }
+}
+
+void game_transition_state(Game* game) {
+    switch(game->current_state) {
+        case GAME_STATE_LEVEL_SELECT:
+            game_state_level_select_uninit(&game->states.level_select);
+            break;
+
+        case GAME_STATE_PLAYING:
+            game_state_playing_uninit(&game->states.playing);
+            break;
+
+        case GAME_STATE_NONE:
+            break;
+    }
+
+    game->current_state = game->game_data.transition_to_state;
+    game->game_data.transition_to_state = GAME_STATE_NONE;
+
+    switch(game->current_state) {
+        case GAME_STATE_LEVEL_SELECT:
+            game_state_level_select_init(&game->states.level_select, game->engine, &game->game_data);
+            break;
+
+        case GAME_STATE_PLAYING:
+            game_state_playing_init(&game->states.playing, game->engine, &game->game_data);
+            break;
+
+        case GAME_STATE_NONE:
+            break;
+    }
 }
