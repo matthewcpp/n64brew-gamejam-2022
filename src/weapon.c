@@ -41,7 +41,7 @@ void weapon_init_shotgun(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocato
     weapon->type = WEAPON_TYPE_SHOTGUN;
     weapon->mesh = fw64_mesh_load(assets, FW64_ASSET_mesh_shotgun, allocator);
     weapon->casing = fw64_mesh_load(assets, FW64_ASSET_mesh_shotgun_shell, allocator);
-    weapon->muzzle_flash = NULL;
+    weapon->muzzle_flash = fw64_mesh_load(assets, FW64_ASSET_mesh_shotgun_muzzle_flash, allocator);
     weapon->fire_rate = 1.6f;
     weapon->gunshot_sound = sound_bank_sounds_shotgun_shot_and_reload;
     weapon->reload_sound = sound_bank_sounds_shotgun_reload;

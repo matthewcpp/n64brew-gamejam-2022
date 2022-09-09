@@ -7,13 +7,16 @@
             "src": "us_ar33/us_ar33.gltf"
         },
         {
+            "src": "9mm_round/9mm_round.gltf"
+        },
+        {
             "src": "shotgun/shotgun.gltf"
         },
         {
             "src": "shotgun_shell/shotgun_shell.gltf"
         },
         {
-            "src": "9mm_round/9mm_round.gltf"
+            "src": "shotgun_muzzle_flash/shotgun_muzzle_flash.gltf"
         }
     ],
     "images": [
