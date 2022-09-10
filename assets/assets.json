@@ -16,7 +16,8 @@
             "src": "shotgun_shell/shotgun_shell.gltf"
         },
         {
-            "src": "shotgun_muzzle_flash/shotgun_muzzle_flash.gltf"
+            "src": "shotgun_muzzle_flash/shotgun_muzzle_flash.gltf",
+            "shadingModeOverride": "UnlitTextured"
         }
     ],
     "images": [
