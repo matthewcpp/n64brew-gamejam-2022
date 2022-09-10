@@ -11,8 +11,7 @@
         "texture.h": "c",
         "assets.h": "c",
         "sound_bank_sounds.h": "c",
-        "layers.h": "c",
-        "xmemory": "c",
-        "weapon.h": "c"
+        "random.h": "c",
+        "behaviors.h": "c"
     }
 }

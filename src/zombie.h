@@ -19,7 +19,8 @@ typedef enum {
     ZOMBIE_STATE_WALKING,
     ZOMBIE_STATE_HIT_REACTION,
     ZOMBIE_STATE_FALLING_DOWN,
-    ZOMBIE_FLYING_BACK    
+    ZOMBIE_FLYING_BACK
+    
 } ZombieState;
 
 typedef struct {
@@ -30,14 +31,21 @@ typedef struct {
     fw64Collider collider;
     fw64AnimationController animation_controller;
     fw64Transform* target;
+    fw64Transform* targetPrevious;
+    Vec3 targetVelocity;
     ZombieState previous_state;
     ZombieState state;
     int health;
-    Vec3 velocity;
-    float rotation; //radians about the y axis. stored to easily update
+    Vec3 velocity_linear; // linear
+    float velocity_angular;
+    float rotation; // current angular offset. radians about the y axis. stored to easily update
     float rotation_speed; // max rotation speed in rads;
-    float max_speed;
-    unsigned long long int active_bahaviors; // bitset of up to 64 unique behaviors
+    float max_speed_linear;
+    float max_speed_angular;
+    float max_accel_linear;
+    float max_accel_angular;
+    unsigned long long int active_bahaviors; // bitset of up to 64 unique behaviors. primarily used to deactivate behaviors.
+    SteeringBehaviorData sb_data;
 } Zombie;
 
 void zombie_init(Zombie* zombie, fw64Engine* engine, fw64Level* level, fw64Mesh* mesh, fw64AnimationData* animation_data);
