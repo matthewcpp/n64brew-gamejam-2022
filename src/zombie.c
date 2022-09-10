@@ -1,5 +1,5 @@
 #include "zombie.h"
-#include "zombie_animation.h"
+#include "assets/zombie_animation.h"
 #include "framework64/random.h"
 #include "behaviors.h"
 
