@@ -5,13 +5,13 @@ Entry into N64Brew 2022 GameJam
 - Docker
 - NodeJS
 
-Additionally for desktop dev build (reccomended)
+Additionally for desktop dev build (recommended)
 - CMake
 - vcpkg
 
 ### Setup
 ```bash
-git clone --recusive https://github.com/matthewcpp/n64brew-gamejam-2022.git
+git clone --recursive https://github.com/matthewcpp/n64brew-gamejam-2022.git
 cd n64brew-gamejam-2022
 npm install
 npm run prepare-game-assets n64
