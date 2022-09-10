@@ -1,13 +1,13 @@
 #include "zombie.h"
 #include "zombie_animation.h"
-#include "framework64/n64/controller_button.h"
+#include "framework64/random.h"
+#include "behaviors.h"
 
 #define ZOMBIE_SCALE 0.025f
 #define ZOMBIE_WALK_SPEED 5.0f
 #define ZOMBIE_RUN_SPEED 15.0f
 #define ZOMBIE_VISION_DISTANCE 45.0f
 ;
-
 static void zombie_move(Zombie* zombie);
 
 void zombie_init(Zombie* zombie, fw64Engine* engine, fw64Level* level, fw64Mesh* mesh, fw64AnimationData* animation_data) {
@@ -15,13 +15,17 @@ void zombie_init(Zombie* zombie, fw64Engine* engine, fw64Level* level, fw64Mesh*
     zombie->level = level;
     zombie->mesh = mesh;
     zombie->target = NULL;
+    vec3_zero(&zombie->targetVelocity);
     zombie->previous_state = ZOMBIE_STATE_INACTIVE;
     zombie->state = ZOMBIE_STATE_INACTIVE;
     zombie->health = ZOMBIE_MAX_HEALTH;
-    vec3_zero(&zombie->velocity);
-    zombie->rotation = (rand() % 360) * (M_PI / 180.0f);
-    zombie->rotation_speed = 90.0f * (M_PI / 180.0f); //90 deg/sec max turn speed. not used yet
-    zombie->max_speed = 0.0f;
+    vec3_zero(&zombie->velocity_linear);
+    zombie->velocity_angular = 0.0f;
+    zombie->rotation = fw64_random_float_in_range(0.0f, 359.9f) * (M_PI / 180.0f);
+    zombie->max_speed_linear = 0.0f;
+    zombie->max_speed_angular = 0.0f;
+    zombie->max_accel_linear = 0.0f;
+    zombie->max_accel_angular = 0.0f;
     fw64_node_init(&zombie->node);
     zombie->node.layer_mask = ZOMBIE_LAYER;
     zombie->node.data = zombie;
@@ -29,6 +33,12 @@ void zombie_init(Zombie* zombie, fw64Engine* engine, fw64Level* level, fw64Mesh*
     fw64_node_set_mesh(&zombie->node, zombie->mesh);
     fw64_node_set_box_collider(&zombie->node, &zombie->collider);
     fw64_node_update(&zombie->node);
+
+    steering_behavior_data_init(zombie->node.transform.position,
+                                zombie->node.transform.position,
+                                &zombie->velocity_linear,
+                                zombie->engine->time->time_delta,
+                                &zombie->sb_data);
     fw64_animation_controller_init(&zombie->animation_controller, animation_data, zombie_animation_Idle, NULL);
     fw64_level_add_dyanmic_node(level, &zombie->node);
 }
@@ -50,22 +60,36 @@ static void zombie_update_idle(Zombie* zombie) {
 void zombie_move(Zombie* zombie) {
 
     zombie_apply_active_behaviors(zombie);
-
+    // char debugMessage[80];
+    // float dist = vec3_distance(&zombie->node.transform.position, &zombie->target->position);
+    // sprintf(debugMessage, "Vel: (%.4f, %.4f, %.4f)   Dist: %.4f", zombie->velocity_linear.x,
+    //                                                               zombie->velocity_linear.y,
+    //                                                               zombie->velocity_linear.z,
+    //                                                               dist);
+    
+    // fw64_debug_log(debugMessage);
     //this chunk just adjusts the rotation of the zombie's model when drawn.
     //I'm sure it can be done better without any atan2 nonsense
     //atan2 return from -pi to + pi.
     //so there's a spot where the function is not continuous, which is annoying
-    float zombie_new_direction = atan2(-zombie->velocity.z, zombie->velocity.x) + (M_PI / 2.0f);
-    float zombie_dir_delta = (zombie_new_direction - zombie->rotation);
-    zombie->rotation += zombie_dir_delta;
-    if(zombie->rotation > M_PI) {
-        zombie->rotation -= 2.0f * M_PI;
-    } else if (zombie->rotation < (-M_PI)) {
-        zombie->rotation += 2.0f * M_PI;
+    Vec3 ref_zero;
+    vec3_zero(&ref_zero);
+    if((vec3_distance_squared(&ref_zero, &zombie->velocity_linear)) > 0.01f)
+    {
+        float zombie_new_direction = atan2(-zombie->velocity_linear.z, zombie->velocity_linear.x) + (M_PI / 2.0f);
+        float zombie_dir_delta = (zombie_new_direction - zombie->rotation);
+        zombie->rotation += zombie_dir_delta;
+        if(zombie->rotation > M_PI) {
+            zombie->rotation -= 2.0f * M_PI;
+        } else if (zombie->rotation < (-M_PI)) {
+            zombie->rotation += 2.0f * M_PI;
+        }
+        quat_set_axis_angle(&zombie->node.transform.rotation, 0, 1, 0, zombie->rotation);
     }
-    quat_set_axis_angle(&zombie->node.transform.rotation, 0, 1, 0, zombie->rotation);
 
-    vec3_add(&zombie->node.transform.position, &zombie->node.transform.position, &zombie->velocity);
+    Vec3 delta_vel;
+    vec3_scale(&delta_vel, &zombie->velocity_linear, zombie->engine->time->time_delta);
+    vec3_add(&zombie->node.transform.position, &zombie->node.transform.position, &delta_vel);
 
     fw64_node_update(&zombie->node);
 }
@@ -138,7 +162,7 @@ void zombie_set_new_state(Zombie* zombie, ZombieState new_state) {
     zombie->previous_state = zombie->state;
     zombie->state = new_state;
 
-    zombie_set_behavior(zombie, SB_NONE);
+    zombie_clear_behavior(zombie, SB_ALL); //clear all active behaviors on new state
 
     int animation;
     int loop;
@@ -146,47 +170,47 @@ void zombie_set_new_state(Zombie* zombie, ZombieState new_state) {
 
     switch (zombie->state) {
         case ZOMBIE_STATE_IDLE:
-            zombie->max_speed = 0.0f;
+            zombie->max_speed_linear = 0.0f;
             animation = zombie_animation_Idle;
             loop = 1;
         break;
 
         case ZOMBIE_STATE_RUNNING:
-            zombie_set_behavior(zombie, SB_SEEK);
-            zombie->max_speed = ZOMBIE_RUN_SPEED;
+            zombie_set_behavior(zombie, SB_PURSUE);
+            zombie->max_speed_linear = ZOMBIE_RUN_SPEED;
             animation = zombie_animation_Run;
             loop = 1;
         break;
 
         case ZOMBIE_STATE_WALKING:
-            zombie_set_behavior(zombie, SB_SEEK);
-            zombie->max_speed = ZOMBIE_WALK_SPEED;
+            zombie_set_behavior(zombie, SB_EVADE);
+            zombie->max_speed_linear = ZOMBIE_WALK_SPEED;
             animation = zombie_animation_Walk;
             loop = 1;
         break;
 
         case ZOMBIE_STATE_HIT_REACTION:
-            zombie->max_speed = 0.0f;
+            zombie->max_speed_linear = 0.0f;
             animation = zombie_animation_Hit;
             loop = 0;
             speed = 2.35f;
         break;
 
         case ZOMBIE_STATE_FALLING_DOWN:
-            zombie->max_speed = 0.0f;
+            zombie->max_speed_linear = 0.0f;
             animation = zombie_animation_Death;
             loop = 0;
         break;
 
         case ZOMBIE_FLYING_BACK:
-            zombie->max_speed = 0.0f;
+            zombie->max_speed_linear = 0.0f;
             animation = zombie_animation_FlyBack;
             loop = 0;
         break;
 
         case ZOMBIE_STATE_INACTIVE:
         case ZOMBIE_STATE_DEAD:
-            zombie->max_speed = 0.0f;
+            zombie->max_speed_linear = 0.0f;
             return;
         break;
     }
@@ -203,6 +227,7 @@ void zombie_draw(Zombie* zombie) {
 
 void zombie_set_target(Zombie* zombie, fw64Transform* target) {
     zombie->target = target;
+    zombie->targetPrevious = target;
     fw64_animation_controller_play(&zombie->animation_controller);
 }
 
@@ -215,27 +240,46 @@ void zombie_clear_behavior(Zombie* zombie, SteeringBehavior behavior) {
 }
 
 void zombie_apply_behavior(Zombie* zombie, SteeringBehavior behavior) {
-    Vec3 behavior_velocity;
-    float displacement = min(zombie->max_speed, zombie->max_speed * zombie->engine->time->time_delta); //cap displacement at 1 second's worth. hacky debug tool.
-    Vec3 position = zombie->node.transform.position;
-    Vec3 target = zombie->target->position;
-    position.y = 0;
-    target.y = 0;
+    steering_behavior_data_init(zombie->node.transform.position,
+                                zombie->target->position,
+                                &zombie->velocity_linear,
+                                zombie->engine->time->time_delta,
+                                &zombie->sb_data);
+    
+    zombie->sb_data.position.y = 0.0f;
+    zombie->sb_data.targetPosition.y = 0.0f;
+
+    //float displacement = min(zombie->max_speed_linear, zombie->max_speed_linear * zombie->engine->time->time_delta); //cap displacement at 1 second's worth. hacky debug tool.
     
     switch(behavior) {
         case SB_SEEK:          
-            steering_seek(&position, &target, displacement, &behavior_velocity);  //here displacement is simple. just the max move speed of the zombie.                                                                      //theoretically though you can adjust this to adjust the strength of this behavior  
-            vec3_add(&zombie->velocity, &zombie->velocity, &behavior_velocity);
+            steering_seek(1.0f, &zombie->sb_data);            
             break;
         case SB_FLEE:
-            steering_flee(&position, &target, displacement, &behavior_velocity);  //here displacement is simple. just the max move speed of the zombie.                                                                      //theoretically though you can adjust this to adjust the strength of this behavior  
-            vec3_add(&zombie->velocity, &zombie->velocity, &behavior_velocity);
+            steering_flee(1.0f, &zombie->sb_data);
+            break;
+        case SB_ARRIVE:
+            steering_arrive(20.0f, 10.0f, 1.0f, &zombie->sb_data);
+            break;
+        case SB_PURSUE:
+            vec3_subtract(&zombie->targetVelocity, &zombie->target->position, &zombie->targetPrevious->position);
+            zombie->targetPrevious->position = zombie->target->position;
+            steering_pursue(&zombie->targetVelocity, 1.0f, &zombie->sb_data);
+            break;
+        case SB_EVADE:
+            vec3_subtract(&zombie->targetVelocity, &zombie->target->position, &zombie->targetPrevious->position);
+            zombie->targetPrevious->position = zombie->target->position;
+            steering_evade(&zombie->targetVelocity, 1.0f, &zombie->sb_data);
             break;
         default: break;
     }
-
-    vec3_normalize(&zombie->velocity);
-    vec3_scale(&zombie->velocity, &zombie->velocity, displacement);
+    vec3_add(&zombie->velocity_linear, &zombie->velocity_linear, &zombie->sb_data.linearAccel);
+    Vec3 ref_zero;
+    vec3_zero(&ref_zero);
+    if(vec3_distance_squared(&ref_zero, &zombie->velocity_linear) > (zombie->max_speed_linear * zombie->max_speed_linear)) {
+        vec3_normalize(&zombie->velocity_linear);
+        vec3_scale(&zombie->velocity_linear, &zombie->velocity_linear, zombie->max_speed_linear);
+    }
 }
 
 void zombie_apply_active_behaviors(Zombie* zombie) {
