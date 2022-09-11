@@ -6,6 +6,11 @@
 
 /** \file mapped_input.h */
 
+#define INPUT_MAP_BUTTON_UP 0
+#define INPUT_MAP_BUTTON_DOWN 1
+#define INPUT_MAP_ANALOG 2
+#define INPUT_MAP_ERROR -1
+
 #define INPUT_MAP_TOTAL_ACTIONS 12
 #define INPUT_MAP_START 0x8001 //deconflict with both N64 and SDL mappings
 typedef enum {
@@ -48,3 +53,6 @@ void mapped_input_init(InputMapping* mapping, fw64Input* fw64_input);
 void mapped_input_set_map_button(InputMapping* mapping, MappedButton mapped_input_name, int new_button_name);
 void mapped_input_set_stick_threshold(InputMapping* mapping, Vec2 new_threshold);
 int mapped_input_controller_read(InputMapping* mapping, int controller, MappedButton button, Vec2* stick);
+
+// this needs to be refactored. it returns either 1.0f for digital buttons or the absolute value of the analog axis requested
+float mapped_input_get_axis(InputMapping* mapping, MappedButton mapped_input_name, Vec2* stick);

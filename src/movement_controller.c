@@ -3,10 +3,11 @@
 #include "assets/layers.h"
 
 #include "framework64/n64/controller_button.h"
+#include "framework64/math.h"
 
 #define DEFAULT_MOVEMENT_SPEED 8.0f
-#define DEFAULT_X_TURN_SPEED 180.0f
-#define DEFAULT_Y_TURN_SPEED 90.0f
+#define DEFAULT_X_TURN_SPEED 90.0f  // look up-down
+#define DEFAULT_Y_TURN_SPEED 180.0f // look left-right
 #define STICK_THRESHOLD 0.15
 
 static void movement_controller_get_ground_height(MovementController* controller);
@@ -53,29 +54,41 @@ static void fps_cam_left(MovementController* fps, Vec3* out) {
 
 static void move_camera(MovementController* controller, float time_delta, Vec2* stick) {
     int did_move = 0;
+    int move_test;
+    float analog_mod = 1.0f;
+    Vec3 temp = {0.0f, 0.0f, 0.0f};
     Vec3 move = {0.0f, 0.0f, 0.0f};
 
-    if(mapped_input_controller_read(controller->input_map, controller->player_index, INPUT_MAP_MOVE_RIGHT, stick) >= 1) {
-        fps_cam_right(controller, &move);
-        vec3_scale(&move, &move, controller->movement_speed * time_delta);
+
+    move_test = mapped_input_controller_read(controller->input_map, controller->player_index, INPUT_MAP_MOVE_RIGHT, stick);
+    if(move_test == INPUT_MAP_BUTTON_DOWN || move_test == INPUT_MAP_ANALOG) {           
+        analog_mod = mapped_input_get_axis(controller->input_map, INPUT_MAP_MOVE_RIGHT, stick);
+        fps_cam_right(controller, &temp);
+        vec3_add_and_scale(&move, &move, &temp, controller->movement_speed * analog_mod * time_delta);
         did_move = 1;
     }
 
-    if (mapped_input_controller_read(controller->input_map, controller->player_index, INPUT_MAP_MOVE_LEFT, stick) >= 1) {
-        fps_cam_left(controller, &move);
-        vec3_scale(&move, &move, controller->movement_speed * time_delta);
+    move_test = mapped_input_controller_read(controller->input_map, controller->player_index, INPUT_MAP_MOVE_LEFT, stick);
+    if(move_test == INPUT_MAP_BUTTON_DOWN || move_test == INPUT_MAP_ANALOG) {           
+        analog_mod = mapped_input_get_axis(controller->input_map, INPUT_MAP_MOVE_LEFT, stick);
+        fps_cam_left(controller, &temp);
+        vec3_add_and_scale(&move, &move, &temp, controller->movement_speed * analog_mod * time_delta);
         did_move = 1;
     }
 
-    if (mapped_input_controller_read(controller->input_map, controller->player_index, INPUT_MAP_MOVE_FORWARD, stick) >= 1) {
-        fps_cam_forward(controller, &move);
-        vec3_scale(&move, &move, controller->movement_speed * time_delta * stick->y);
+    move_test = mapped_input_controller_read(controller->input_map, controller->player_index, INPUT_MAP_MOVE_FORWARD, stick);
+    if(move_test == INPUT_MAP_BUTTON_DOWN || move_test == INPUT_MAP_ANALOG) {           
+        analog_mod = mapped_input_get_axis(controller->input_map, INPUT_MAP_MOVE_FORWARD, stick);
+        fps_cam_forward(controller, &temp);
+        vec3_add_and_scale(&move, &move, &temp, controller->movement_speed * analog_mod * time_delta);
         did_move = 1;
     }
 
-    if (mapped_input_controller_read(controller->input_map, controller->player_index, INPUT_MAP_MOVE_BACKWARD, stick) >= 1) {
-        fps_cam_back(controller, &move);
-        vec3_scale(&move, &move, controller->movement_speed * time_delta * -stick->y);
+    move_test = mapped_input_controller_read(controller->input_map, controller->player_index, INPUT_MAP_MOVE_BACKWARD, stick);
+    if(move_test == INPUT_MAP_BUTTON_DOWN || move_test == INPUT_MAP_ANALOG) {           
+        analog_mod = mapped_input_get_axis(controller->input_map, INPUT_MAP_MOVE_BACKWARD, stick);
+        fps_cam_back(controller, &temp);
+        vec3_add_and_scale(&move, &move, &temp, controller->movement_speed * analog_mod * time_delta);
         did_move = 1;
     }
 
@@ -83,6 +96,14 @@ static void move_camera(MovementController* controller, float time_delta, Vec2* 
     // note this is just prelimary...will probably need to get more fancy in the future.
     if (!did_move)
         return;
+
+    // prevent running faster by moving diagonally
+    Vec3 ref_zero = {0.0f, 0.0f, 0.0f};
+    if(vec3_distance(&move, &ref_zero) > (controller->movement_speed * time_delta))
+    {
+        vec3_normalize(&move);
+        vec3_scale(&move, &move, controller->movement_speed * time_delta);
+    }
 
     fw64IntersectMovingBoxQuery query;
     if (fw64_level_moving_box_intersection(controller->level, &controller->collider->bounding, &move, controller->collision_mask, &query)) {
@@ -93,25 +114,34 @@ static void move_camera(MovementController* controller, float time_delta, Vec2* 
 }
 
 static void tilt_camera(MovementController* fps, float time_delta, Vec2* stick) {
-    if (mapped_input_controller_read(fps->input_map, fps->player_index, INPUT_MAP_LOOK_RIGHT, stick) >= 1) {
-        float delta = fps->turn_speed.y * time_delta;
-        if(stick->x > fps->input_map->threshold.x || stick->x < -fps->input_map->threshold.x)
-            delta *= stick->x;
+    int look_test = 0;
+    float analog_mod = 0.0f;
+
+    look_test = mapped_input_controller_read(fps->input_map, fps->player_index, INPUT_MAP_LOOK_RIGHT, stick);
+    if (look_test == INPUT_MAP_BUTTON_DOWN || look_test == INPUT_MAP_ANALOG) {
+        analog_mod = mapped_input_get_axis(fps->input_map, INPUT_MAP_LOOK_RIGHT, stick);
+        float delta = fps->turn_speed.y * analog_mod * time_delta;
         fps->rotation.y -= delta;
-    } else if (mapped_input_controller_read(fps->input_map, fps->player_index, INPUT_MAP_LOOK_LEFT, stick) >= 1) {
-        float delta = fps->turn_speed.y * time_delta;
-        if(stick->x > fps->input_map->threshold.x || stick->x < -fps->input_map->threshold.x)
-            delta *= stick->x;
+    }
+    look_test = mapped_input_controller_read(fps->input_map, fps->player_index, INPUT_MAP_LOOK_LEFT, stick);
+    if (look_test == INPUT_MAP_BUTTON_DOWN || look_test == INPUT_MAP_ANALOG) {
+        analog_mod = mapped_input_get_axis(fps->input_map, INPUT_MAP_LOOK_LEFT, stick);
+        float delta = fps->turn_speed.y * analog_mod * time_delta;
         fps->rotation.y += delta;
     }
 
-    if (mapped_input_controller_read(fps->input_map, fps->player_index, INPUT_MAP_LOOK_UP, stick) >= 1) {
-        fps->rotation.x += fps->turn_speed.x * time_delta;
+    look_test = mapped_input_controller_read(fps->input_map, fps->player_index, INPUT_MAP_LOOK_UP, stick);
+    if (look_test == INPUT_MAP_BUTTON_DOWN || look_test == INPUT_MAP_ANALOG) {
+        analog_mod = mapped_input_get_axis(fps->input_map, INPUT_MAP_LOOK_UP, stick);
+        fps->rotation.x += fps->turn_speed.x * analog_mod * time_delta;
 
         if (fps->rotation.x > 90.0f)
             fps->rotation.x = 90.0f;
-    } else if (mapped_input_controller_read(fps->input_map, fps->player_index, INPUT_MAP_LOOK_DOWN, stick) >= 1) {
-        fps->rotation.x -= fps->turn_speed.x * time_delta;
+    }
+    look_test = mapped_input_controller_read(fps->input_map, fps->player_index, INPUT_MAP_LOOK_DOWN, stick);
+    if (look_test == INPUT_MAP_BUTTON_DOWN || look_test == INPUT_MAP_ANALOG) {
+        analog_mod = mapped_input_get_axis(fps->input_map, INPUT_MAP_LOOK_DOWN, stick);
+        fps->rotation.x -= fps->turn_speed.x * analog_mod * time_delta;
 
         if (fps->rotation.x < -90.0f)
             fps->rotation.x = -90.0f;
