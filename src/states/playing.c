@@ -1,8 +1,10 @@
 #include "playing.h"
+#include "framework64/random.h"
 
 void game_state_playing_init(Playing* state, fw64Engine* engine, GameData* game_data) {
     state->engine = engine;
     state->game_data = game_data;
+    fw64_random_set_seed(*(uint32_t*)&engine->time->total_time); //intentional type punning
     state->return_to_level_select_time = 0.0f;
 
     state->current_level = game_data->transition_to_level;
@@ -15,6 +17,7 @@ void game_state_playing_init(Playing* state, fw64Engine* engine, GameData* game_
 
         case LEVEL_CHURCH_HILL:
             hill_level_init(&state->levels.church_hill, engine);
+            break;
 
         case LEVEL_NONE:
             game_data->transition_to_level = GAME_STATE_LEVEL_SELECT;
@@ -30,6 +33,7 @@ void game_state_playing_uninit(Playing* state) {
 
         case LEVEL_CHURCH_HILL:
             hill_level_uninit(&state->levels.church_hill);
+            break;
 
         case LEVEL_NONE:
             break;
@@ -58,6 +62,7 @@ void game_state_playing_update(Playing* state) {
 
         case LEVEL_CHURCH_HILL:
             hill_level_update(&state->levels.church_hill);
+            break;
 
         case LEVEL_NONE:
             break;
@@ -72,6 +77,7 @@ void game_state_playing_draw(Playing* state) {
 
         case LEVEL_CHURCH_HILL:
             hill_level_draw(&state->levels.church_hill);
+            break;
 
         case LEVEL_NONE:
             break;
