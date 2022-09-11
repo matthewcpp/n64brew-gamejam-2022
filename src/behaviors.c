@@ -1,4 +1,5 @@
 #include "behaviors.h"
+#include "framework64/random.h"
 
 static void steering_behavior_data_zero(SteeringBehaviorData* data) {
 	vec3_zero(&data->linearAccel);
@@ -15,6 +16,7 @@ void steering_behavior_data_init(Vec3 position, Vec3 targetPosition, Vec3* linea
 	data->linearVel = linearVelocity;
 }
 
+// Max acceleration directly towards a given point
 void steering_seek(float strength, SteeringBehaviorData* data) {
 	data->angularAccel = 0.0f;
 	Vec3 seekAccel;
@@ -24,6 +26,7 @@ void steering_seek(float strength, SteeringBehaviorData* data) {
 	vec3_add_and_scale(&data->linearAccel, &data->linearAccel, &seekAccel, strength);
 }
 
+// Max acceleration directly away from a given point
 void steering_flee(float strength, SteeringBehaviorData* data) {
 	data->angularAccel = 0.0f;
 	Vec3 fleeAccel;
@@ -33,6 +36,7 @@ void steering_flee(float strength, SteeringBehaviorData* data) {
 	vec3_add_and_scale(&data->linearAccel, &data->linearAccel, &fleeAccel, strength);
 }
 
+// seek towards a given point, slow to a stop when getting close
 void steering_arrive(float slowRadius, float stopRadius, float strength, SteeringBehaviorData* data) {
 	data->angularAccel = 0.0f;
 	
@@ -50,19 +54,23 @@ void steering_arrive(float slowRadius, float stopRadius, float strength, Steerin
 	}
 }
 
+// seek towards the target's estimated future position
 void steering_pursue(Vec3* targetVelocity, float strength, SteeringBehaviorData* data){
 	vec3_add(&data->targetPosition, &data->targetPosition, targetVelocity);
 	data->targetPosition.y = data->position.y;
 	steering_seek(strength, data);
 }
 
+// flee from the target's estimated future position
 void steering_evade(Vec3* targetVelocity, float strength, SteeringBehaviorData* data){
 	vec3_add(&data->targetPosition, &data->targetPosition, targetVelocity);
 	data->targetPosition.y = data->position.y;
 	steering_flee(strength, data);
 }
 
-void steering_wander(Vec3* position, float strength, Vec3* out){} // stubbed
+void steering_wander(float strength, SteeringBehaviorData* data) {
+	steering_arrive(2.0f, 1.0f, strength, data); // TODO: add some mindless slow turning / zig zagging too
+} 
 void steering_follow_path(Vec3* position, float strength, Vec3* out){} // stubbed
 void steering_avoid_collision(Vec3* position, float strength, Vec3* out){} // stubbed
 void steering_align(Vec3* position, float strength, Vec3* out){} // stubbed

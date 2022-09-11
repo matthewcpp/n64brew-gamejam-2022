@@ -48,7 +48,7 @@ void steering_flee(float strength, SteeringBehaviorData* data);
 void steering_arrive(float slowRadius, float stopRadius, float strength, SteeringBehaviorData* data); // slowing not implemented
 void steering_pursue(Vec3* targetVelocity, float strength, SteeringBehaviorData* data);
 void steering_evade(Vec3* targetVelocity, float strength, SteeringBehaviorData* data);
-void steering_wander(Vec3* position, float strength, Vec3* out); // stubbed
+void steering_wander(float strength, SteeringBehaviorData* data);
 void steering_follow_path(Vec3* position, float strength, Vec3* out); // stubbed
 void steering_avoid_collision(Vec3* position, float strength, Vec3* out); // stubbed
 void steering_align(Vec3* position, float strength, Vec3* out); // stubbed

@@ -14,6 +14,10 @@
 #define AI_TIMER_LENGTH_LEAD 	15.0f
 #define AI_TIMER_LENGTH_AGGRO 	15.0f
 
+#define ZOMBIE_WALK_SPEED 2.5f
+#define ZOMBIE_RUN_SPEED 15.0f
+#define ZOMBIE_VISION_DISTANCE 45.0f
+
 typedef enum {
 	ZLS_INACTIVE,	// special state, reserved for zombie that is not in use
 	ZLS_IDLE,		// waiting

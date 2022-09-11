@@ -3,10 +3,7 @@
 #include "framework64/random.h"
 
 #define ZOMBIE_SCALE 0.025f
-#define ZOMBIE_WALK_SPEED 5.0f
-#define ZOMBIE_RUN_SPEED 15.0f
-#define ZOMBIE_VISION_DISTANCE 45.0f
-;
+
 static void zombie_move(Zombie* zombie);
 
 void zombie_init(Zombie* zombie, fw64Engine* engine, fw64Level* level, fw64Mesh* mesh, fw64AnimationData* animation_data) {
@@ -31,22 +28,10 @@ void zombie_init(Zombie* zombie, fw64Engine* engine, fw64Level* level, fw64Mesh*
 }
 
 static void zombie_update_idle(Zombie* zombie) {
-    if (!zombie->target)
-        return;
-
-    Vec3 target_xz = zombie->target->position;
-    target_xz.y = 0.0f;
-    Vec3 zombie_xz = zombie->node.transform.position;
-    zombie_xz.y = 0.0f;
-
-    if (vec3_distance_squared(&zombie_xz, &target_xz) <= (ZOMBIE_VISION_DISTANCE * ZOMBIE_VISION_DISTANCE)) {
-        zombie_set_new_state(zombie, ZOMBIE_STATE_WALKING);
-    }
+    return;
 }
 
 static void zombie_move(Zombie* zombie) {
-
-    zombie_ai_update(&zombie->ai, zombie->engine->time->time_delta);
 
     //this chunk just adjusts the rotation of the zombie's model when drawn.
     //I'm sure it can be done better without any atan2 nonsense
@@ -111,7 +96,27 @@ void zombie_hit(Zombie* zombie, WeaponType weapon_type) {
 
 void zombie_update(Zombie* zombie) {
     fw64_animation_controller_update(&zombie->animation_controller, zombie->engine->time->time_delta);
+    zombie_ai_update(&zombie->ai, zombie->engine->time->time_delta);
+    // TODO: replace this series of polling ifs with an animation state change inside the ai state change
+    if(zombie->ai.state == ZLS_IDLE) {
+        if(zombie->state == ZOMBIE_STATE_RUNNING || zombie->state == ZOMBIE_STATE_WALKING)
+            zombie_set_new_state(zombie, ZOMBIE_STATE_IDLE);
+    }
+    else {
+        Vec3 ref_zero = {0.0f, 0.0f, 0.0f};
+        float speed_sq = vec3_distance_squared(&ref_zero, &zombie->ai.velocity.linear);
 
+        if (zombie->state == ZOMBIE_STATE_IDLE) {
+            zombie_set_new_state(zombie, ZOMBIE_STATE_WALKING);
+        }
+        if(speed_sq <= (ZOMBIE_WALK_SPEED*ZOMBIE_WALK_SPEED*1.1f)) {
+            if(zombie->state == ZOMBIE_STATE_RUNNING)
+                zombie_set_new_state(zombie, ZOMBIE_STATE_WALKING);
+        } else if (zombie->state == ZOMBIE_STATE_WALKING){
+            zombie_set_new_state(zombie, ZOMBIE_STATE_RUNNING);
+        }
+    }
+    
     switch(zombie->state) {
         case ZOMBIE_STATE_IDLE:
             zombie_update_idle(zombie);

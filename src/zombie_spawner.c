@@ -35,8 +35,8 @@ void spawn_next_zombie(ZombieSpawner* spawner) {
     zombie->node.transform.position = spawner->spawner_node->transform.position;
     fw64_node_update(&zombie->node);
     
-    zombie_set_new_state(zombie, spawner->next_index == 0 ? ZOMBIE_STATE_WALKING : ZOMBIE_STATE_RUNNING);
-    zombie_ai_set_logic_state(&zombie->ai, ZLS_AGGRO);
+    zombie_set_new_state(zombie, ZOMBIE_STATE_IDLE);
+    zombie_ai_set_logic_state(&zombie->ai, ZLS_IDLE);
     zombie->health = ZOMBIE_MAX_HEALTH;
     spawner->next_index = spawner->next_index == 0 ? 1 : 0;
 }
