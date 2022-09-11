@@ -8,6 +8,7 @@ set(core_files
     weapon_controller.h weapon_controller.c
     trigger.h trigger.c
     zombie.h zombie.c
+    zombie_logic.h zombie_logic.c
     zombie_spawner.h zombie_spawner.c
     ui.h ui.c
 )

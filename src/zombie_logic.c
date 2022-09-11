@@ -1,0 +1,281 @@
+#include "zombie_logic.h"
+#include "framework64/random.h"
+
+void zombie_ai_init(ZombieAI* zombie_ai, fw64Transform* transform, fw64Transform* target) {	
+	zombie_ai->state = ZLS_INACTIVE;
+	zombie_ai->active_bahaviors = SB_NONE;
+	zombie_ai->transform = transform;
+	zombie_ai->target = target;
+	fw64_transform_init(&zombie_ai->targetPrev);
+	vec3_zero(&zombie_ai->velocity.linear);
+	zombie_ai->velocity.angular = 0.0f;
+	zombie_ai->maxVelocity.linear = 0.0f;
+	zombie_ai->maxVelocity.angular = 0.0f;	
+	steering_behavior_data_init(zombie_ai->transform->position,
+								zombie_ai->target->position,
+								&zombie_ai->velocity.linear,
+								0.0f,
+								&zombie_ai->sb_data);
+	zombie_ai->timer = 0.0f;
+	return;
+}
+
+static void zombie_ai_init_wander(ZombieAI* zombie_ai);
+static void zombie_ai_init_meet(ZombieAI* zombie_ai);
+static void zombie_ai_init_follow(ZombieAI* zombie_ai);
+static void zombie_ai_init_lead(ZombieAI* zombie_ai);
+static void zombie_ai_share_target(ZombieAI* zombie_ai);
+static void zombie_ai_timer_reset(ZombieAI* zombie_ai, ZombieLogicState newState);
+
+static void zombie_ai_behavior_set(ZombieAI* zombie_ai, SteeringBehavior behavior);
+static void zombie_ai_behavior_clear(ZombieAI* zombie_ai, SteeringBehavior behavior);
+static void zombie_ai_behavior_apply(ZombieAI* zombie_ai, SteeringBehavior behavior, float deltaTime);
+static void zombie_ai_behavior_apply_all_active(ZombieAI* zombie_ai, float deltaTime);
+
+void zombie_ai_set_logic_state(ZombieAI* zombie_ai, ZombieLogicState newState) {
+	zombie_ai->state = newState;
+	zombie_ai_behavior_clear(zombie_ai, SB_ALL);
+	zombie_ai_timer_reset(zombie_ai, newState);
+
+	switch(zombie_ai->state) {
+		case ZLS_INACTIVE:
+			break;
+		case ZLS_IDLE:			
+			zombie_ai->maxVelocity.linear = 0.0f;
+			zombie_ai->maxVelocity.angular = 0.0f;
+			break;
+		case ZLS_WANDER:
+			zombie_ai->maxVelocity.linear = 5.0f;
+			zombie_ai->maxVelocity.angular = 1.0f;
+			zombie_ai_init_wander(zombie_ai);
+			break;
+		case ZLS_MEET:
+			zombie_ai->maxVelocity.linear = 5.0f;
+			zombie_ai->maxVelocity.angular = 1.0f;
+			zombie_ai_init_meet(zombie_ai);
+			break;
+		case ZLS_EXPLORE:
+			zombie_ai->maxVelocity.linear = 5.0f;
+			zombie_ai->maxVelocity.angular = 1.0f;
+			zombie_ai_behavior_set(zombie_ai, SB_WANDER);
+			break;
+		case ZLS_HERD:
+			zombie_ai->maxVelocity.linear = 5.0f;
+			zombie_ai->maxVelocity.angular = 1.0f;
+			zombie_ai_behavior_set(zombie_ai, SB_FLOCK);
+			break;
+		case ZLS_FOLLOW:
+			zombie_ai->maxVelocity.linear = 5.0f;
+			zombie_ai->maxVelocity.angular = 1.0f;
+			zombie_ai_init_follow(zombie_ai);
+			zombie_ai_behavior_set(zombie_ai, SB_FLOCK);
+			break;
+		case ZLS_LEAD:
+			zombie_ai->maxVelocity.linear = 5.0f;
+			zombie_ai->maxVelocity.angular = 1.0f;
+			zombie_ai_init_lead(zombie_ai);
+			break;
+		case ZLS_AGGRO:
+			zombie_ai->maxVelocity.linear = 15.0f;
+			zombie_ai->maxVelocity.angular = 3.0f;
+			float propagateTargetChance = 20.0f;
+			float attemptPropagate = fw64_random_float_in_range(0.0f, 100.0f);
+			if(attemptPropagate <= propagateTargetChance) {
+				zombie_ai_share_target(zombie_ai);
+			}
+			zombie_ai_behavior_set(zombie_ai, SB_SEEK);
+			break;
+		default:
+			break;
+	}
+	return;
+}
+int zombie_get_logic_state(ZombieAI* zombie_ai) {
+	return zombie_ai->state;
+}
+
+void zombie_ai_set_target(ZombieAI* zombie_ai, fw64Transform* target) {
+	zombie_ai->target = target;
+	
+	vec3_copy(&zombie_ai->targetPrev.position, &zombie_ai->target->position);
+	vec3_copy(&zombie_ai->targetPrev.scale, &zombie_ai->target->scale);
+
+	zombie_ai->targetPrev.rotation.x = zombie_ai->target->rotation.x;
+	zombie_ai->targetPrev.rotation.y = zombie_ai->target->rotation.y;
+	zombie_ai->targetPrev.rotation.z = zombie_ai->target->rotation.z;
+	zombie_ai->targetPrev.rotation.w = zombie_ai->target->rotation.w;
+	
+	return;
+}
+fw64Transform* zombie_ai_get_target(ZombieAI* zombie_ai) {
+	return zombie_ai->target;
+}
+
+
+static void zombie_ai_update_idle(ZombieAI* zombie_ai, float deltaTime);
+static void zombie_ai_update_wander(ZombieAI* zombie_ai, float deltaTime);
+static void zombie_ai_update_meet(ZombieAI* zombie_ai, float deltaTime);
+static void zombie_ai_update_explore(ZombieAI* zombie_ai, float deltaTime);
+static void zombie_ai_update_herd(ZombieAI* zombie_ai, float deltaTime);
+static void zombie_ai_update_follow(ZombieAI* zombie_ai, float deltaTime);
+static void zombie_ai_update_lead(ZombieAI* zombie_ai, float deltaTime);
+static void zombie_ai_update_aggro(ZombieAI* zombie_ai, float deltaTime);
+
+void zombie_ai_update(ZombieAI* zombie_ai, float deltaTime) {
+	switch(zombie_ai->state) {
+		case ZLS_INACTIVE:
+			break;
+		case ZLS_IDLE:
+			zombie_ai_update_idle(zombie_ai, deltaTime);
+			break;
+		case ZLS_WANDER:
+			zombie_ai_update_wander(zombie_ai, deltaTime);
+			break;
+		case ZLS_MEET:
+			zombie_ai_update_meet(zombie_ai, deltaTime);
+			break;
+		case ZLS_EXPLORE:
+			zombie_ai_update_explore(zombie_ai, deltaTime);
+			break;
+		case ZLS_HERD:
+			zombie_ai_update_herd(zombie_ai, deltaTime);
+			break;
+		case ZLS_FOLLOW:
+			zombie_ai_update_follow(zombie_ai, deltaTime);
+			break;
+		case ZLS_LEAD:
+			zombie_ai_update_lead(zombie_ai, deltaTime);
+			break;
+		case ZLS_AGGRO:
+			zombie_ai_update_aggro(zombie_ai, deltaTime);
+			break;
+		default:
+			break;
+	}
+	return;
+}
+
+static void zombie_ai_init_wander(ZombieAI* zombie_ai) {}
+static void zombie_ai_init_meet(ZombieAI* zombie_ai) {}
+static void zombie_ai_init_follow(ZombieAI* zombie_ai) {}
+static void zombie_ai_init_lead(ZombieAI* zombie_ai) {}
+static void zombie_ai_share_target(ZombieAI* zombie_ai) {}
+
+static void zombie_ai_timer_reset(ZombieAI* zombie_ai, ZombieLogicState newState) {
+	switch(newState) {
+		case ZLS_IDLE:
+		zombie_ai->timer = AI_TIMER_LENGTH_IDLE;
+			break;
+		case ZLS_WANDER:
+		zombie_ai->timer = AI_TIMER_LENGTH_WANDER;
+			break;
+		case ZLS_MEET:
+		zombie_ai->timer = AI_TIMER_LENGTH_MEET;
+			break;
+		case ZLS_EXPLORE:
+		zombie_ai->timer = AI_TIMER_LENGTH_EXPLORE;
+			break;
+		case ZLS_HERD:
+		zombie_ai->timer = AI_TIMER_LENGTH_HERD;
+			break;
+		case ZLS_FOLLOW:
+		zombie_ai->timer = AI_TIMER_LENGTH_FOLLOW;
+			break;
+		case ZLS_LEAD:
+		zombie_ai->timer = AI_TIMER_LENGTH_LEAD;
+			break;
+		case ZLS_AGGRO:
+		zombie_ai->timer = AI_TIMER_LENGTH_AGGRO;
+			break;
+		case ZLS_INACTIVE: /* fall through */
+		default:
+			break;
+	}
+	return;
+}
+
+static void zombie_ai_behavior_set(ZombieAI* zombie_ai, SteeringBehavior behavior) {
+    zombie_ai->active_bahaviors |= behavior;
+}
+
+static void zombie_ai_behavior_clear(ZombieAI* zombie_ai, SteeringBehavior behavior) {
+    zombie_ai->active_bahaviors &= ~(behavior);
+}
+
+static void zombie_ai_behavior_apply(ZombieAI* zombie_ai, SteeringBehavior behavior, float deltaTime) {
+    steering_behavior_data_init(zombie_ai->transform->position,
+                                zombie_ai->target->position,
+                                &zombie_ai->velocity.linear,
+                                deltaTime,
+                                &zombie_ai->sb_data);
+    
+    zombie_ai->sb_data.position.y = 0.0f;
+    zombie_ai->sb_data.targetPosition.y = 0.0f;
+
+    switch(behavior) {
+        case SB_SEEK: {          
+            steering_seek(1.0f, &zombie_ai->sb_data);            
+            break;
+		}
+        case SB_FLEE: {
+            steering_flee(1.0f, &zombie_ai->sb_data);
+            break;
+		}
+        case SB_ARRIVE: {
+            steering_arrive(20.0f, 10.0f, 1.0f, &zombie_ai->sb_data);
+            break;
+		}
+        case SB_PURSUE: {
+			Vec3 targetVelocity;
+            vec3_subtract(&targetVelocity, &zombie_ai->target->position, &zombie_ai->targetPrev.position);
+            vec3_copy(&zombie_ai->targetPrev.position, &zombie_ai->target->position);
+            steering_pursue(&targetVelocity, 1.0f, &zombie_ai->sb_data);
+            break;
+		}
+        case SB_EVADE: {
+			Vec3 targetVelocity;
+            vec3_subtract(&targetVelocity, &zombie_ai->target->position, &zombie_ai->targetPrev.position);
+            vec3_copy(&zombie_ai->targetPrev.position, &zombie_ai->target->position);
+            steering_evade(&targetVelocity, 1.0f, &zombie_ai->sb_data);
+            break;
+		}
+        default: break;
+    }
+    vec3_add(&zombie_ai->velocity.linear, &zombie_ai->velocity.linear, &zombie_ai->sb_data.linearAccel);
+	zombie_ai->velocity.angular += zombie_ai->sb_data.angularAccel;
+}
+
+static void zombie_ai_behavior_apply_all_active(ZombieAI* zombie_ai, float deltaTime) {
+    for(int i = 0; i < SB_TOTAL_BEHAVIORS; i++) {
+        unsigned long long int check_bahavior = (1 << i);
+        if(check_bahavior & zombie_ai->active_bahaviors) {
+			zombie_ai_behavior_apply(zombie_ai, (SteeringBehavior)check_bahavior, deltaTime);
+        }
+    }
+	Vec3 ref_zero;
+    vec3_zero(&ref_zero);
+    if(vec3_distance_squared(&ref_zero, &zombie_ai->velocity.linear) > (zombie_ai->maxVelocity.linear * zombie_ai->maxVelocity.linear)) {
+        vec3_normalize(&zombie_ai->velocity.linear);
+        vec3_scale(&zombie_ai->velocity.linear, &zombie_ai->velocity.linear, zombie_ai->maxVelocity.linear);
+    }
+}
+
+static void zombie_ai_update_idle(ZombieAI* zombie_ai, float deltaTime)	{}
+static void zombie_ai_update_wander(ZombieAI* zombie_ai, float deltaTime) {}
+static void zombie_ai_update_meet(ZombieAI* zombie_ai, float deltaTime) {}
+static void zombie_ai_update_explore(ZombieAI* zombie_ai, float deltaTime) {}
+static void zombie_ai_update_herd(ZombieAI* zombie_ai, float deltaTime) {}
+static void zombie_ai_update_follow(ZombieAI* zombie_ai, float deltaTime) {}
+static void zombie_ai_update_lead(ZombieAI* zombie_ai, float deltaTime) {}
+
+static void zombie_ai_update_aggro(ZombieAI* zombie_ai, float deltaTime) {
+	if(deltaTime >= zombie_ai->timer) {
+		// TODO: verify we can actually still detect the target
+
+		//if so, reset timer
+		zombie_ai_timer_reset(zombie_ai, ZLS_AGGRO);
+	} else {
+		zombie_ai->timer -= deltaTime;
+	}
+	zombie_ai_behavior_apply_all_active(zombie_ai, deltaTime);
+}

@@ -18,7 +18,7 @@ void zombie_spawner_init(ZombieSpawner* spawner, fw64Engine* engine, fw64Level* 
     for (int i = 0; i < ZOMBIE_SPAWNER_COUNT; i++) {
         Zombie* zombie = &spawner->zombies[i];
         zombie_init(zombie, engine, level, spawner->zombie_mesh, spawner->animation_data);
-        zombie_set_target(zombie, target);
+        zombie_ai_init(&zombie->ai, &zombie->node.transform, target);
     }
 
     spawn_next_zombie(spawner);
@@ -34,7 +34,9 @@ void spawn_next_zombie(ZombieSpawner* spawner) {
     zombie->health = 3;
     zombie->node.transform.position = spawner->spawner_node->transform.position;
     fw64_node_update(&zombie->node);
+    
     zombie_set_new_state(zombie, spawner->next_index == 0 ? ZOMBIE_STATE_WALKING : ZOMBIE_STATE_RUNNING);
+    zombie_ai_set_logic_state(&zombie->ai, ZLS_AGGRO);
     zombie->health = ZOMBIE_MAX_HEALTH;
     spawner->next_index = spawner->next_index == 0 ? 1 : 0;
 }

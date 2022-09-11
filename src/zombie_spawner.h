@@ -5,6 +5,7 @@
 
 #include "level.h"
 #include "zombie.h"
+#include "zombie_logic.h"
 
 #define ZOMBIE_SPAWNER_COUNT 2
 
