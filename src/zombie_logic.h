@@ -17,6 +17,8 @@
 #define ZOMBIE_WALK_SPEED 2.5f
 #define ZOMBIE_RUN_SPEED 15.0f
 #define ZOMBIE_VISION_DISTANCE 45.0f
+#define ZOMBIE_ATTACK_RANGE 8.0f
+#define ZOMBIE_ATTACK_COOLDOWN 1.0f
 
 typedef enum {
 	ZLS_INACTIVE,	// special state, reserved for zombie that is not in use
@@ -27,7 +29,8 @@ typedef enum {
 	ZLS_HERD,		// stick with nearby allies
 	ZLS_FOLLOW,		// stick with nearby allies, strongly influenced by a specific "leader"
 	ZLS_LEAD,		// ignore nearby allies, restrict behaviors to wander, explore, and aggro
-	ZLS_AGGRO		// move towards player location
+	ZLS_AGGRO,		// move towards player location
+	ZLS_ATTACK		// swing or bite
 } ZombieLogicState;
 
 typedef struct {
@@ -46,6 +49,7 @@ typedef struct {
 		float angular;
 	} maxVelocity;
 	float timer;
+	float attack_cooldown;
 } ZombieAI;
 
 void zombie_ai_init(ZombieAI* zombie_ai, fw64Transform* transform, fw64Transform* target);

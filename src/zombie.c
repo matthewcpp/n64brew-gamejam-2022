@@ -81,6 +81,15 @@ static void zombie_update_dying(Zombie* zombie) {
     }
 }
 
+static void zombie_update_attack(Zombie* zombie) {
+    if (zombie->animation_controller.state == FW64_ANIMATION_STATE_STOPPED) {
+        if(zombie->health > 0) {
+            zombie_ai_set_logic_state(&zombie->ai, ZLS_AGGRO);
+            zombie_set_new_state(zombie, ZOMBIE_STATE_RUNNING);
+        }
+    }
+}
+
 void zombie_hit(Zombie* zombie, WeaponType weapon_type) {
     if (weapon_type == WEAPON_TYPE_SHOTGUN) {
         zombie_set_new_state(zombie, ZOMBIE_FLYING_BACK);
@@ -107,8 +116,10 @@ int zombie_update(Zombie* zombie) {
     if(zombie->ai.state == ZLS_IDLE) {
         if(zombie->state == ZOMBIE_STATE_RUNNING || zombie->state == ZOMBIE_STATE_WALKING)
             zombie_set_new_state(zombie, ZOMBIE_STATE_IDLE);
-    }
-    else {
+    } else if (zombie->ai.state == ZLS_ATTACK) {
+        if(zombie->state != ZOMBIE_STATE_ATTACK)
+            zombie_set_new_state(zombie, ZOMBIE_STATE_ATTACK);
+    } else {
         Vec3 ref_zero = {0.0f, 0.0f, 0.0f};
         float speed_sq = vec3_distance_squared(&ref_zero, &zombie->ai.velocity.linear);
 
@@ -140,6 +151,10 @@ int zombie_update(Zombie* zombie) {
         case ZOMBIE_STATE_FALLING_DOWN:
         case ZOMBIE_FLYING_BACK:
             zombie_update_dying(zombie);
+        break;
+
+        case ZOMBIE_STATE_ATTACK:
+            zombie_update_attack(zombie);
         break;
 
         case ZOMBIE_STATE_INACTIVE:
@@ -187,6 +202,11 @@ void zombie_set_new_state(Zombie* zombie, ZombieState new_state) {
 
         case ZOMBIE_FLYING_BACK:
             animation = zombie_animation_FlyBack;
+            loop = 0;
+        break;
+
+        case ZOMBIE_STATE_ATTACK:
+            animation = zombie_animation_Attack;
             loop = 0;
         break;
 

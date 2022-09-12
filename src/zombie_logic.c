@@ -17,6 +17,7 @@ void zombie_ai_init(ZombieAI* zombie_ai, fw64Transform* transform, fw64Transform
 								0.0f,
 								&zombie_ai->sb_data);
 	zombie_ai->timer = 0.0f;
+	zombie_ai->attack_cooldown = 0.0f;
 	return;
 }
 
@@ -41,6 +42,7 @@ static void zombie_ai_update_herd(ZombieAI* zombie_ai, float deltaTime);
 static void zombie_ai_update_follow(ZombieAI* zombie_ai, float deltaTime);
 static void zombie_ai_update_lead(ZombieAI* zombie_ai, float deltaTime);
 static void zombie_ai_update_aggro(ZombieAI* zombie_ai, float deltaTime);
+static void zombie_ai_update_attack(ZombieAI* zombie_ai, float deltaTime);
 
 void zombie_ai_set_logic_state(ZombieAI* zombie_ai, ZombieLogicState newState) {
 	zombie_ai->state = newState;
@@ -94,6 +96,10 @@ void zombie_ai_set_logic_state(ZombieAI* zombie_ai, ZombieLogicState newState) {
 				zombie_ai_share_target(zombie_ai);
 			}
 			zombie_ai_behavior_set(zombie_ai, SB_SEEK);
+			break;
+		case ZLS_ATTACK:
+			zombie_ai->maxVelocity.linear = 0.0f;
+			zombie_ai->maxVelocity.angular = 0.0f;
 			break;
 		default:
 			break;
@@ -165,10 +171,13 @@ void zombie_ai_update(ZombieAI* zombie_ai, float deltaTime) {
 		case ZLS_AGGRO:
 			zombie_ai_update_aggro(zombie_ai, deltaTime);
 			break;
+		case ZLS_ATTACK:
+			zombie_ai_update_attack(zombie_ai, deltaTime);
+			break;
 		default:
 			break;
 	}
-	if(zombie_ai->state != ZLS_AGGRO) {
+	if(zombie_ai->state != ZLS_AGGRO && zombie_ai->state != ZLS_ATTACK) {
 		int sighted = zombie_ai_target_in_view(zombie_ai, zombie_ai->target);
 		if(sighted) {
 			zombie_ai_set_logic_state(zombie_ai, ZLS_AGGRO);
@@ -347,17 +356,40 @@ static void zombie_ai_update_follow(ZombieAI* zombie_ai, float deltaTime) {}
 static void zombie_ai_update_lead(ZombieAI* zombie_ai, float deltaTime) {}
 
 static void zombie_ai_update_aggro(ZombieAI* zombie_ai, float deltaTime) {
-	//periodically double check that the target is close enough to see
-	if(deltaTime >= zombie_ai->timer) {
-		if(zombie_ai_target_in_view(zombie_ai, zombie_ai->target)) {
-			zombie_ai_timer_reset(zombie_ai, ZLS_AGGRO);
-		} else {
-			zombie_ai_set_logic_state(zombie_ai, ZLS_IDLE);
+	
+	if(vec3_distance_squared(&zombie_ai->transform->position, &zombie_ai->target->position) < ZOMBIE_ATTACK_RANGE * ZOMBIE_ATTACK_RANGE) {
+		if(zombie_ai->attack_cooldown <= 0.0f) {
+			// attack!
+			zombie_ai_set_logic_state(zombie_ai, ZLS_ATTACK);
+			zombie_ai->attack_cooldown = ZOMBIE_ATTACK_COOLDOWN;
 			return;
+		} else {
+			zombie_ai->attack_cooldown -= deltaTime;
 		}
 	} else {
-		zombie_ai->timer -= deltaTime;
-	}
-
+		//periodically double check that the target is close enough to see
+		if(deltaTime >= zombie_ai->timer) {
+			if(zombie_ai_target_in_view(zombie_ai, zombie_ai->target)) {
+				zombie_ai_timer_reset(zombie_ai, ZLS_AGGRO);
+			} else {
+				zombie_ai_set_logic_state(zombie_ai, ZLS_IDLE);
+				return;
+			}
+		} else {
+			zombie_ai->timer -= deltaTime;
+		}
+		
 	zombie_ai_behavior_apply_all_active(zombie_ai, deltaTime);
+	}
+}
+
+static void zombie_ai_update_attack(ZombieAI* zombie_ai, float deltaTime) {
+		if(zombie_ai->attack_cooldown <= 0.0f) {
+			zombie_ai->attack_cooldown = 0.0f;
+			//zombie_ai_set_logic_state(zombie_ai, ZLS_AGGRO);			
+			return;
+		} else {
+			//give animation time to ply out and give player time to back away
+			zombie_ai->attack_cooldown -= deltaTime;
+		}
 }
