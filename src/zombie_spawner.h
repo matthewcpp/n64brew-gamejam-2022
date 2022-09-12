@@ -7,15 +7,19 @@
 #include "zombie.h"
 #include "zombie_logic.h"
 
-#define ZOMBIE_SPAWNER_COUNT 2
+#define ZOMBIE_SPAWNER_MAX_COUNT 32 // might be very optimistic
+#define ZOMBIE_SPAWNER_SMALL_GROUP 5
+#define ZOMBIE_SPAWNER_BIG_GROUP 20
 
 typedef struct {
     fw64Engine* engine;
     fw64Level* level;
     fw64Allocator* allocator;
     fw64Node* spawner_node;
-    Zombie zombies[ZOMBIE_SPAWNER_COUNT];
-    int next_index;
+    fw64Transform* target;
+    Zombie zombies[ZOMBIE_SPAWNER_MAX_COUNT];
+    unsigned int zombie_slot_active; // bitset. todo: make a proper clone procedure instead
+    int active_zombies;
     fw64Mesh* zombie_mesh;
     fw64AnimationData* animation_data;
 } ZombieSpawner;

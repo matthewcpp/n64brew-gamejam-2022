@@ -6,25 +6,31 @@
 
 static void zombie_move(Zombie* zombie);
 
+
 void zombie_init(Zombie* zombie, fw64Engine* engine, fw64Level* level, fw64Mesh* mesh, fw64AnimationData* animation_data) {
     zombie->engine = engine;
     zombie->level = level;
     zombie->mesh = mesh;
     zombie->target = NULL;
+    fw64_node_init(&zombie->node);
+    zombie->node.layer_mask = ZOMBIE_LAYER;
+    zombie->node.data = zombie;
+    fw64_node_set_mesh(&zombie->node, zombie->mesh);
+    fw64_node_set_box_collider(&zombie->node, &zombie->collider);
+    fw64_level_add_dyanmic_node(level, &zombie->node);
+    fw64_animation_controller_init(&zombie->animation_controller, animation_data, zombie_animation_Idle, NULL);
+
     vec3_zero(&zombie->targetVelocity);
     zombie->previous_state = ZOMBIE_STATE_INACTIVE;
     zombie->state = ZOMBIE_STATE_INACTIVE;
     zombie->health = ZOMBIE_MAX_HEALTH;
-    zombie->rotation = fw64_random_float_in_range(0.0f, 359.9f) * (M_PI / 180.0f);
-    fw64_node_init(&zombie->node);
-    zombie->node.layer_mask = ZOMBIE_LAYER;
-    zombie->node.data = zombie;
+    zombie->rotation = fw64_random_float_in_range(0.0f, 359.9f) * (M_PI / 180.0f);    
     vec3_set_all(&zombie->node.transform.scale, ZOMBIE_SCALE);
-    fw64_node_set_mesh(&zombie->node, zombie->mesh);
-    fw64_node_set_box_collider(&zombie->node, &zombie->collider);
     fw64_node_update(&zombie->node);
-    fw64_animation_controller_init(&zombie->animation_controller, animation_data, zombie_animation_Idle, NULL);
-    fw64_level_add_dyanmic_node(level, &zombie->node);
+}
+
+void zombie_uninit(Zombie* zombie) {
+    fw64_level_remove_dynamic_node(zombie->level, &zombie->node);
 }
 
 static void zombie_update_idle(Zombie* zombie) {
@@ -94,7 +100,7 @@ void zombie_hit(Zombie* zombie, WeaponType weapon_type) {
     }
 }
 
-void zombie_update(Zombie* zombie) {
+int zombie_update(Zombie* zombie) {
     fw64_animation_controller_update(&zombie->animation_controller, zombie->engine->time->time_delta);
     zombie_ai_update(&zombie->ai, zombie->engine->time->time_delta);
     // TODO: replace this series of polling ifs with an animation state change inside the ai state change
@@ -138,9 +144,10 @@ void zombie_update(Zombie* zombie) {
 
         case ZOMBIE_STATE_INACTIVE:
         case ZOMBIE_STATE_DEAD:
-            return;
+            return 0;
         break;
     }
+    return 1;
 }
 
 void zombie_set_new_state(Zombie* zombie, ZombieState new_state) {

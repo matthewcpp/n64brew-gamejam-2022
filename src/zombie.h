@@ -42,7 +42,13 @@ typedef struct {
 } Zombie;
 
 void zombie_init(Zombie* zombie, fw64Engine* engine, fw64Level* level, fw64Mesh* mesh, fw64AnimationData* animation_data);
-void zombie_update(Zombie* zombie);
+
+void zombie_uninit(Zombie* zombie);
+
+// returns 0 if dead or inactive
+// returns 1 otherwise
+int zombie_update(Zombie* zombie);
+
 void zombie_draw(Zombie* zombie);
 void zombie_set_target(Zombie* zombie, fw64Transform* target);
 void zombie_hit(Zombie* zombie, WeaponType weapon_type);

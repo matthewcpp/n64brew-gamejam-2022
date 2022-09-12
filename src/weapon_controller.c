@@ -143,6 +143,8 @@ static void weapon_controller_fire(WeaponController* controller) {
 
     // temp implementation for now need to raycast etc
     uint32_t dynamic_node_count = fw64_level_get_dynamic_node_count(controller->level);
+    float closest_dist = FLT_MAX;
+    Zombie* closest_nerd = NULL;
     for (uint32_t i = 0; i < dynamic_node_count; i++) {
         fw64Node* dynamic_node = fw64_level_get_dynamic_node(controller->level, i);
 
@@ -156,12 +158,15 @@ static void weapon_controller_fire(WeaponController* controller) {
                                                                 &zombie->node.collider->bounding,
                                                                 &out_hitpoint,
                                                                 &out_distance);
-                if(bounding_hit) {                    
-                    zombie_hit(zombie, controller->weapon->type);
-                    break;
+                if(bounding_hit && (out_distance < closest_dist)) {                    
+                    closest_dist = out_distance;
+                    closest_nerd = zombie;
                 } 
             }          
         }
+    }
+    if(closest_nerd != NULL) {
+        zombie_hit(closest_nerd, controller->weapon->type);
     }
 }
 
