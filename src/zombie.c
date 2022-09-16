@@ -116,7 +116,7 @@ int zombie_update(Zombie* zombie) {
     if(zombie->ai.state == ZLS_IDLE) {
         if(zombie->state == ZOMBIE_STATE_RUNNING || zombie->state == ZOMBIE_STATE_WALKING)
             zombie_set_new_state(zombie, ZOMBIE_STATE_IDLE);
-    } else if (zombie->ai.state == ZLS_ATTACK) {
+    } else if (zombie->ai.state == ZLS_ATTACK && zombie->health > 0) {
         if(zombie->state != ZOMBIE_STATE_ATTACK)
             zombie_set_new_state(zombie, ZOMBIE_STATE_ATTACK);
     } else {
