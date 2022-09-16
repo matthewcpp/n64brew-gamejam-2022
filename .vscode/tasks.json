@@ -1,0 +1,72 @@
+{
+	// See https://go.microsoft.com/fwlink/?LinkId=733558
+	// for the documentation about the tasks.json format
+	"version": "2.0.0",
+	"tasks": [
+	  {
+		"label": "Run (Ares)",
+		"type": "shell",
+		"command": ".emu/run.sh",
+		"windows": {
+		  "command": ".emu\\run.bat"
+		},
+		"group": "test",
+		"presentation": {
+		  "reveal": "silent",
+		  "panel": "shared"
+		}
+	  },
+	  {
+		"label": "Run (CEN64)",
+		"type": "shell",
+		"command": ".emu/run-cen64.sh",
+		"windows": {
+		  "command": ".emu\\run-cen64.bat"
+		},
+		"group": "test",
+		"presentation": {
+		  "reveal": "silent",
+		  "panel": "shared"
+		}
+	  },
+	  {
+		"label": "Debug (CEN64)",
+		"type": "shell",
+		"command": ".emu/debug.sh",
+		"windows": {
+		  "command": ".emu\\debug.bat"
+		},
+		"group": "test",
+		"presentation": {
+		  "reveal": "silent",
+		  "panel": "dedicated"
+		}
+	  },
+	  {
+		"label": "Run (Hardware)",
+		"type": "shell",
+		"command": ".usb/run-usb.sh",
+		"windows": {
+		  "command": ".usb\\run-usb.bat"
+		},
+		"group": "test",
+		"presentation": {
+		  "reveal": "silent",
+		  "panel": "shared"
+		}
+	  },
+	  {
+		"label": "Debug (Hardware)",
+		"type": "shell",
+		"command": ".usb/debug-usb.sh",
+		"windows": {
+		  "command": ".usb\\debug-usb.bat"
+		},
+		"group": "test",
+		"presentation": {
+		  "reveal": "always",
+		  "panel": "dedicated"
+		}
+	  },
+	]
+  }

@@ -1,0 +1,1 @@
+%~dp0.\cen64.exe -debug localhost:8080 -controller num=1 %~dp0.\pifdata.bin %~dp0..\build_n64\bin\spooky.z64

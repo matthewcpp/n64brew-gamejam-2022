@@ -1,0 +1,1 @@
+%~dp0.\ares.exe %~dp0..\build_n64\bin\spooky.z64
