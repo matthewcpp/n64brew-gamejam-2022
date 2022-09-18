@@ -21,6 +21,9 @@ void hill_level_init(HillLevel* hill_level, fw64Engine* engine) {
     fw64Node* start_node = fw64_scene_get_node(scene, FW64_scene_church_hill_node_Player_Start);
     player_set_position(&hill_level->player, &start_node->transform.position);
     player_set_weapon(&hill_level->player, WEAPON_TYPE_AR15);
+
+    zombie_spawner_init(&hill_level->zombie_spawner[0], engine, &hill_level->level, FW64_scene_church_hill_node_Zombie_Spawn_1, &hill_level->player.movement.camera.transform, hill_level->allocator);
+    zombie_spawner_init(&hill_level->zombie_spawner[1], engine, &hill_level->level, FW64_scene_church_hill_node_Zombie_Spawn_2, &hill_level->player.movement.camera.transform, hill_level->allocator);
     
     ui_init(&hill_level->ui, engine, &hill_level->player);
 
@@ -33,6 +36,8 @@ void hill_level_init(HillLevel* hill_level, fw64Engine* engine) {
 
 void hill_level_uninit(HillLevel* hill_level) {
     player_uninit(&hill_level->player);
+    zombie_spawner_uninit(&hill_level->zombie_spawner[0]);
+    zombie_spawner_uninit(&hill_level->zombie_spawner[1]);
     ui_uninit(&hill_level->ui);
     fw64_level_delete(&hill_level->level);
     fw64_sound_bank_delete(hill_level->engine->assets, hill_level->sound, hill_level->allocator);
@@ -58,7 +63,8 @@ void setup_sound_trigger(HillLevel* hill_level, fw64Scene* scene, int trigger_bo
 
 void hill_level_update(HillLevel* hill_level) {
     player_update(&hill_level->player);
-
+    zombie_spawner_update(&hill_level->zombie_spawner[0]);
+    zombie_spawner_update(&hill_level->zombie_spawner[1]);
     for (int i = 0; i < HILL_LEVEL_TRIGGER_COUNT; i++) {
         trigger_box_update(&hill_level->triggers[i]);
     }
@@ -70,6 +76,8 @@ void hill_level_draw(HillLevel* hill_level) {
     fw64_renderer_set_anti_aliasing_enabled(renderer, 1);
     fw64_renderer_begin(renderer, FW64_RENDERER_MODE_TRIANGLES,  FW64_RENDERER_FLAG_CLEAR);
     player_draw(&hill_level->player);
+    zombie_spawner_draw(&hill_level->zombie_spawner[0]);
+    zombie_spawner_draw(&hill_level->zombie_spawner[1]);
     player_draw_weapon(&hill_level->player);
 
     fw64_renderer_set_anti_aliasing_enabled(renderer, 0);

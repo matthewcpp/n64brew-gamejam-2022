@@ -8,7 +8,7 @@
 
 #include <stdint.h>
 
-#define LEVEL_DYNAMIC_NODE_SIZE 8
+#define LEVEL_DYNAMIC_NODE_SIZE 32
 
 typedef struct {
     fw64Engine* engine;

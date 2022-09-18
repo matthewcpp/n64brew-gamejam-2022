@@ -5,6 +5,7 @@
 #include "level.h"
 #include "player.h"
 #include "ui.h"
+#include "zombie_spawner.h"
 #include "trigger.h"
 
 #define HILL_LEVEL_TRIGGER_CROW 0
@@ -16,6 +17,7 @@ typedef struct {
     fw64Level level;
     Player player;
     UI ui;
+    ZombieSpawner zombie_spawner[2];
     TriggerBox triggers[HILL_LEVEL_TRIGGER_COUNT];
     fw64Allocator* allocator;
     fw64SoundBank* sound;
