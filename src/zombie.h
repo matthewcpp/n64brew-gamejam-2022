@@ -54,6 +54,7 @@ void zombie_draw(Zombie* zombie);
 void zombie_set_target(Zombie* zombie, fw64Transform* target);
 void zombie_hit(Zombie* zombie, WeaponType weapon_type);
 void zombie_set_new_state(Zombie* zombie, ZombieState new_state);
+void zombie_set_to_ground_height(Zombie* zombie);
 
 // temp
 #define ZOMBIE_LAYER 2

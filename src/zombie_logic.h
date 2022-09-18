@@ -3,6 +3,7 @@
 /** \file zombie_logic.h */
 
 #include "behaviors.h"
+#include "level.h"
 #include "framework64/transform.h"
 
 #define AI_TIMER_LENGTH_IDLE 	fw64_random_float_in_range(1.0f, 30.0f)
@@ -34,9 +35,11 @@ typedef enum {
 } ZombieLogicState;
 
 typedef struct {
+	fw64Level* level; // for collision data with environment and dynamic nodes
 	ZombieLogicState state;
     unsigned long long int active_bahaviors; // bitset of up to 64 unique behaviors. primarily used to deactivate behaviors.
     SteeringBehaviorData sb_data;
+	fw64Collider* collider;
 	fw64Transform* transform;
 	fw64Transform* target;
 	fw64Transform targetPrev;
@@ -52,7 +55,7 @@ typedef struct {
 	float attack_cooldown;
 } ZombieAI;
 
-void zombie_ai_init(ZombieAI* zombie_ai, fw64Transform* transform, fw64Transform* target);
+void zombie_ai_init(ZombieAI* zombie_ai, fw64Level* level, fw64Collider* collider, fw64Transform* transform, fw64Transform* target);
 void zombie_ai_update(ZombieAI* zombie_ai, float deltaTime);
 void zombie_ai_set_logic_state(ZombieAI* zombie_ai, ZombieLogicState newState);
 int zombie_ai_get_logic_state(ZombieAI* zombie_ai);

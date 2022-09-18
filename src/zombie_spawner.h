@@ -24,7 +24,7 @@ typedef struct {
     fw64AnimationData* animation_data;
 } ZombieSpawner;
 
-void zombie_spawner_init(ZombieSpawner* spawner, fw64Engine* engine, fw64Level* level, fw64Transform* target, fw64Allocator* allocator);
+void zombie_spawner_init(ZombieSpawner* spawner, fw64Engine* engine, fw64Level* level, int position_node, fw64Transform* target, fw64Allocator* allocator);
 void zombie_spawner_uninit(ZombieSpawner* spawner);
 void zombie_spawner_update(ZombieSpawner* spawner);
 void zombie_spawner_draw(ZombieSpawner* spawner);

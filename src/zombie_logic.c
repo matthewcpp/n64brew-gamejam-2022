@@ -1,9 +1,13 @@
 #include "zombie_logic.h"
 #include "framework64/random.h"
+#include "assets/layers.h"
+#include "zombie.h"
 
-void zombie_ai_init(ZombieAI* zombie_ai, fw64Transform* transform, fw64Transform* target) {	
+void zombie_ai_init(ZombieAI* zombie_ai, fw64Level* level, fw64Collider* collider, fw64Transform* transform, fw64Transform* target) {	
+	zombie_ai->level = level;
 	zombie_ai->state = ZLS_INACTIVE;
 	zombie_ai->active_bahaviors = SB_NONE;
+	zombie_ai->collider = collider;
 	zombie_ai->transform = transform;
 	zombie_ai->target = target;
 	fw64_transform_init(&zombie_ai->targetPrev);
@@ -11,7 +15,9 @@ void zombie_ai_init(ZombieAI* zombie_ai, fw64Transform* transform, fw64Transform
 	zombie_ai->velocity.angular = 0.0f;
 	zombie_ai->maxVelocity.linear = 0.0f;
 	zombie_ai->maxVelocity.angular = 0.0f;	
-	steering_behavior_data_init(zombie_ai->transform->position,
+	steering_behavior_data_init(zombie_ai->level,
+								zombie_ai->collider,
+								zombie_ai->transform->position,
 								zombie_ai->target->position,
 								&zombie_ai->velocity.linear,
 								0.0f,
@@ -70,17 +76,20 @@ void zombie_ai_set_logic_state(ZombieAI* zombie_ai, ZombieLogicState newState) {
 			zombie_ai->maxVelocity.linear = ZOMBIE_WALK_SPEED;
 			zombie_ai->maxVelocity.angular = 1.0f;
 			zombie_ai_behavior_set(zombie_ai, SB_WANDER);
+			zombie_ai_behavior_set(zombie_ai, SB_AVOID_OBSTACLE);
 			break;
 		case ZLS_HERD:
 			zombie_ai->maxVelocity.linear = ZOMBIE_WALK_SPEED;
 			zombie_ai->maxVelocity.angular = 1.0f;
 			zombie_ai_behavior_set(zombie_ai, SB_FLOCK);
+			zombie_ai_behavior_set(zombie_ai, SB_AVOID_OBSTACLE);
 			break;
 		case ZLS_FOLLOW:
 			zombie_ai->maxVelocity.linear = ZOMBIE_WALK_SPEED;
 			zombie_ai->maxVelocity.angular = 1.0f;
 			zombie_ai_init_follow(zombie_ai);
 			zombie_ai_behavior_set(zombie_ai, SB_FLOCK);
+			zombie_ai_behavior_set(zombie_ai, SB_AVOID_OBSTACLE);
 			break;
 		case ZLS_LEAD:
 			zombie_ai->maxVelocity.linear = ZOMBIE_WALK_SPEED;
@@ -96,6 +105,7 @@ void zombie_ai_set_logic_state(ZombieAI* zombie_ai, ZombieLogicState newState) {
 				zombie_ai_share_target(zombie_ai);
 			}
 			zombie_ai_behavior_set(zombie_ai, SB_SEEK);
+			zombie_ai_behavior_set(zombie_ai, SB_AVOID_OBSTACLE);
 			break;
 		case ZLS_ATTACK:
 			zombie_ai->maxVelocity.linear = 0.0f;
@@ -177,7 +187,9 @@ void zombie_ai_update(ZombieAI* zombie_ai, float deltaTime) {
 		default:
 			break;
 	}
-	if(zombie_ai->state != ZLS_AGGRO && zombie_ai->state != ZLS_ATTACK) {
+	
+	//trigger aggro if too close
+	if((zombie_ai->state != ZLS_AGGRO) && (zombie_ai->state != ZLS_ATTACK)) {
 		int sighted = zombie_ai_target_in_view(zombie_ai, zombie_ai->target);
 		if(sighted) {
 			zombie_ai_set_logic_state(zombie_ai, ZLS_AGGRO);
@@ -196,6 +208,7 @@ static void zombie_ai_init_wander(ZombieAI* zombie_ai) {
 						&target,
 						fw64_random_float_in_range(5.0f, 45.0f));
 	zombie_ai_behavior_set(zombie_ai, SB_WANDER);
+	zombie_ai_behavior_set(zombie_ai, SB_AVOID_OBSTACLE);
 }
 static void zombie_ai_init_meet(ZombieAI* zombie_ai) {}
 static void zombie_ai_init_follow(ZombieAI* zombie_ai) {}
@@ -247,19 +260,21 @@ static void zombie_ai_behavior_apply(ZombieAI* zombie_ai, SteeringBehavior behav
     
 	//TODO: this is a quick fix so wander doesn't just chase the player.
 	Vec3 targetPos;
-	if(behavior == SB_WANDER) {
+	if(zombie_ai->state == ZLS_WANDER) {
 		vec3_copy(&targetPos, &zombie_ai->sb_data.targetPosition);
 	} else {
 		vec3_copy(&targetPos, &zombie_ai->target->position);
 	}
 
-	steering_behavior_data_init(zombie_ai->transform->position,
-                                targetPos,
-                                &zombie_ai->velocity.linear,
-                                deltaTime,
-                                &zombie_ai->sb_data);    
-    zombie_ai->sb_data.position.y = 0.0f;
-    zombie_ai->sb_data.targetPosition.y = 0.0f;
+	steering_behavior_data_init(zombie_ai->level,
+								zombie_ai->collider,
+								zombie_ai->transform->position,
+								targetPos,
+								&zombie_ai->velocity.linear,
+								0.0f,
+								&zombie_ai->sb_data);    
+    //zombie_ai->sb_data.position.y = 0.0f;
+    //zombie_ai->sb_data.targetPosition.y = 0.0f;
 
     switch(behavior) {
         case SB_SEEK: {          
@@ -291,6 +306,11 @@ static void zombie_ai_behavior_apply(ZombieAI* zombie_ai, SteeringBehavior behav
 		case SB_WANDER: {
 			steering_wander(1.0f, &zombie_ai->sb_data);            
             break;
+		}
+		case SB_AVOID_OBSTACLE: /* fall through */
+		case SB_AVOID_COLLISION: {
+			steering_avoid_collision(1.0f, &zombie_ai->sb_data);
+			break;
 		}
         default: break;
     }

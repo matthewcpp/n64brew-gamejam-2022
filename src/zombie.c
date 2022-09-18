@@ -1,11 +1,11 @@
 #include "zombie.h"
 #include "assets/zombie_animation.h"
+#include "assets/layers.h"
 #include "framework64/random.h"
 
 #define ZOMBIE_SCALE 0.025f
 
 static void zombie_move(Zombie* zombie);
-
 
 void zombie_init(Zombie* zombie, fw64Engine* engine, fw64Level* level, fw64Mesh* mesh, fw64AnimationData* animation_data) {
     zombie->engine = engine;
@@ -60,8 +60,26 @@ static void zombie_move(Zombie* zombie) {
 
     Vec3 delta_vel;
     vec3_scale(&delta_vel, &zombie->ai.velocity.linear, zombie->engine->time->time_delta);
-    vec3_add(&zombie->node.transform.position, &zombie->node.transform.position, &delta_vel);
+    
+    //attempt smooth resolution of collisions
+    uint32_t mask = (uint32_t)(FW64_layer_obstacles | FW64_layer_tree | FW64_layer_wall);
+    fw64IntersectMovingBoxQuery query;
+    if (fw64_level_moving_box_intersection(zombie->level, &zombie->collider.bounding, &delta_vel, mask, &query)) {
+    
+        Box testBox;
+        Vec3 origin;
+        float radius = 5.0f;
+        vec3_add(&origin, &zombie->node.transform.position, &delta_vel);
+        float speed = vec3_distance(&zombie->node.transform.position, &origin);
+        testBox = query.results[0].node->collider->bounding;
+        Vec3 point;
+        if((speed > 0.01) && fw64_collision_test_box_sphere(&testBox, &origin, radius, &point)) {
+            vec3_scale(&delta_vel, &delta_vel, vec3_distance(&zombie->node.transform.position, &point));
+        }    
+    }
 
+    vec3_add(&zombie->node.transform.position, &zombie->node.transform.position, &delta_vel);   
+    zombie_set_to_ground_height(zombie);
     fw64_node_update(&zombie->node);
 }
 
@@ -230,4 +248,16 @@ void zombie_set_target(Zombie* zombie, fw64Transform* target) {
     zombie->target = target;
     zombie->targetPrevious = target;
     fw64_animation_controller_play(&zombie->animation_controller);
+}
+
+void zombie_set_to_ground_height(Zombie* zombie) {
+    fw64RaycastHit raycast_hit;
+
+    Vec3 ray_pos = zombie->node.transform.position;
+    ray_pos.y = 1000.0f;
+    Vec3 ray_dir = {0.0f, -1.0f, 0.0f};
+
+    if (fw64_level_raycast(zombie->level, &ray_pos, &ray_dir, FW64_layer_ground, &raycast_hit)) {
+        zombie->node.transform.position.y = raycast_hit.point.y;
+    }
 }

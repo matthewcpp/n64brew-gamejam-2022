@@ -8,12 +8,12 @@ static void spawn_next_zombie(ZombieSpawner* spawner);
 static int get_free_slot(ZombieSpawner* spawner);
 static void set_free_slot(ZombieSpawner* spawner, int slot);
 
-void zombie_spawner_init(ZombieSpawner* spawner, fw64Engine* engine, fw64Level* level, fw64Transform* target, fw64Allocator* allocator) {
+void zombie_spawner_init(ZombieSpawner* spawner, fw64Engine* engine, fw64Level* level, int position_node, fw64Transform* target, fw64Allocator* allocator) {
     spawner->engine = engine;
     spawner->level = level;
     spawner->target = target;
     spawner->allocator = allocator;
-    spawner->spawner_node = fw64_scene_get_node(level->scene, FW64_scene_spooky_level_node_Zombie_Spawn);
+    spawner->spawner_node = fw64_scene_get_node(level->scene, position_node);
 
     spawner->active_zombies = 0;
     spawner->zombie_slot_active = 0;
@@ -40,16 +40,22 @@ void spawn_next_zombie(ZombieSpawner* spawner) {
     Zombie* zed = &spawner->zombies[next_slot];
     spawner->active_zombies++;
     zombie_init(zed, spawner->engine, spawner->level, spawner->zombie_mesh, spawner->animation_data);
-    zombie_ai_init(&zed->ai, &zed->node.transform, spawner->target);
+    zombie_ai_init(&zed->ai, zed->level, &zed->collider, &zed->node.transform, spawner->target);
 
     zed->health = 3;
-    zed->node.transform.position = spawner->spawner_node->transform.position; //spawn in more intelligent locations
+    zed->node.transform.position = spawner->spawner_node->transform.position;
     float radius = 10.0f + (2.0f * spawner->active_zombies);
-    Vec3 random_offset = {fw64_random_float_in_range(-radius,radius), 0.0f, fw64_random_float_in_range(-radius,radius)};
+    Vec3 random_offset = {fw64_random_float_in_range(-radius,radius), spawner->spawner_node->transform.position.y, fw64_random_float_in_range(-radius,radius)};
     vec3_add(&zed->node.transform.position, &zed->node.transform.position, &random_offset);
+    zed->rotation = fw64_random_float_in_range(0.0f, 359.9f);
+    quat_from_euler(&zed->node.transform.rotation, 0.0f, zed->rotation, 0.0f);
+    zombie_set_to_ground_height(zed);
     fw64_node_update(&zed->node);
     
     zombie_set_new_state(zed, ZOMBIE_STATE_IDLE);
+    zed->animation_controller.current_time = fw64_random_float();
+    zed->animation_controller.speed = 0.5f + fw64_random_float();
+
     zombie_ai_set_logic_state(&zed->ai, ZLS_IDLE);
     zed->health = ZOMBIE_MAX_HEALTH;
 }

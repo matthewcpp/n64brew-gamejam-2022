@@ -1,8 +1,9 @@
 #pragma once
 
 /** \file behaviors.h */
-
+#include "level.h"
 #include "framework64/vec3.h"
+#include "framework64/collider.h"
 
 #define DEFAULT_MAX_LIN_ACCEL 5.0f
 #define DEFAULT_MAX_ANG_ACCEL 1.0f
@@ -31,7 +32,8 @@ typedef enum {
 } SteeringBehavior;
 
 typedef struct {
-
+	fw64Level* level;
+	fw64Collider* collider;
 	Vec3 position;
 	Vec3 targetPosition;
 	Vec3* linearVel;
@@ -42,7 +44,7 @@ typedef struct {
 	float maxAngularAccel;
 } SteeringBehaviorData;
 
-void steering_behavior_data_init(Vec3 position, Vec3 targetPosition, Vec3* linearVelocity, float deltaTime, SteeringBehaviorData* data);
+void steering_behavior_data_init(fw64Level* level, fw64Collider* collider, Vec3 position, Vec3 targetPosition, Vec3* linearVelocity, float deltaTime, SteeringBehaviorData* data);
 void steering_seek(float strength, SteeringBehaviorData* data);
 void steering_flee(float strength, SteeringBehaviorData* data);
 void steering_arrive(float slowRadius, float stopRadius, float strength, SteeringBehaviorData* data); // slowing not implemented
@@ -50,6 +52,6 @@ void steering_pursue(Vec3* targetVelocity, float strength, SteeringBehaviorData*
 void steering_evade(Vec3* targetVelocity, float strength, SteeringBehaviorData* data);
 void steering_wander(float strength, SteeringBehaviorData* data);
 void steering_follow_path(Vec3* position, float strength, Vec3* out); // stubbed
-void steering_avoid_collision(Vec3* position, float strength, Vec3* out); // stubbed
+void steering_avoid_collision(float strength, SteeringBehaviorData* data);
 void steering_align(Vec3* position, float strength, Vec3* out); // stubbed
 void steering_flock(Vec3* position, float strength, Vec3* out); // stubbed
