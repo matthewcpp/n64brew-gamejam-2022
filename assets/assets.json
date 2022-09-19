@@ -7,13 +7,28 @@
             "src": "us_ar33/us_ar33.gltf"
         },
         {
+            "src": "ar15_muzzle_flash/ar15_muzzle_flash.gltf",
+            "shadingModeOverride": "UnlitTextured"
+        },
+        {
+            "src": "9mm_round/9mm_round.gltf"
+        },
+        {
+            "src": "uzi/uzi.gltf"
+        },
+        {
+            "src": "uzi_muzzle_flash/uzi_muzzle_flash.gltf",
+            "shadingModeOverride": "UnlitTextured"
+        },
+        {
             "src": "shotgun/shotgun.gltf"
         },
         {
             "src": "shotgun_shell/shotgun_shell.gltf"
         },
         {
-            "src": "9mm_round/9mm_round.gltf"
+            "src": "shotgun_muzzle_flash/shotgun_muzzle_flash.gltf",
+            "shadingModeOverride": "UnlitTextured"
         }
     ],
     "images": [
