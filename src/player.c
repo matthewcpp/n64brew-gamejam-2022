@@ -32,15 +32,6 @@ void player_init(Player* player, fw64Engine* engine, fw64Level* level, fw64Alloc
     player->aim.direction.y = player->movement.rotation.y;
     player->aim.infinite = 1; //boolean true
 
-    fw64_camera_init(&player->weapon_camera);
-    vec3_zero(&player->weapon_camera.transform.position);
-    fw64_camera_update_view_matrix(&player->weapon_camera);
-
-    player->weapon_camera.near = 1.0f;
-    player->weapon_camera.far = 125.0f;
-    player->weapon_camera.fovy = 60.0f;
-    fw64_camera_update_projection_matrix(&player->weapon_camera);
-
     weapon_init(&player->weapon);
     weapon_controller_init(&player->weapon_controller, engine, level, &player->input_map, 0);
     player->weapon_controller.aim = &player->aim;
@@ -82,10 +73,24 @@ void player_aim_update(Player* player) {
 static void player_next_weapon_func(Weapon* current_weapon, WeaponControllerState complete_state, void* arg) {
     Player* player = (Player*)arg;
 
-    if (player->weapon.type == WEAPON_TYPE_AR15)
-        player_set_weapon(player, WEAPON_TYPE_SHOTGUN);
-    else
-        player_set_weapon(player, WEAPON_TYPE_AR15);
+    WeaponType next_weapon_type = player->weapon.type + 1;
+    if (next_weapon_type == WEAPON_COUNT)
+        next_weapon_type = WEAPON_TYPE_AR15;
+
+    switch (next_weapon_type)
+    {
+        case WEAPON_TYPE_AR15:
+            player_set_weapon(player, WEAPON_TYPE_AR15);
+            break;
+    
+        case WEAPON_TYPE_SHOTGUN:
+            player_set_weapon(player, WEAPON_TYPE_SHOTGUN);
+            break;
+
+        case WEAPON_TYPE_UZI:
+            player_set_weapon(player, WEAPON_TYPE_UZI);
+            break;
+    }
 
     weapon_controller_raise_weapon(&player->weapon_controller, NULL, NULL);
 }
@@ -113,9 +118,13 @@ void player_draw_weapon(Player* player) {
     if (player->weapon.type == WEAPON_TYPE_NONE)
         return;
     
-    fw64_renderer_set_camera(renderer, &player->weapon_camera);
-    fw64_renderer_util_clear_viewport(renderer, &player->weapon_camera, FW64_RENDERER_FLAG_CLEAR_DEPTH);
+    fw64_renderer_set_camera(renderer, &player->weapon_controller.weapon_camera);
+    fw64_renderer_util_clear_viewport(renderer, &player->weapon_controller.weapon_camera, FW64_RENDERER_FLAG_CLEAR_DEPTH);
     fw64_renderer_draw_static_mesh(renderer, &player->weapon_controller.weapon_transform, player->weapon.mesh);
+    
+    if (player->weapon_controller.muzzle_flash_time_remaining > 0.0f) {
+        fw64_renderer_draw_static_mesh(renderer, &player->weapon_controller.muzzle_flash_transform, player->weapon.muzzle_flash);
+    }
 
     if (player->weapon_controller.time_to_next_fire > 0.0f && player->weapon.casing) {
         fw64_renderer_draw_static_mesh(renderer, &player->weapon_controller.casing_transform, player->weapon.casing);
@@ -130,6 +139,10 @@ void player_set_weapon(Player* player, WeaponType weapon_type) {
 
         case WEAPON_TYPE_SHOTGUN:
             weapon_init_shotgun(&player->weapon, player->engine->assets, player->weapon_allocator);
+        break;
+
+        case WEAPON_TYPE_UZI:
+            weapon_init_uzi(&player->weapon, player->engine->assets, player->weapon_allocator);
         break;
 
         case WEAPON_TYPE_NONE:

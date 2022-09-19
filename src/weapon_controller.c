@@ -5,7 +5,8 @@
 
 #include "zombie.h"
 
-#define WEAPON_CONTROLLER_TRANSITION_SPEED 0.75f
+#define WEAPON_CONTROLLER_TRANSITION_SPEED 0.50f
+#define WEAPON_CONTROLLER_MUZZLE_FLASH_TIME 0.1f
 
 static void weapon_controller_fire(WeaponController* controller);
 
@@ -17,9 +18,22 @@ void weapon_controller_init(WeaponController* controller, fw64Engine* engine, fw
     controller->weapon = NULL;
     controller->state = WEAPON_CONTROLLER_HOLDING;
     controller->transition_time = 0.0f;
+    controller->muzzle_flash_time_remaining = 0.0f;
+    controller->recoil_time = 0.0f;
+    controller->recoil_state = WEAPON_RECOIL_INACTIVE;
+
+    fw64_camera_init(&controller->weapon_camera);
+    vec3_zero(&controller->weapon_camera.transform.position);
+    fw64_camera_update_view_matrix(&controller->weapon_camera);
+
+    controller->weapon_camera.near = 1.0f;
+    controller->weapon_camera.far = 125.0f;
+    controller->weapon_camera.fovy = 60.0f;
+    fw64_camera_update_projection_matrix(&controller->weapon_camera);
 
     fw64_transform_init(&controller->weapon_transform);
     fw64_transform_init(&controller->casing_transform);
+    fw64_transform_init(&controller->muzzle_flash_transform);
 }
 
 /** shell casing ejection is modeled via a simple quadratic equation*/
@@ -39,9 +53,59 @@ static void weapon_controller_update_casing(WeaponController* controller) {
     fw64_transform_update_matrix(&controller->casing_transform);
 }
 
+static void weapon_controller_update_muzzle_flash(WeaponController* controller) {
+    if (controller->muzzle_flash_time_remaining <= 0)
+        return;
+
+    controller->muzzle_flash_transform.position = controller->weapon_transform.position;
+    controller->muzzle_flash_transform.rotation = controller->weapon_transform.rotation;
+
+    fw64_transform_update_matrix(&controller->muzzle_flash_transform);
+
+    controller->muzzle_flash_time_remaining -= controller->engine->time->time_delta;
+}
+
+static void weapon_controller_update_recoil(WeaponController* controller) {
+    Weapon* weapon = controller->weapon;
+
+    if (controller->recoil_state == WEAPON_RECOIL_INACTIVE)
+        return;
+
+    controller->recoil_time += controller->engine->time->time_delta;
+
+    if (controller->recoil_time >= weapon->recoil_time) {
+        if (controller->recoil_state == WEAPON_RECOIL_RECOILING) {
+            controller->recoil_time -= weapon->recoil_time;
+            controller->recoil_state = WEAPON_RECOIL_RECOVERING;
+        }
+        else { // recoil is finished
+            controller->recoil_state = WEAPON_RECOIL_INACTIVE;
+            controller->recoil_time = 0.0f;
+            controller->weapon_transform.position = weapon->default_position;
+            controller->weapon_transform.rotation = weapon->default_rotation;
+        }
+    }
+
+    float smoothed_time = fw64_smoothstep(0.0f, 1.0f, controller->recoil_time / weapon->recoil_time);
+
+    if (controller->recoil_state == WEAPON_RECOIL_RECOILING) {
+        vec3_lerp(&controller->weapon_transform.position, &weapon->default_position, &weapon->recoil_pos, smoothed_time);
+        quat_slerp(&controller->weapon_transform.rotation, &weapon->default_rotation, &weapon->recoil_rotation, smoothed_time);
+    }
+    else if (controller->recoil_state == WEAPON_RECOIL_RECOVERING) {
+        vec3_lerp(&controller->weapon_transform.position, &weapon->recoil_pos, &weapon->default_position, smoothed_time);
+        quat_slerp(&controller->weapon_transform.rotation, &weapon->recoil_rotation, &weapon->default_rotation, smoothed_time);
+    }
+
+    fw64_transform_update_matrix(&controller->weapon_transform);
+}
+
 static void weapon_controller_update_holding(WeaponController* controller) {
     if (controller->weapon == NULL)
         return;
+
+    weapon_controller_update_recoil(controller);
+    weapon_controller_update_muzzle_flash(controller);
 
     if (controller->time_to_next_fire > 0.0f) {
         controller->time_to_next_fire -= controller->engine->time->time_delta;
@@ -132,6 +196,9 @@ void weapon_controller_set_weapon(WeaponController* controller, Weapon* weapon) 
 
         fw64_transform_update_matrix(&controller->casing_transform);
     }
+
+    // note other muzzle flash values will be set during update.
+    controller->muzzle_flash_transform.scale = weapon->default_scale;
 }
 
 static void weapon_controller_fire(WeaponController* controller) {
@@ -140,6 +207,10 @@ static void weapon_controller_fire(WeaponController* controller) {
 
     controller->casing_transform.position = controller->weapon->ejection_port_pos;
     fw64_transform_update_matrix(&controller->casing_transform);
+
+    controller->muzzle_flash_time_remaining = WEAPON_CONTROLLER_MUZZLE_FLASH_TIME;
+    weapon_controller_update_muzzle_flash(controller);
+    controller->recoil_state = WEAPON_RECOIL_RECOILING;
 
     // temp implementation for now need to raycast etc
     uint32_t dynamic_node_count = fw64_level_get_dynamic_node_count(controller->level);

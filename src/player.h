@@ -15,7 +15,6 @@
 typedef struct {
     MovementController movement;
     InputMapping input_map;
-    fw64Camera weapon_camera; // todo: move to weapon controller?
     Weapon weapon;
     WeaponController weapon_controller;
     Ray aim;    
