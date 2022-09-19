@@ -14,18 +14,29 @@ typedef enum {
     WEAPON_CONTROLLER_RAISING,
 } WeaponControllerState;
 
+typedef enum {
+    WEAPON_RECOIL_INACTIVE,
+    WEAPON_RECOIL_RECOILING,
+    WEAPON_RECOIL_RECOVERING
+} RecoilState;
+
 typedef void(*WeaponTransitionFunc)(Weapon*, WeaponControllerState, void*);
 
 typedef struct {
     fw64Engine* engine;
     fw64Level* level;
+    fw64Camera weapon_camera;
     Ray* aim;
     int controller_index;
     InputMapping* input_map;
     float time_to_next_fire;
+    float muzzle_flash_time_remaining;
+    float recoil_time;
+    RecoilState recoil_state;
     Weapon* weapon;
     fw64Transform weapon_transform;
     fw64Transform casing_transform;
+    fw64Transform muzzle_flash_transform;
     WeaponControllerState state;
     float transition_time;
     WeaponTransitionFunc transition_callback;
