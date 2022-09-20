@@ -209,7 +209,10 @@ static void weapon_controller_fire(WeaponController* controller) {
     controller->casing_transform.position = controller->weapon->ejection_port_pos;
     fw64_transform_update_matrix(&controller->casing_transform);
 
-    projectile_controller_fire_ray(controller->projectile_controller, controller->aim->position, &controller->aim->direction, controller->weapon->type);
+    if(controller->weapon->type == WEAPON_TYPE_SHOTGUN)
+        projectile_controller_fire_arc(controller->projectile_controller, controller->aim->position, &controller->aim->direction, 30.0f, 20.0f, controller->weapon->type);
+    else
+        projectile_controller_fire_ray(controller->projectile_controller, controller->aim->position, &controller->aim->direction, controller->weapon->type);
 
     controller->muzzle_flash_time_remaining = WEAPON_CONTROLLER_MUZZLE_FLASH_TIME;
     weapon_controller_update_muzzle_flash(controller);

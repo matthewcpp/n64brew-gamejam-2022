@@ -14,6 +14,7 @@
         "random.h": "c",
         "behaviors.h": "c",
         "memory": "cpp",
-        "array": "cpp"
+        "array": "cpp",
+        "zombie_spawner.h": "c"
     }
 }

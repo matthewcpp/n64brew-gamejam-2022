@@ -149,6 +149,7 @@ void player_set_weapon(Player* player, WeaponType weapon_type) {
         break;
 
         case WEAPON_TYPE_NONE:
+        case WEAPON_COUNT:
             break;
     }
 
