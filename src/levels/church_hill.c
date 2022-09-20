@@ -14,8 +14,9 @@ void hill_level_init(HillLevel* hill_level, fw64Engine* engine) {
     fw64_renderer_set_clear_color(engine->renderer, 20, 4, 40);
 
     fw64_level_init(&hill_level->level, engine);
+    projectile_controller_init(&hill_level->projectile_controller, &hill_level->level);
     fw64Scene* scene = fw64_level_load_chunk(&hill_level->level, engine->assets, FW64_ASSET_scene_church_hill, hill_level->allocator);
-    player_init(&hill_level->player, engine, &hill_level->level, hill_level->allocator);
+    player_init(&hill_level->player, engine, &hill_level->level, &hill_level->projectile_controller, hill_level->allocator);
     fw64_level_add_dyanmic_node(&hill_level->level, hill_level->player.node);
 
     fw64Node* start_node = fw64_scene_get_node(scene, FW64_scene_church_hill_node_Player_Start);

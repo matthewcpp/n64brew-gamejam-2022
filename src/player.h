@@ -25,7 +25,7 @@ typedef struct {
     fw64Node* node;
 } Player;
 
-void player_init(Player* player, fw64Engine* engine, fw64Level* level, fw64Allocator* allocator);
+void player_init(Player* player, fw64Engine* engine, fw64Level* level, ProjectileController* projectile_controller, fw64Allocator* allocator);
 void player_uninit(Player* player);
 void player_update(Player* player);
 void player_draw(Player* player);

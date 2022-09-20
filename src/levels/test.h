@@ -7,12 +7,14 @@
 #include "player.h"
 #include "ui.h"
 #include "zombie_spawner.h"
+#include "projectile_controller.h"
 
 #include "level.h"
 
 typedef struct {
     fw64Engine* engine;
     Player player;
+    ProjectileController projectile_controller;
     UI ui;
     ZombieSpawner zombie_spawner;
     fw64Level level;
