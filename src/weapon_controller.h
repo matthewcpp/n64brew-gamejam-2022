@@ -6,6 +6,7 @@
 #include "level.h"
 #include "ray.h"
 #include "mapped_input.h"
+#include "projectile_controller.h"
 
 typedef enum {
     WEAPON_CONTROLLER_HOLDING,
@@ -25,6 +26,7 @@ typedef void(*WeaponTransitionFunc)(Weapon*, WeaponControllerState, void*);
 typedef struct {
     fw64Engine* engine;
     fw64Level* level;
+    ProjectileController* projectile_controller;
     fw64Camera weapon_camera;
     Ray* aim;
     int controller_index;
@@ -43,7 +45,7 @@ typedef struct {
     void* transition_arg;
 } WeaponController;
 
-void weapon_controller_init(WeaponController* controller, fw64Engine* engine, fw64Level* level, InputMapping* input_map, int controller_index);
+void weapon_controller_init(WeaponController* controller, fw64Engine* engine, fw64Level* level, InputMapping* input_map, ProjectileController* projectile_controller, int controller_index);
 void weapon_controller_update(WeaponController* controller);
 void weapon_controller_set_weapon(WeaponController* controller, Weapon* weapon);
 int weapon_controller_raise_weapon(WeaponController* controller, WeaponTransitionFunc callback , void* arg);

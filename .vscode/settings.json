@@ -12,6 +12,8 @@
         "assets.h": "c",
         "sound_bank_sounds.h": "c",
         "random.h": "c",
-        "behaviors.h": "c"
+        "behaviors.h": "c",
+        "memory": "cpp",
+        "array": "cpp"
     }
 }

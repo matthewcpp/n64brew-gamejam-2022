@@ -9,7 +9,7 @@ static Vec3 default_player_dimensions = {0.75, 5.6f, 1.1f};
 
 static void setup_player_node(Player* player);
 
-void player_init(Player* player, fw64Engine* engine, fw64Level* level, fw64Allocator* allocator) {
+void player_init(Player* player, fw64Engine* engine, fw64Level* level, ProjectileController* projectile_controller, fw64Allocator* allocator) {
     player->engine = engine;
     player->level = level;
     player->allocator = allocator;
@@ -33,7 +33,7 @@ void player_init(Player* player, fw64Engine* engine, fw64Level* level, fw64Alloc
     player->aim.infinite = 1; //boolean true
 
     weapon_init(&player->weapon);
-    weapon_controller_init(&player->weapon_controller, engine, level, &player->input_map, 0);
+    weapon_controller_init(&player->weapon_controller, engine, level, &player->input_map, projectile_controller, 0);
     player->weapon_controller.aim = &player->aim;
 }
 
@@ -89,6 +89,9 @@ static void player_next_weapon_func(Weapon* current_weapon, WeaponControllerStat
 
         case WEAPON_TYPE_UZI:
             player_set_weapon(player, WEAPON_TYPE_UZI);
+            break;
+        
+        default:
             break;
     }
 

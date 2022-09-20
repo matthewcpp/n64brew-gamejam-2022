@@ -10,9 +10,10 @@
 
 static void weapon_controller_fire(WeaponController* controller);
 
-void weapon_controller_init(WeaponController* controller, fw64Engine* engine, fw64Level* level, InputMapping* input_map, int controller_index) {
+void weapon_controller_init(WeaponController* controller, fw64Engine* engine, fw64Level* level, InputMapping* input_map, ProjectileController* projectile_controller, int controller_index) {
     controller->engine = engine;
     controller->level = level;
+    controller->projectile_controller = projectile_controller;
     controller->controller_index = controller_index;
     controller->input_map = input_map;
     controller->weapon = NULL;
@@ -208,37 +209,11 @@ static void weapon_controller_fire(WeaponController* controller) {
     controller->casing_transform.position = controller->weapon->ejection_port_pos;
     fw64_transform_update_matrix(&controller->casing_transform);
 
+    projectile_controller_fire_ray(controller->projectile_controller, controller->aim->position, &controller->aim->direction, controller->weapon->type);
+
     controller->muzzle_flash_time_remaining = WEAPON_CONTROLLER_MUZZLE_FLASH_TIME;
     weapon_controller_update_muzzle_flash(controller);
     controller->recoil_state = WEAPON_RECOIL_RECOILING;
-
-    // temp implementation for now need to raycast etc
-    uint32_t dynamic_node_count = fw64_level_get_dynamic_node_count(controller->level);
-    float closest_dist = FLT_MAX;
-    Zombie* closest_nerd = NULL;
-    for (uint32_t i = 0; i < dynamic_node_count; i++) {
-        fw64Node* dynamic_node = fw64_level_get_dynamic_node(controller->level, i);
-
-        if (dynamic_node->layer_mask & ZOMBIE_LAYER) {
-            Zombie* zombie = (Zombie*)dynamic_node->data;
-            if (zombie->health > 0 && zombie->state != ZOMBIE_FLYING_BACK) {
-                Vec3 out_hitpoint;
-                float out_distance;
-                int bounding_hit = fw64_collision_test_ray_box( controller->aim->position,
-                                                                &controller->aim->direction,
-                                                                &zombie->node.collider->bounding,
-                                                                &out_hitpoint,
-                                                                &out_distance);
-                if(bounding_hit && (out_distance < closest_dist)) {                    
-                    closest_dist = out_distance;
-                    closest_nerd = zombie;
-                } 
-            }          
-        }
-    }
-    if(closest_nerd != NULL) {
-        zombie_hit(closest_nerd, controller->weapon->type);
-    }
 }
 
 static int weapon_controller_start_transition(WeaponController* controller, WeaponControllerState target_state, WeaponTransitionFunc callback, void* arg) {

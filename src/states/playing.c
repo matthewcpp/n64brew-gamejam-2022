@@ -20,7 +20,8 @@ void game_state_playing_init(Playing* state, fw64Engine* engine, GameData* game_
             break;
 
         case LEVEL_NONE:
-            game_data->transition_to_level = GAME_STATE_LEVEL_SELECT;
+        case LEVEL_COUNT:
+            game_data->transition_to_state = GAME_STATE_LEVEL_SELECT;
             break;
     }
 }
@@ -36,6 +37,7 @@ void game_state_playing_uninit(Playing* state) {
             break;
 
         case LEVEL_NONE:
+        case LEVEL_COUNT:
             break;
     }
 }
