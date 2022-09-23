@@ -65,7 +65,7 @@
             "size": 12,
             "name": "level_select",
             "imageFormat": "rgba32",
-            "sourceString": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz 0123456789:_-+=*()[],.?!<>\'\""
+            "sourceString": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz 0123456789:_-+=*()[],.?!<>'\""
         }
     ],
     "layers": {
