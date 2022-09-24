@@ -19,7 +19,6 @@ typedef struct {
     Ray aim;    
     fw64Engine* engine;
     fw64Allocator* allocator;
-    fw64Allocator* weapon_allocator; 
     fw64Level* level;
     fw64Node* node;
 } Player;

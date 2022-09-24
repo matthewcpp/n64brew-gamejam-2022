@@ -67,34 +67,6 @@ void player_aim_update(Player* player) {
     quat_transform_vec3(&player->aim.direction, &q, &forward);
 }
 
-static void player_next_weapon_func(Weapon* current_weapon, WeaponControllerState complete_state, void* arg) {
-    Player* player = (Player*)arg;
-
-    WeaponType next_weapon_type = player->weapon_controller.weapon.type + 1;
-    if (next_weapon_type == WEAPON_COUNT)
-        next_weapon_type = WEAPON_TYPE_AR15;
-
-    switch (next_weapon_type)
-    {
-        case WEAPON_TYPE_AR15:
-            player_set_weapon(player, WEAPON_TYPE_AR15);
-            break;
-    
-        case WEAPON_TYPE_SHOTGUN:
-            player_set_weapon(player, WEAPON_TYPE_SHOTGUN);
-            break;
-
-        case WEAPON_TYPE_UZI:
-            player_set_weapon(player, WEAPON_TYPE_UZI);
-            break;
-        
-        default:
-            break;
-    }
-
-    weapon_controller_raise_weapon(&player->weapon_controller, NULL, NULL);
-}
-
 void player_update(Player* player) {
     movement_controller_update(&player->movement, player->engine->time->time_delta);
     player_aim_update(player); // should be updated after fps camera
@@ -103,7 +75,7 @@ void player_update(Player* player) {
     vec3_copy(&player->node->transform.position, &player->movement.camera.transform.position);
     fw64_node_update(player->node); // todo manual update xform / collider
     if(mapped_input_controller_read(&player->input_map, 0, INPUT_MAP_WEAPON_SWAP, NULL)) {
-        weapon_controller_lower_weapon(&player->weapon_controller, player_next_weapon_func, player);
+        weapon_controller_switch_to_next_weapon(&player->weapon_controller);
     }
 }
 
@@ -115,12 +87,12 @@ void player_draw(Player* player) {
 void player_draw_weapon(Player* player) {
     fw64Renderer* renderer = player->engine->renderer;
 
-    if (player->weapon.type == WEAPON_TYPE_NONE)
+    if (player->weapon_controller.weapon.type == WEAPON_TYPE_NONE)
         return;
     
     fw64_renderer_set_camera(renderer, &player->weapon_controller.weapon_camera);
     fw64_renderer_util_clear_viewport(renderer, &player->weapon_controller.weapon_camera, FW64_RENDERER_FLAG_CLEAR_DEPTH);
-    weapon_controller_draw(&player->wepon_controller);
+    weapon_controller_draw(&player->weapon_controller);
 }
 
 void player_set_weapon(Player* player, WeaponType weapon_type) {

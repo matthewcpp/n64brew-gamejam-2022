@@ -36,19 +36,19 @@ void weapon_controller_init(WeaponController* controller, fw64Engine* engine, Pr
     fw64_transform_init(&controller->muzzle_flash_transform);
 
     for (int i = 0; i < WEAPON_COUNT; i++) {
-        controller->weapon_ammo[i] = 0;
+        controller->weapon_ammo[i] = 20;
     }
 
     weapon_init(&controller->weapon);
 }
 
 void weapon_controller_uninit(WeaponController* controller) {
-    weapon_uninit(&controller->weapon, player->engine->assets, player->weapon_allocator);
+    weapon_uninit(&controller->weapon, controller->engine->assets, controller->weapon_allocator);
 }
 
 /** shell casing ejection is modeled via a simple quadratic equation*/
 static void weapon_controller_update_casing(WeaponController* controller) {
-    float fly_time = controller->weapon->fire_rate - controller->time_to_next_fire;
+    float fly_time = controller->weapon.fire_rate - controller->time_to_next_fire;
 
     float x = fly_time;
     float y = (-((0.5f * x - 1.5f) * (0.5f * x - 1.5f)) + 2.0f) * 0.5f;
@@ -56,7 +56,7 @@ static void weapon_controller_update_casing(WeaponController* controller) {
     float x_scale = 16.0f;
     float y_scale = 8.5f;
 
-    controller->casing_transform.position = controller->weapon->ejection_port_pos;
+    controller->casing_transform.position = controller->weapon.ejection_port_pos;
     controller->casing_transform.position.x += x * x_scale;
     controller->casing_transform.position.x += y * y_scale;
 
@@ -187,18 +187,18 @@ void weapon_controller_draw(WeaponController* controller) {
     fw64Renderer* renderer = controller->engine->renderer;
     Weapon* weapon = &controller->weapon;
 
-    fw64_renderer_draw_static_mesh(renderer, &controller.weapon_transform, weapon->mesh);
+    fw64_renderer_draw_static_mesh(renderer, &controller->weapon_transform, weapon->mesh);
     
-    if (player->weapon_controller.muzzle_flash_time_remaining > 0.0f) {
+    if (controller->muzzle_flash_time_remaining > 0.0f) {
         fw64_renderer_draw_static_mesh(renderer, &controller->muzzle_flash_transform, weapon->muzzle_flash);
     }
 
-    if (player->weapon_controller.time_to_next_fire > 0.0f && weapon->casing) {
-        fw64_renderer_draw_static_mesh(renderer, &player->weapon_controller.casing_transform, player->weapon.casing);
+    if (controller->time_to_next_fire > 0.0f && weapon->casing) {
+        fw64_renderer_draw_static_mesh(renderer, &controller->casing_transform, controller->weapon.casing);
     }
 }
 
-void weapon_controller_set_weapon(WeaponController* controller, WeaponType weaponType) {
+void weapon_controller_set_weapon(WeaponController* controller, WeaponType weapon_type) {
     Weapon* weapon = &controller->weapon;
     switch(weapon_type) {
         case WEAPON_TYPE_AR15:
@@ -246,16 +246,16 @@ void weapon_controller_set_weapon(WeaponController* controller, WeaponType weapo
 }
 
 static void weapon_controller_fire(WeaponController* controller) {
-    fw64_audio_play_sound(controller->engine->audio, controller->weapon->gunshot_sound);
-    controller->time_to_next_fire = controller->weapon->fire_rate;
+    fw64_audio_play_sound(controller->engine->audio, controller->weapon.gunshot_sound);
+    controller->time_to_next_fire = controller->weapon.fire_rate;
 
-    controller->casing_transform.position = controller->weapon->ejection_port_pos;
+    controller->casing_transform.position = controller->weapon.ejection_port_pos;
     fw64_transform_update_matrix(&controller->casing_transform);
 
-    if(controller->weapon->type == WEAPON_TYPE_SHOTGUN)
-        projectile_controller_fire_arc(controller->projectile_controller, controller->aim->position, &controller->aim->direction, 30.0f, 20.0f, controller->weapon->type);
+    if(controller->weapon.type == WEAPON_TYPE_SHOTGUN)
+        projectile_controller_fire_arc(controller->projectile_controller, controller->aim->position, &controller->aim->direction, 30.0f, 20.0f, controller->weapon.type);
     else
-        projectile_controller_fire_ray(controller->projectile_controller, controller->aim->position, &controller->aim->direction, controller->weapon->type);
+        projectile_controller_fire_ray(controller->projectile_controller, controller->aim->position, &controller->aim->direction, controller->weapon.type);
 
     controller->muzzle_flash_time_remaining = WEAPON_CONTROLLER_MUZZLE_FLASH_TIME;
     weapon_controller_update_muzzle_flash(controller);
@@ -281,4 +281,34 @@ int weapon_controller_raise_weapon(WeaponController* controller, WeaponTransitio
 
 int weapon_controller_lower_weapon(WeaponController* controller, WeaponTransitionFunc callback, void* arg) {
     return weapon_controller_start_transition(controller,  WEAPON_CONTROLLER_LOWERING, callback, arg);
+}
+
+static WeaponType get_next_weapon_with_ammo(WeaponController* controller) {
+    WeaponType current_weapon_type = controller->weapon.type;
+    WeaponType next_weapon_type = current_weapon_type + 1;
+
+    while (next_weapon_type != current_weapon_type) {
+        if (next_weapon_type == WEAPON_COUNT)
+            next_weapon_type = WEAPON_TYPE_NONE;
+
+        if (controller->weapon_ammo[next_weapon_type] > 0) {
+            return next_weapon_type;
+        }
+    }
+
+    return WEAPON_TYPE_NONE;
+}
+
+static void next_weapon_func(Weapon* current_weapon, WeaponControllerState complete_state, void* arg) {
+    WeaponController* controller = (WeaponController*)arg;
+    WeaponType next_weapon = get_next_weapon_with_ammo(controller);
+    weapon_controller_set_weapon(controller, next_weapon);
+    weapon_controller_raise_weapon(controller, NULL, NULL);
+}
+
+void weapon_controller_switch_to_next_weapon(WeaponController* controller) {
+    if (controller->state != WEAPON_CONTROLLER_HOLDING)
+        return;
+
+    weapon_controller_lower_weapon(controller, next_weapon_func, controller);
 }

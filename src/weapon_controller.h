@@ -55,6 +55,7 @@ void weapon_controller_init(WeaponController* controller, fw64Engine* engine, Pr
 void weapon_controller_uninit(WeaponController* controller);
 void weapon_controller_update(WeaponController* controller);
 void weapon_controller_draw(WeaponController* controller);
-void weapon_controller_set_weapon(WeaponController* controller, WeaponType weaponType);
+void weapon_controller_set_weapon(WeaponController* controller, WeaponType weapon_type);
 int weapon_controller_raise_weapon(WeaponController* controller, WeaponTransitionFunc callback , void* arg);
 int weapon_controller_lower_weapon(WeaponController* controller, WeaponTransitionFunc callback, void* arg);
+void weapon_controller_switch_to_next_weapon(WeaponController* controller);
