@@ -69,6 +69,12 @@
             "name": "level_select",
             "imageFormat": "rgba32",
             "sourceString": "abcdefghijklmnopqrstuvwxyz 0123456789_-.>"
+        },
+        {
+            "src": "Consolas.ttf",
+            "size": 12,
+            "name": "weapon_display",
+            "sourceString": "0123456789/ "
         }
     ],
     "layers": {

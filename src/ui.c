@@ -1,12 +1,19 @@
 #include "ui.h"
 
-void ui_init(UI* ui, fw64Engine* engine, Player* player) {
+#include "assets/assets.h"
+
+#include <stdio.h>
+
+void ui_init(UI* ui, fw64Engine* engine, fw64Allocator* allocator, Player* player) {
     ui->engine = engine;
+    ui->allocator = allocator;
     ui->player = player;
+
+    ui->ammo_font = fw64_font_load(ui->engine->assets, FW64_ASSET_font_weapon_display, ui->allocator);
 }
 
 void ui_uninit(UI* ui) {
-    
+    fw64_font_delete(ui->engine->assets, ui->ammo_font, ui->allocator);
 }
 
 static void ui_draw_player_weapon_crosshair(UI* ui) {
@@ -22,6 +29,11 @@ static void ui_draw_player_weapon_crosshair(UI* ui) {
 }
 
 void ui_draw(UI* ui) {
-    if (ui->player->weapon_controller.weapon.type != WEAPON_TYPE_NONE)
+    if (ui->player->weapon_controller.weapon.type != WEAPON_TYPE_NONE) {
         ui_draw_player_weapon_crosshair(ui);
+
+        char ammo_text[16];
+        sprintf(ammo_text, "%d / %d", 0,0);
+    }
+
 }

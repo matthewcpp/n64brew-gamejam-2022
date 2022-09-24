@@ -25,7 +25,7 @@ void hill_level_init(HillLevel* hill_level, fw64Engine* engine) {
     zombie_spawner_init(&hill_level->zombie_spawner[0], engine, &hill_level->level, FW64_scene_church_hill_node_Zombie_Spawn_1, &hill_level->player.movement.camera.transform, hill_level->allocator);
     zombie_spawner_init(&hill_level->zombie_spawner[1], engine, &hill_level->level, FW64_scene_church_hill_node_Zombie_Spawn_2, &hill_level->player.movement.camera.transform, hill_level->allocator);
     
-    ui_init(&hill_level->ui, engine, &hill_level->player);
+    ui_init(&hill_level->ui, engine, hill_level->allocator, &hill_level->player);
 
     hill_level->sound = fw64_sound_bank_load(engine->assets, FW64_ASSET_soundbank_sounds, hill_level->allocator);
     fw64_audio_set_sound_bank(engine->audio, hill_level->sound);

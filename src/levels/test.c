@@ -24,7 +24,7 @@ void test_level_init(TestLevel* level, fw64Engine* engine) {
 
     zombie_spawner_init(&level->zombie_spawner, engine, &level->level, FW64_scene_spooky_level_node_Zombie_Spawn, &level->player.movement.camera.transform, level->allocator);
 
-    ui_init(&level->ui, engine, &level->player);
+    ui_init(&level->ui, engine, level->allocator, &level->player);
 
     fw64Renderer* renderer = level->engine->renderer;
     fw64_renderer_set_clear_color(renderer, 20, 4, 40);
