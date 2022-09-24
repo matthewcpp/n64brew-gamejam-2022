@@ -107,7 +107,7 @@ void weapon_init_uzi(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* a
     vec3_set_all(&weapon->default_scale, 0.01f);
     quat_ident(&weapon->default_rotation);
 
-    vec3_set(&weapon->ejection_port_pos, 2.039, -1.983, -5.241f);
+    vec3_set(&weapon->ejection_port_pos, 2.6f, -1.983f, -5.241f);
 
     vec3_set(&weapon->recoil_pos, 1.966, -2.44f, -4.545);
     quat_ident(&weapon->recoil_rotation);

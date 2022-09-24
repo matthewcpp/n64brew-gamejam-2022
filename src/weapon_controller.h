@@ -3,7 +3,7 @@
 #include "framework64/engine.h"
 
 #include "weapon.h"
-#include "level.h"
+#include "framework64/level.h"
 #include "ray.h"
 #include "mapped_input.h"
 #include "projectile_controller.h"

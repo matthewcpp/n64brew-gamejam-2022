@@ -1,7 +1,7 @@
 #pragma once
 
 /** \file behaviors.h */
-#include "level.h"
+#include "framework64/level.h"
 #include "framework64/vec3.h"
 #include "framework64/collider.h"
 

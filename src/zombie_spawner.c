@@ -13,7 +13,7 @@ void zombie_spawner_init(ZombieSpawner* spawner, fw64Engine* engine, fw64Level* 
     spawner->level = level;
     spawner->target = target;
     spawner->allocator = allocator;
-    spawner->spawner_node = fw64_scene_get_node(level->scene, position_node);
+    spawner->spawner_node = fw64_scene_get_node(fw64_level_get_chunk_by_index(level, 0), position_node);
 
     spawner->active_zombies = 0;
     spawner->zombie_slot_active = 0;

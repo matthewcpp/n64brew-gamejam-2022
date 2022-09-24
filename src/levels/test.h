@@ -9,7 +9,7 @@
 #include "zombie_spawner.h"
 #include "projectile_controller.h"
 
-#include "level.h"
+#include "framework64/level.h"
 
 typedef struct {
     fw64Engine* engine;
