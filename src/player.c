@@ -13,7 +13,6 @@ void player_init(Player* player, fw64Engine* engine, fw64Level* level, Projectil
     player->engine = engine;
     player->level = level;
     player->allocator = allocator;
-    player->weapon_allocator = allocator; // todo need to figure this out
 
     setup_player_node(player);
     mapped_input_init(&player->input_map, engine->input);
@@ -32,15 +31,13 @@ void player_init(Player* player, fw64Engine* engine, fw64Level* level, Projectil
     player->aim.direction.y = player->movement.rotation.y;
     player->aim.infinite = 1; //boolean true
 
-    weapon_init(&player->weapon);
-    weapon_controller_init(&player->weapon_controller, engine, level, &player->input_map, projectile_controller, 0);
+    // todo: investigate weapon allocator usage
+    weapon_controller_init(&player->weapon_controller, engine, projectile_controller, allocator, &player->input_map, 0);
     player->weapon_controller.aim = &player->aim;
 }
 
 void player_uninit(Player* player) {
     fw64Allocator* allocator = player->allocator;
-
-    weapon_uninit(&player->weapon, player->engine->assets, player->weapon_allocator);
 
     allocator->free(allocator, player->node->collider);
     allocator->free(allocator, player->node);
@@ -73,7 +70,7 @@ void player_aim_update(Player* player) {
 static void player_next_weapon_func(Weapon* current_weapon, WeaponControllerState complete_state, void* arg) {
     Player* player = (Player*)arg;
 
-    WeaponType next_weapon_type = player->weapon.type + 1;
+    WeaponType next_weapon_type = player->weapon_controller.weapon.type + 1;
     if (next_weapon_type == WEAPON_COUNT)
         next_weapon_type = WEAPON_TYPE_AR15;
 
@@ -123,37 +120,11 @@ void player_draw_weapon(Player* player) {
     
     fw64_renderer_set_camera(renderer, &player->weapon_controller.weapon_camera);
     fw64_renderer_util_clear_viewport(renderer, &player->weapon_controller.weapon_camera, FW64_RENDERER_FLAG_CLEAR_DEPTH);
-    fw64_renderer_draw_static_mesh(renderer, &player->weapon_controller.weapon_transform, player->weapon.mesh);
-    
-    if (player->weapon_controller.muzzle_flash_time_remaining > 0.0f) {
-        fw64_renderer_draw_static_mesh(renderer, &player->weapon_controller.muzzle_flash_transform, player->weapon.muzzle_flash);
-    }
-
-    if (player->weapon_controller.time_to_next_fire > 0.0f && player->weapon.casing) {
-        fw64_renderer_draw_static_mesh(renderer, &player->weapon_controller.casing_transform, player->weapon.casing);
-    }
+    weapon_controller_draw(&player->wepon_controller);
 }
 
 void player_set_weapon(Player* player, WeaponType weapon_type) {
-    switch(weapon_type) {
-        case WEAPON_TYPE_AR15:
-            weapon_init_ar15(&player->weapon, player->engine->assets, player->weapon_allocator);
-        break;
-
-        case WEAPON_TYPE_SHOTGUN:
-            weapon_init_shotgun(&player->weapon, player->engine->assets, player->weapon_allocator);
-        break;
-
-        case WEAPON_TYPE_UZI:
-            weapon_init_uzi(&player->weapon, player->engine->assets, player->weapon_allocator);
-        break;
-
-        case WEAPON_TYPE_NONE:
-        case WEAPON_COUNT:
-            break;
-    }
-
-    weapon_controller_set_weapon(&player->weapon_controller, &player->weapon);
+    weapon_controller_set_weapon(&player->weapon_controller, weapon_type);
 }
 
 void player_set_position(Player* player, Vec3* position) {

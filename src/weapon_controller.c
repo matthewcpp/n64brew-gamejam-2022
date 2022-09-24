@@ -10,13 +10,12 @@
 
 static void weapon_controller_fire(WeaponController* controller);
 
-void weapon_controller_init(WeaponController* controller, fw64Engine* engine, fw64Level* level, InputMapping* input_map, ProjectileController* projectile_controller, int controller_index) {
+void weapon_controller_init(WeaponController* controller, fw64Engine* engine, ProjectileController* projectile_controller, fw64Allocator* weapon_allocator, InputMapping* input_map, int controller_index) {
     controller->engine = engine;
-    controller->level = level;
     controller->projectile_controller = projectile_controller;
+    controller->weapon_allocator = weapon_allocator;
     controller->controller_index = controller_index;
     controller->input_map = input_map;
-    controller->weapon = NULL;
     controller->state = WEAPON_CONTROLLER_HOLDING;
     controller->transition_time = 0.0f;
     controller->muzzle_flash_time_remaining = 0.0f;
@@ -35,6 +34,16 @@ void weapon_controller_init(WeaponController* controller, fw64Engine* engine, fw
     fw64_transform_init(&controller->weapon_transform);
     fw64_transform_init(&controller->casing_transform);
     fw64_transform_init(&controller->muzzle_flash_transform);
+
+    for (int i = 0; i < WEAPON_COUNT; i++) {
+        controller->weapon_ammo[i] = 0;
+    }
+
+    weapon_init(&controller->weapon);
+}
+
+void weapon_controller_uninit(WeaponController* controller) {
+    weapon_uninit(&controller->weapon, player->engine->assets, player->weapon_allocator);
 }
 
 /** shell casing ejection is modeled via a simple quadratic equation*/
@@ -67,7 +76,7 @@ static void weapon_controller_update_muzzle_flash(WeaponController* controller) 
 }
 
 static void weapon_controller_update_recoil(WeaponController* controller) {
-    Weapon* weapon = controller->weapon;
+    Weapon* weapon = &controller->weapon;
 
     if (controller->recoil_state == WEAPON_RECOIL_INACTIVE)
         return;
@@ -102,7 +111,7 @@ static void weapon_controller_update_recoil(WeaponController* controller) {
 }
 
 static void weapon_controller_update_holding(WeaponController* controller) {
-    if (controller->weapon == NULL)
+    if (controller->weapon.type == WEAPON_TYPE_NONE)
         return;
 
     weapon_controller_update_recoil(controller);
@@ -120,7 +129,7 @@ static void weapon_controller_update_holding(WeaponController* controller) {
 
 static void weapon_controller_transition_complete(WeaponController* controller) {
         if (controller->transition_callback)
-            controller->transition_callback(controller->weapon, controller->state, controller->transition_arg);
+            controller->transition_callback(&controller->weapon, controller->state, controller->transition_arg);
 }
 
 static void weapon_controller_update_transition(WeaponController* controller, Vec3* start, Vec3* end) {
@@ -138,7 +147,7 @@ static void weapon_controller_update_transition(WeaponController* controller, Ve
 }
 
 static void weapon_controller_update_raising(WeaponController* controller) {
-    weapon_controller_update_transition(controller, &controller->weapon->lowered_position, &controller->weapon->default_position);
+    weapon_controller_update_transition(controller, &controller->weapon.lowered_position, &controller->weapon.default_position);
 
     if (controller->transition_time >= WEAPON_CONTROLLER_TRANSITION_SPEED) {
         weapon_controller_transition_complete(controller);
@@ -147,7 +156,7 @@ static void weapon_controller_update_raising(WeaponController* controller) {
 }
 
 static void weapon_controller_update_lowering(WeaponController* controller) {
-    weapon_controller_update_transition(controller, &controller->weapon->default_position, &controller->weapon->lowered_position);
+    weapon_controller_update_transition(controller, &controller->weapon.default_position, &controller->weapon.lowered_position);
 
     if (controller->transition_time >= WEAPON_CONTROLLER_TRANSITION_SPEED) {
         controller->state = WEAPON_CONTROLLER_LOWERED;
@@ -174,8 +183,42 @@ void weapon_controller_update(WeaponController* controller) {
     }
 }
 
-void weapon_controller_set_weapon(WeaponController* controller, Weapon* weapon) {
-    controller->weapon = weapon;
+void weapon_controller_draw(WeaponController* controller) {
+    fw64Renderer* renderer = controller->engine->renderer;
+    Weapon* weapon = &controller->weapon;
+
+    fw64_renderer_draw_static_mesh(renderer, &controller.weapon_transform, weapon->mesh);
+    
+    if (player->weapon_controller.muzzle_flash_time_remaining > 0.0f) {
+        fw64_renderer_draw_static_mesh(renderer, &controller->muzzle_flash_transform, weapon->muzzle_flash);
+    }
+
+    if (player->weapon_controller.time_to_next_fire > 0.0f && weapon->casing) {
+        fw64_renderer_draw_static_mesh(renderer, &player->weapon_controller.casing_transform, player->weapon.casing);
+    }
+}
+
+void weapon_controller_set_weapon(WeaponController* controller, WeaponType weaponType) {
+    Weapon* weapon = &controller->weapon;
+    switch(weapon_type) {
+        case WEAPON_TYPE_AR15:
+            weapon_init_ar15(weapon, controller->engine->assets, controller->weapon_allocator);
+        break;
+
+        case WEAPON_TYPE_SHOTGUN:
+            weapon_init_shotgun(weapon, controller->engine->assets, controller->weapon_allocator);
+        break;
+
+        case WEAPON_TYPE_UZI:
+            weapon_init_uzi(weapon, controller->engine->assets, controller->weapon_allocator);
+        break;
+
+        case WEAPON_TYPE_NONE:
+        case WEAPON_COUNT:
+            weapon_init_none(weapon, controller->engine->assets, controller->weapon_allocator);
+            break;
+    }
+
     controller->time_to_next_fire = 0.0f; // i think this is OK?
 
     // TODO: does this need to be investigated more?

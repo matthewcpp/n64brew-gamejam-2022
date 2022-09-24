@@ -26,6 +26,11 @@ void weapon_uninit(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* all
     weapon_reomve_existing(weapon, assets, allocator);
 }
 
+void weapon_init_none(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator) {
+    weapon_reomve_existing(weapon, assets, allocator);
+    memset(weapon, 0, sizeof(Weapon));
+}
+
 /** TODO: this should probably be controlled in export? */
 static void clamp_textures(fw64Mesh* mesh) {
     int primitive_count = fw64_mesh_get_primitive_count(mesh);
@@ -59,6 +64,9 @@ void weapon_init_ar15(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* 
     quat_ident(&weapon->recoil_rotation);
     weapon->recoil_time = 0.10f;
 
+    weapon->mag_size = 30;
+    weapon->max_ammo_capacity = 180;
+
     clamp_textures(weapon->muzzle_flash);
 }
 
@@ -84,6 +92,9 @@ void weapon_init_shotgun(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocato
     vec3_set(&weapon->recoil_pos, 3.49f, -4.8f, -5.0f);
     quat_from_euler(&weapon->recoil_rotation, 2.5f, 0.0f, 5.0f);
     weapon->recoil_time = 0.25f;
+
+    weapon->mag_size = 8;
+    weapon->max_ammo_capacity = 40;
 
     clamp_textures(weapon->muzzle_flash);
 }
@@ -112,6 +123,9 @@ void weapon_init_uzi(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* a
     vec3_set(&weapon->recoil_pos, 1.966, -2.44f, -4.545);
     quat_ident(&weapon->recoil_rotation);
     weapon->recoil_time = 0.12f;
+
+    weapon->mag_size = 32;
+    weapon->max_ammo_capacity = 320;
 
     clamp_textures(weapon->muzzle_flash);
 }

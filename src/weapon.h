@@ -29,7 +29,8 @@ typedef struct {
     int reload_sound;
     Vec3 casing_pos;
     float fire_rate;
-    int mag_size;
+    uint32_t mag_size;
+    uint32_t max_ammo_capacity;
     Quat recoil_rotation;
     Vec3 recoil_pos;
     float recoil_time;
@@ -40,6 +41,7 @@ typedef struct {
  * This should be called before any of the other weapon_init_xxx functions!
 */
 void weapon_init(Weapon* weapon);
+void weapon_init_none(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator);
 void weapon_uninit(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator);
 void weapon_init_ar15(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator);
 void weapon_init_shotgun(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator);

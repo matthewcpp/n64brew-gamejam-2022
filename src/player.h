@@ -15,7 +15,6 @@
 typedef struct {
     MovementController movement;
     InputMapping input_map;
-    Weapon weapon;
     WeaponController weapon_controller;
     Ray aim;    
     fw64Engine* engine;

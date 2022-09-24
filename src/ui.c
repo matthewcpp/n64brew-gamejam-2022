@@ -11,7 +11,7 @@ void ui_uninit(UI* ui) {
 
 static void ui_draw_player_weapon_crosshair(UI* ui) {
     fw64Renderer* renderer = ui->engine->renderer;
-    fw64Texture* crosshair = ui->player->weapon.crosshair;
+    fw64Texture* crosshair = ui->player->weapon_controller.weapon.crosshair;
 
     IVec2 screen_size, crosshair_pos;
     fw64_renderer_get_screen_size(renderer, &screen_size);
@@ -22,6 +22,6 @@ static void ui_draw_player_weapon_crosshair(UI* ui) {
 }
 
 void ui_draw(UI* ui) {
-    if (ui->player->weapon.type != WEAPON_TYPE_NONE)
+    if (ui->player->weapon_controller.weapon.type != WEAPON_TYPE_NONE)
         ui_draw_player_weapon_crosshair(ui);
 }
