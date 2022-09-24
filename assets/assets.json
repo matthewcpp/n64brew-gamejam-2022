@@ -45,6 +45,9 @@
         },
         {
             "src": "hill_level/hill_level.gltf"
+        },
+        {
+            "src": "tiles_test/tiles_test.gltf"
         }
     ],
     "musicBanks": [

@@ -7,10 +7,12 @@
 #include "levels/levels.h"
 #include "levels/test.h"
 #include "levels/church_hill.h"
+#include "levels/tiles_test.h"
 
 typedef union {
     TestLevel test_level;
     HillLevel church_hill;
+    TilesTestLevel tiles_test;
 } Levels;
 
 typedef struct {

@@ -5,17 +5,16 @@
 #include "assets/sound_bank_sounds.h"
 
 static void setup_sound_trigger(HillLevel* hill_level, fw64Scene* scene, int trigger_box_index, int node_index);
-
+static fw64Scene* setup_level(HillLevel* hill_level);
 void hill_level_init(HillLevel* hill_level, fw64Engine* engine) {
     hill_level->engine = engine;
 
     hill_level->allocator = fw64_default_allocator();
 
     fw64_renderer_set_clear_color(engine->renderer, 20, 4, 40);
+    fw64Scene* scene = setup_level(hill_level);
 
-    fw64_level_init(&hill_level->level, engine);
     projectile_controller_init(&hill_level->projectile_controller, &hill_level->level);
-    fw64Scene* scene = fw64_level_load_chunk(&hill_level->level, engine->assets, FW64_ASSET_scene_church_hill, hill_level->allocator);
     player_init(&hill_level->player, engine, &hill_level->level, &hill_level->projectile_controller, hill_level->allocator);
     fw64_level_add_dyanmic_node(&hill_level->level, hill_level->player.node);
 
@@ -35,12 +34,22 @@ void hill_level_init(HillLevel* hill_level, fw64Engine* engine) {
     setup_sound_trigger(hill_level, scene, HILL_LEVEL_TRIGGER_HOWL, FW64_scene_church_hill_node_HowlTrigger);
 }
 
+fw64Scene* setup_level(HillLevel* hill_level) {
+    fw64_level_init(&hill_level->level, hill_level->engine);
+    fw64LevelChunkInfo info;
+    fw64_level_chunk_info_init(&info);
+    info.scene_id = FW64_ASSET_scene_church_hill;
+    info.allocator = hill_level->allocator;
+    uint32_t chunk_handle = fw64_level_load_chunk(&hill_level->level, &info);
+    return fw64_level_get_chunk_by_handle(&hill_level->level, chunk_handle);
+}
+
 void hill_level_uninit(HillLevel* hill_level) {
     player_uninit(&hill_level->player);
     zombie_spawner_uninit(&hill_level->zombie_spawner[0]);
     zombie_spawner_uninit(&hill_level->zombie_spawner[1]);
     ui_uninit(&hill_level->ui);
-    fw64_level_delete(&hill_level->level);
+    fw64_level_uninit(&hill_level->level);
     fw64_sound_bank_delete(hill_level->engine->assets, hill_level->sound, hill_level->allocator);
 }
 
