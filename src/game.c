@@ -1,9 +1,12 @@
 #include "game.h"
-#include "game.h"
+#include "debug.h"
 
 static void game_transition_state(Game* game);
 
 void game_init(Game* game, fw64Engine* engine) {
+
+    INIT_LOG(); // needed for N64. sets up logging thread.
+
     game->engine = engine;
     game_data_init(&game->game_data);
 
@@ -19,6 +22,9 @@ void game_init(Game* game, fw64Engine* engine) {
 }
 
 void game_update(Game* game) {
+    
+    UPDATE_LOG(); // not required, but suggested. fetches any usb data on N64.
+
     if (game->game_data.transition_to_state) {
         game_transition_state(game);
     }
