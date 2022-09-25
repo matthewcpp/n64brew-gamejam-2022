@@ -8,6 +8,7 @@
 #include "ui.h"
 #include "zombie_spawner.h"
 #include "projectile_controller.h"
+#include "weapon_pickup.h"
 
 #include "framework64/level.h"
 
@@ -17,6 +18,7 @@ typedef struct {
     ProjectileController projectile_controller;
     UI ui;
     ZombieSpawner zombie_spawner;
+    WeaponPickups weapon_pickups;
     fw64Level level;
     fw64MusicBank* music;
     fw64SoundBank* sound;

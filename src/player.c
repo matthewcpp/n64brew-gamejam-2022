@@ -87,7 +87,7 @@ void player_draw(Player* player) {
 void player_draw_weapon(Player* player) {
     fw64Renderer* renderer = player->engine->renderer;
 
-    if (player->weapon_controller.weapon.type == WEAPON_TYPE_NONE)
+    if (player->weapon_controller.weapon.info->type == WEAPON_TYPE_NONE)
         return;
     
     fw64_renderer_set_camera(renderer, &player->weapon_controller.weapon_camera);
@@ -105,4 +105,22 @@ void player_set_position(Player* player, Vec3* position) {
 
     fw64_camera_update_view_matrix(&player->movement.camera);
     fw64_node_update(player->node);
+}
+
+int player_pickup_ammo(Player* player, WeaponType weapon_type, uint32_t amount) {
+    WeaponInfo* weapon_info = weapon_get_info(weapon_type);
+    WeaponAmmo* weapon_ammo = &player->weapon_controller.weapon_ammo[weapon_type];
+
+    uint32_t available_count = weapon_info->max_additional_rounds - weapon_ammo->additional_rounds_count;
+    if (available_count == 0)
+        return 0;
+
+    if (amount > available_count)
+        amount = available_count;
+
+    weapon_ammo->additional_rounds_count += amount;
+    
+    fw64_audio_play_sound(player->engine->audio, weapon_info->reload_sound);
+
+    return 1;
 }

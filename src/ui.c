@@ -37,7 +37,7 @@ static void ui_draw_player_ammo_status(UI* ui) {
 }
 
 void ui_draw(UI* ui) {
-    if (ui->player->weapon_controller.weapon.type != WEAPON_TYPE_NONE) {
+    if (ui->player->weapon_controller.weapon.info->type != WEAPON_TYPE_NONE) {
         ui_draw_player_weapon_crosshair(ui);
         ui_draw_player_ammo_status(ui);
     }

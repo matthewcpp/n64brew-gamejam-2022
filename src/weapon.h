@@ -16,10 +16,6 @@ typedef enum {
 
 typedef struct {
     WeaponType type;
-    fw64Mesh* mesh;
-    fw64Mesh* casing;
-    fw64Mesh* muzzle_flash;
-    fw64Texture* crosshair;
     Vec3 default_position;
     Quat default_rotation;
     Vec3 default_scale;
@@ -34,6 +30,14 @@ typedef struct {
     Quat recoil_rotation;
     Vec3 recoil_pos;
     float recoil_time;
+} WeaponInfo;
+
+typedef struct {
+    fw64Mesh* mesh;
+    fw64Mesh* casing;
+    fw64Mesh* muzzle_flash;
+    fw64Texture* crosshair;
+    WeaponInfo* info;
 } Weapon;
 
 /** 
@@ -46,3 +50,6 @@ void weapon_uninit(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* all
 void weapon_init_ar15(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator);
 void weapon_init_shotgun(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator);
 void weapon_init_uzi(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator);
+
+void init_weapon_info();
+WeaponInfo* weapon_get_info(WeaponType weapon_type);

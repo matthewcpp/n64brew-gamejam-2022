@@ -49,7 +49,7 @@ void weapon_controller_uninit(WeaponController* controller) {
 
 /** shell casing ejection is modeled via a simple quadratic equation*/
 static void weapon_controller_update_casing(WeaponController* controller) {
-    float fly_time = controller->weapon.fire_rate - controller->time_to_next_fire;
+    float fly_time = controller->weapon.info->fire_rate - controller->time_to_next_fire;
 
     float x = fly_time;
     float y = (-((0.5f * x - 1.5f) * (0.5f * x - 1.5f)) + 2.0f) * 0.5f;
@@ -57,7 +57,7 @@ static void weapon_controller_update_casing(WeaponController* controller) {
     float x_scale = 16.0f;
     float y_scale = 8.5f;
 
-    controller->casing_transform.position = controller->weapon.ejection_port_pos;
+    controller->casing_transform.position = controller->weapon.info->ejection_port_pos;
     controller->casing_transform.position.x += x * x_scale;
     controller->casing_transform.position.x += y * y_scale;
 
@@ -84,35 +84,35 @@ static void weapon_controller_update_recoil(WeaponController* controller) {
 
     controller->recoil_time += controller->engine->time->time_delta;
 
-    if (controller->recoil_time >= weapon->recoil_time) {
+    if (controller->recoil_time >= weapon->info->recoil_time) {
         if (controller->recoil_state == WEAPON_RECOIL_RECOILING) {
-            controller->recoil_time -= weapon->recoil_time;
+            controller->recoil_time -= weapon->info->recoil_time;
             controller->recoil_state = WEAPON_RECOIL_RECOVERING;
         }
         else { // recoil is finished
             controller->recoil_state = WEAPON_RECOIL_INACTIVE;
             controller->recoil_time = 0.0f;
-            controller->weapon_transform.position = weapon->default_position;
-            controller->weapon_transform.rotation = weapon->default_rotation;
+            controller->weapon_transform.position = weapon->info->default_position;
+            controller->weapon_transform.rotation = weapon->info->default_rotation;
         }
     }
 
-    float smoothed_time = fw64_smoothstep(0.0f, 1.0f, controller->recoil_time / weapon->recoil_time);
+    float smoothed_time = fw64_smoothstep(0.0f, 1.0f, controller->recoil_time / weapon->info->recoil_time);
 
     if (controller->recoil_state == WEAPON_RECOIL_RECOILING) {
-        vec3_lerp(&controller->weapon_transform.position, &weapon->default_position, &weapon->recoil_pos, smoothed_time);
-        quat_slerp(&controller->weapon_transform.rotation, &weapon->default_rotation, &weapon->recoil_rotation, smoothed_time);
+        vec3_lerp(&controller->weapon_transform.position, &weapon->info->default_position, &weapon->info->recoil_pos, smoothed_time);
+        quat_slerp(&controller->weapon_transform.rotation, &weapon->info->default_rotation, &weapon->info->recoil_rotation, smoothed_time);
     }
     else if (controller->recoil_state == WEAPON_RECOIL_RECOVERING) {
-        vec3_lerp(&controller->weapon_transform.position, &weapon->recoil_pos, &weapon->default_position, smoothed_time);
-        quat_slerp(&controller->weapon_transform.rotation, &weapon->recoil_rotation, &weapon->default_rotation, smoothed_time);
+        vec3_lerp(&controller->weapon_transform.position, &weapon->info->recoil_pos, &weapon->info->default_position, smoothed_time);
+        quat_slerp(&controller->weapon_transform.rotation, &weapon->info->recoil_rotation, &weapon->info->default_rotation, smoothed_time);
     }
 
     fw64_transform_update_matrix(&controller->weapon_transform);
 }
 
 static void weapon_controller_update_holding(WeaponController* controller) {
-    if (controller->weapon.type == WEAPON_TYPE_NONE)
+    if (controller->weapon.info->type == WEAPON_TYPE_NONE)
         return;
 
     weapon_controller_update_recoil(controller);
@@ -155,7 +155,7 @@ static void weapon_controller_update_transition(WeaponController* controller, Ve
 }
 
 static void weapon_controller_update_raising(WeaponController* controller) {
-    weapon_controller_update_transition(controller, &controller->weapon.lowered_position, &controller->weapon.default_position);
+    weapon_controller_update_transition(controller, &controller->weapon.info->lowered_position, &controller->weapon.info->default_position);
 
     if (controller->transition_time >= WEAPON_CONTROLLER_TRANSITION_SPEED) {
         weapon_controller_transition_complete(controller);
@@ -164,7 +164,7 @@ static void weapon_controller_update_raising(WeaponController* controller) {
 }
 
 static void weapon_controller_update_lowering(WeaponController* controller) {
-    weapon_controller_update_transition(controller, &controller->weapon.default_position, &controller->weapon.lowered_position);
+    weapon_controller_update_transition(controller, &controller->weapon.info->default_position, &controller->weapon.info->lowered_position);
 
     if (controller->transition_time >= WEAPON_CONTROLLER_TRANSITION_SPEED) {
         controller->state = WEAPON_CONTROLLER_LOWERED;
@@ -231,47 +231,47 @@ void weapon_controller_set_weapon(WeaponController* controller, WeaponType weapo
 
     // TODO: does this need to be investigated more?
     if (controller->state == WEAPON_CONTROLLER_HOLDING) {
-        controller->weapon_transform.position = weapon->default_position;
+        controller->weapon_transform.position = weapon->info->default_position;
     }
     else if (controller->state == WEAPON_CONTROLLER_LOWERED) {
-        controller->weapon_transform.position = weapon->lowered_position;
+        controller->weapon_transform.position = weapon->info->lowered_position;
     }
     
-    controller->weapon_transform.scale = weapon->default_scale;
+    controller->weapon_transform.scale = weapon->info->default_scale;
     fw64_transform_update_matrix(&controller->weapon_transform);
 
     if (weapon->casing) {
-        if (weapon->type == WEAPON_TYPE_AR15) // temp fix
+        if (weapon->info->type == WEAPON_TYPE_AR15) // temp fix
             vec3_set_all(&controller->casing_transform.scale, 0.02f);
         else
-            controller->casing_transform.scale = weapon->default_scale;
+            controller->casing_transform.scale = weapon->info->default_scale;
 
         fw64_transform_update_matrix(&controller->casing_transform);
     }
 
     // note other muzzle flash values will be set during update.
-    controller->muzzle_flash_transform.scale = weapon->default_scale;
+    controller->muzzle_flash_transform.scale = weapon->info->default_scale;
 }
 
 static void weapon_controller_fire(WeaponController* controller) {
     if (!weapon_controller_is_idle(controller))
         return;
 
-    WeaponAmmo* weapon_ammo = &controller->weapon_ammo[controller->weapon.type];
+    WeaponAmmo* weapon_ammo = &controller->weapon_ammo[controller->weapon.info->type];
     if (weapon_ammo->current_mag_count <= 0) {
         // todo play out of ammo sound
         return;
     }
-    fw64_audio_play_sound(controller->engine->audio, controller->weapon.gunshot_sound);
-    controller->time_to_next_fire = controller->weapon.fire_rate;
+    fw64_audio_play_sound(controller->engine->audio, controller->weapon.info->gunshot_sound);
+    controller->time_to_next_fire = controller->weapon.info->fire_rate;
 
-    controller->casing_transform.position = controller->weapon.ejection_port_pos;
+    controller->casing_transform.position = controller->weapon.info->ejection_port_pos;
     fw64_transform_update_matrix(&controller->casing_transform);
 
-    if(controller->weapon.type == WEAPON_TYPE_SHOTGUN)
-        projectile_controller_fire_arc(controller->projectile_controller, controller->aim->position, &controller->aim->direction, 30.0f, 20.0f, controller->weapon.type);
+    if(controller->weapon.info->type == WEAPON_TYPE_SHOTGUN)
+        projectile_controller_fire_arc(controller->projectile_controller, controller->aim->position, &controller->aim->direction, 30.0f, 20.0f, controller->weapon.info->type);
     else
-        projectile_controller_fire_ray(controller->projectile_controller, controller->aim->position, &controller->aim->direction, controller->weapon.type);
+        projectile_controller_fire_ray(controller->projectile_controller, controller->aim->position, &controller->aim->direction, controller->weapon.info->type);
 
     controller->muzzle_flash_time_remaining = WEAPON_CONTROLLER_MUZZLE_FLASH_TIME;
     weapon_controller_update_muzzle_flash(controller);
@@ -302,7 +302,7 @@ int weapon_controller_lower_weapon(WeaponController* controller, WeaponTransitio
 }
 
 static WeaponType get_next_weapon_with_ammo(WeaponController* controller) {
-    WeaponType current_weapon_type = controller->weapon.type;
+    WeaponType current_weapon_type = controller->weapon.info->type;
     WeaponType next_weapon_type = current_weapon_type + 1;
 
     while (next_weapon_type != current_weapon_type) {
@@ -338,15 +338,15 @@ void weapon_controller_switch_to_next_weapon(WeaponController* controller) {
     weapon_controller_lower_weapon(controller, next_weapon_func, controller);
 }
 
-static void check_weapon_ammo(WeaponController* controller) {
-    Weapon* current_weapon = &controller->weapon;
-    WeaponAmmo* weapon_ammo = &controller->weapon_ammo[current_weapon->type];
+static void check_weapon_ammo(WeaponController* controller, WeaponType weapon_type) {
+    WeaponInfo* weapon_info = weapon_get_info(weapon_type);
+    WeaponAmmo* weapon_ammo = &controller->weapon_ammo[weapon_type];
 
-    if (weapon_ammo->current_mag_count > current_weapon->mag_size)
-        weapon_ammo->current_mag_count = current_weapon->mag_size;
+    if (weapon_ammo->current_mag_count > weapon_info->mag_size)
+        weapon_ammo->current_mag_count = weapon_info->mag_size;
 
-    if (weapon_ammo->additional_rounds_count > current_weapon->max_additional_rounds)
-        weapon_ammo->additional_rounds_count = current_weapon->max_additional_rounds;
+    if (weapon_ammo->additional_rounds_count > weapon_info->max_additional_rounds)
+        weapon_ammo->additional_rounds_count = weapon_info->max_additional_rounds;
 }
 
 void weapon_controller_set_weapon_ammo(WeaponController* controller, WeaponType weapon_type, uint32_t current_mag_count, uint32_t additional_rounds_count) {
@@ -355,18 +355,17 @@ void weapon_controller_set_weapon_ammo(WeaponController* controller, WeaponType 
     weapon_ammo->current_mag_count = current_mag_count;
     weapon_ammo->additional_rounds_count = additional_rounds_count;
 
-    if (weapon_type == controller->weapon.type)
-        check_weapon_ammo(controller);
+    check_weapon_ammo(controller, weapon_type);
 }
 
 WeaponAmmo* weapon_controller_get_current_weapon_ammo(WeaponController* controller) {
-    return &controller->weapon_ammo[controller->weapon.type];
+    return &controller->weapon_ammo[controller->weapon.info->type];
 }
 
 static void reload_weapon_func(Weapon* current_weapon, WeaponControllerState complete_state, void* arg) {
     WeaponController* controller = (WeaponController*)arg;
     WeaponAmmo* weapon_ammo = weapon_controller_get_current_weapon_ammo(controller);
-    uint32_t ammo_needed = controller->weapon.mag_size - weapon_ammo->current_mag_count;
+    uint32_t ammo_needed = controller->weapon.info->mag_size - weapon_ammo->current_mag_count;
     if (ammo_needed > weapon_ammo->additional_rounds_count) {
         ammo_needed = weapon_ammo->additional_rounds_count;
     }
@@ -374,7 +373,7 @@ static void reload_weapon_func(Weapon* current_weapon, WeaponControllerState com
     weapon_ammo->current_mag_count += ammo_needed;
     weapon_ammo->additional_rounds_count -= ammo_needed;
     
-    fw64_audio_play_sound(controller->engine->audio, controller->weapon.reload_sound);
+    fw64_audio_play_sound(controller->engine->audio, controller->weapon.info->reload_sound);
 
     weapon_controller_raise_weapon(controller, NULL, NULL);
 }
@@ -385,7 +384,7 @@ void weapon_controller_reload_current_weapon(WeaponController* controller) {
 
     // can we reload this weapon?
     WeaponAmmo* weapon_ammo = weapon_controller_get_current_weapon_ammo(controller);
-    if (weapon_ammo->current_mag_count == controller->weapon.mag_size || weapon_ammo->additional_rounds_count == 0)
+    if (weapon_ammo->current_mag_count == controller->weapon.info->mag_size || weapon_ammo->additional_rounds_count == 0)
         return;
 
     weapon_controller_lower_weapon(controller, reload_weapon_func, controller);

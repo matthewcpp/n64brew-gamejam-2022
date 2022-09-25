@@ -6,6 +6,7 @@ set(core_files
     weapon.h weapon.c
     projectile_controller.h projectile_controller.c
     weapon_controller.h weapon_controller.c
+    weapon_pickup.h weapon_pickup.c
     trigger.h trigger.c
     zombie.h zombie.c
     zombie_logic.h zombie_logic.c

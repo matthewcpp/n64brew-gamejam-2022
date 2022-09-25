@@ -29,5 +29,8 @@ void player_update(Player* player);
 void player_draw(Player* player);
 void player_draw_weapon(Player* player);
 
+/** player attempts to pick up ammo.  will return false if their inventory is maxed out. */
+int player_pickup_ammo(Player* player, WeaponType weapon_type, uint32_t amount);
+
 void player_set_weapon(Player* player, WeaponType weapon_type);
 void player_set_position(Player* player, Vec3* position);
