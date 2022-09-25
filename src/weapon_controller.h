@@ -63,8 +63,10 @@ void weapon_controller_draw(WeaponController* controller);
 void weapon_controller_set_weapon(WeaponController* controller, WeaponType weapon_type);
 int weapon_controller_raise_weapon(WeaponController* controller, WeaponTransitionFunc callback , void* arg);
 int weapon_controller_lower_weapon(WeaponController* controller, WeaponTransitionFunc callback, void* arg);
-void weapon_controller_switch_to_next_weapon(WeaponController* controller);
 WeaponAmmo* weapon_controller_get_current_weapon_ammo(WeaponController* controller);
+
+void weapon_controller_switch_to_next_weapon(WeaponController* controller);
+void weapon_controller_reload_current_weapon(WeaponController* controller);
 
 /** 
  * immediately sets the ammo counts for the specified weapon.

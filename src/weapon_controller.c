@@ -11,6 +11,7 @@
 #define WEAPON_CONTROLLER_MUZZLE_FLASH_TIME 0.1f
 
 static void weapon_controller_fire(WeaponController* controller);
+static int weapon_controller_is_idle(WeaponController* controller);
 
 void weapon_controller_init(WeaponController* controller, fw64Engine* engine, ProjectileController* projectile_controller, fw64Allocator* weapon_allocator, InputMapping* input_map, int controller_index) {
     controller->engine = engine;
@@ -122,8 +123,15 @@ static void weapon_controller_update_holding(WeaponController* controller) {
         weapon_controller_update_casing(controller);
     }
 
-    if (controller->time_to_next_fire <= 0.0f && mapped_input_controller_read(controller->input_map, controller->controller_index, INPUT_MAP_WEAPON_FIRE, NULL)) {
+    if (controller->time_to_next_fire > 0.0f)
+        return;
+
+    if (mapped_input_controller_read(controller->input_map, controller->controller_index, INPUT_MAP_WEAPON_FIRE, NULL)) {
         weapon_controller_fire(controller);
+    }
+
+    if (mapped_input_controller_read(controller->input_map, controller->controller_index, INPUT_MAP_WEAPON_RELOAD, NULL)) {
+        weapon_controller_reload_current_weapon(controller);
     }
 }
 
@@ -246,6 +254,9 @@ void weapon_controller_set_weapon(WeaponController* controller, WeaponType weapo
 }
 
 static void weapon_controller_fire(WeaponController* controller) {
+    if (!weapon_controller_is_idle(controller))
+        return;
+
     WeaponAmmo* weapon_ammo = &controller->weapon_ammo[controller->weapon.type];
     if (weapon_ammo->current_mag_count <= 0) {
         // todo play out of ammo sound
@@ -316,8 +327,12 @@ static void next_weapon_func(Weapon* current_weapon, WeaponControllerState compl
     weapon_controller_raise_weapon(controller, NULL, NULL);
 }
 
+int weapon_controller_is_idle(WeaponController* controller) {
+    return controller->state == WEAPON_CONTROLLER_HOLDING && controller->time_to_next_fire <= 0.0f;
+}
+
 void weapon_controller_switch_to_next_weapon(WeaponController* controller) {
-    if (controller->state != WEAPON_CONTROLLER_HOLDING)
+    if (!weapon_controller_is_idle(controller))
         return;
 
     weapon_controller_lower_weapon(controller, next_weapon_func, controller);
@@ -346,4 +361,32 @@ void weapon_controller_set_weapon_ammo(WeaponController* controller, WeaponType 
 
 WeaponAmmo* weapon_controller_get_current_weapon_ammo(WeaponController* controller) {
     return &controller->weapon_ammo[controller->weapon.type];
+}
+
+static void reload_weapon_func(Weapon* current_weapon, WeaponControllerState complete_state, void* arg) {
+    WeaponController* controller = (WeaponController*)arg;
+    WeaponAmmo* weapon_ammo = weapon_controller_get_current_weapon_ammo(controller);
+    uint32_t ammo_needed = controller->weapon.mag_size - weapon_ammo->current_mag_count;
+    if (ammo_needed > weapon_ammo->additional_rounds_count) {
+        ammo_needed = weapon_ammo->additional_rounds_count;
+    }
+
+    weapon_ammo->current_mag_count += ammo_needed;
+    weapon_ammo->additional_rounds_count -= ammo_needed;
+    
+    fw64_audio_play_sound(controller->engine->audio, controller->weapon.reload_sound);
+
+    weapon_controller_raise_weapon(controller, NULL, NULL);
+}
+
+void weapon_controller_reload_current_weapon(WeaponController* controller) {
+    if (!weapon_controller_is_idle(controller))
+        return;
+
+    // can we reload this weapon?
+    WeaponAmmo* weapon_ammo = weapon_controller_get_current_weapon_ammo(controller);
+    if (weapon_ammo->current_mag_count == controller->weapon.mag_size || weapon_ammo->additional_rounds_count == 0)
+        return;
+
+    weapon_controller_lower_weapon(controller, reload_weapon_func, controller);
 }
