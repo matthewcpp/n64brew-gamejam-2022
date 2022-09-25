@@ -30,7 +30,7 @@ typedef struct {
     Vec3 casing_pos;
     float fire_rate;
     uint32_t mag_size;
-    uint32_t max_ammo_capacity;
+    uint32_t max_additional_rounds;
     Quat recoil_rotation;
     Vec3 recoil_pos;
     float recoil_time;

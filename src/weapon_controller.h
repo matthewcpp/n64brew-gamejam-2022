@@ -21,6 +21,11 @@ typedef enum {
     WEAPON_RECOIL_RECOVERING
 } RecoilState;
 
+typedef struct {
+    uint32_t current_mag_count;
+    uint32_t additional_rounds_count;
+} WeaponAmmo;
+
 typedef void(*WeaponTransitionFunc)(Weapon*, WeaponControllerState, void*);
 
 typedef struct {
@@ -34,7 +39,7 @@ typedef struct {
     InputMapping* input_map;
 
     WeaponControllerState state;
-    int weapon_ammo[WEAPON_COUNT];
+    WeaponAmmo weapon_ammo[WEAPON_COUNT];
 
     float time_to_next_fire;
     float muzzle_flash_time_remaining;
@@ -59,3 +64,10 @@ void weapon_controller_set_weapon(WeaponController* controller, WeaponType weapo
 int weapon_controller_raise_weapon(WeaponController* controller, WeaponTransitionFunc callback , void* arg);
 int weapon_controller_lower_weapon(WeaponController* controller, WeaponTransitionFunc callback, void* arg);
 void weapon_controller_switch_to_next_weapon(WeaponController* controller);
+WeaponAmmo* weapon_controller_get_current_weapon_ammo(WeaponController* controller);
+
+/** 
+ * immediately sets the ammo counts for the specified weapon.
+ * use \ref weapon_controller_reload to perform a weapon reload
+ */
+void weapon_controller_set_weapon_ammo(WeaponController* controller, WeaponType weapon_type, uint32_t current_mag_count, uint32_t additional_rounds_count);

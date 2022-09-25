@@ -65,7 +65,7 @@ void weapon_init_ar15(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* 
     weapon->recoil_time = 0.10f;
 
     weapon->mag_size = 30;
-    weapon->max_ammo_capacity = 180;
+    weapon->max_additional_rounds = 180;
 
     clamp_textures(weapon->muzzle_flash);
 }
@@ -94,7 +94,7 @@ void weapon_init_shotgun(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocato
     weapon->recoil_time = 0.25f;
 
     weapon->mag_size = 8;
-    weapon->max_ammo_capacity = 40;
+    weapon->max_additional_rounds = 40;
 
     clamp_textures(weapon->muzzle_flash);
 }
@@ -125,7 +125,7 @@ void weapon_init_uzi(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* a
     weapon->recoil_time = 0.12f;
 
     weapon->mag_size = 32;
-    weapon->max_ammo_capacity = 320;
+    weapon->max_additional_rounds = 320;
 
     clamp_textures(weapon->muzzle_flash);
 }

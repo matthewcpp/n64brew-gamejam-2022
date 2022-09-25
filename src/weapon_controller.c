@@ -5,6 +5,8 @@
 
 #include "zombie.h"
 
+#include <string.h>
+
 #define WEAPON_CONTROLLER_TRANSITION_SPEED 0.50f
 #define WEAPON_CONTROLLER_MUZZLE_FLASH_TIME 0.1f
 
@@ -35,9 +37,7 @@ void weapon_controller_init(WeaponController* controller, fw64Engine* engine, Pr
     fw64_transform_init(&controller->casing_transform);
     fw64_transform_init(&controller->muzzle_flash_transform);
 
-    for (int i = 0; i < WEAPON_COUNT; i++) {
-        controller->weapon_ammo[i] = 20;
-    }
+    memset(&controller->weapon_ammo[0], 0, sizeof(WeaponAmmo) * WEAPON_COUNT);
 
     weapon_init(&controller->weapon);
 }
@@ -246,6 +246,11 @@ void weapon_controller_set_weapon(WeaponController* controller, WeaponType weapo
 }
 
 static void weapon_controller_fire(WeaponController* controller) {
+    WeaponAmmo* weapon_ammo = &controller->weapon_ammo[controller->weapon.type];
+    if (weapon_ammo->current_mag_count <= 0) {
+        // todo play out of ammo sound
+        return;
+    }
     fw64_audio_play_sound(controller->engine->audio, controller->weapon.gunshot_sound);
     controller->time_to_next_fire = controller->weapon.fire_rate;
 
@@ -260,6 +265,8 @@ static void weapon_controller_fire(WeaponController* controller) {
     controller->muzzle_flash_time_remaining = WEAPON_CONTROLLER_MUZZLE_FLASH_TIME;
     weapon_controller_update_muzzle_flash(controller);
     controller->recoil_state = WEAPON_RECOIL_RECOILING;
+
+    weapon_ammo->current_mag_count -= 1;
 }
 
 static int weapon_controller_start_transition(WeaponController* controller, WeaponControllerState target_state, WeaponTransitionFunc callback, void* arg) {
@@ -291,9 +298,12 @@ static WeaponType get_next_weapon_with_ammo(WeaponController* controller) {
         if (next_weapon_type == WEAPON_COUNT)
             next_weapon_type = WEAPON_TYPE_NONE;
 
-        if (controller->weapon_ammo[next_weapon_type] > 0) {
+        WeaponAmmo* weapon_ammo = &controller->weapon_ammo[next_weapon_type];
+        if (weapon_ammo->additional_rounds_count > 0 || weapon_ammo->current_mag_count > 0) {
             return next_weapon_type;
         }
+
+        next_weapon_type += 1;
     }
 
     return WEAPON_TYPE_NONE;
@@ -311,4 +321,29 @@ void weapon_controller_switch_to_next_weapon(WeaponController* controller) {
         return;
 
     weapon_controller_lower_weapon(controller, next_weapon_func, controller);
+}
+
+static void check_weapon_ammo(WeaponController* controller) {
+    Weapon* current_weapon = &controller->weapon;
+    WeaponAmmo* weapon_ammo = &controller->weapon_ammo[current_weapon->type];
+
+    if (weapon_ammo->current_mag_count > current_weapon->mag_size)
+        weapon_ammo->current_mag_count = current_weapon->mag_size;
+
+    if (weapon_ammo->additional_rounds_count > current_weapon->max_additional_rounds)
+        weapon_ammo->additional_rounds_count = current_weapon->max_additional_rounds;
+}
+
+void weapon_controller_set_weapon_ammo(WeaponController* controller, WeaponType weapon_type, uint32_t current_mag_count, uint32_t additional_rounds_count) {
+    WeaponAmmo* weapon_ammo = &controller->weapon_ammo[weapon_type];
+
+    weapon_ammo->current_mag_count = current_mag_count;
+    weapon_ammo->additional_rounds_count = additional_rounds_count;
+
+    if (weapon_type == controller->weapon.type)
+        check_weapon_ammo(controller);
+}
+
+WeaponAmmo* weapon_controller_get_current_weapon_ammo(WeaponController* controller) {
+    return &controller->weapon_ammo[controller->weapon.type];
 }
