@@ -119,6 +119,12 @@ int player_pickup_ammo(Player* player, WeaponType weapon_type, uint32_t amount) 
         amount = available_count;
 
     weapon_ammo->additional_rounds_count += amount;
+
+    if (player->weapon_controller.weapon.info->type == WEAPON_TYPE_NONE) {
+        weapon_controller_set_weapon(&player->weapon_controller, weapon_type);
+        weapon_controller_refill_current_weapon_magazine(&player->weapon_controller);
+        weapon_controller_raise_weapon(&player->weapon_controller, NULL, NULL);
+    }
     
     fw64_audio_play_sound(player->engine->audio, weapon_info->reload_sound);
 

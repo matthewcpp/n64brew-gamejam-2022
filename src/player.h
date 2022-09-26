@@ -13,14 +13,14 @@
 #include "mapped_input.h"
 
 typedef struct {
-    MovementController movement;
-    InputMapping input_map;
-    WeaponController weapon_controller;
-    Ray aim;    
     fw64Engine* engine;
     fw64Allocator* allocator;
     fw64Level* level;
     fw64Node* node;
+    MovementController movement;
+    WeaponController weapon_controller;
+    InputMapping input_map;
+    Ray aim;    
 } Player;
 
 void player_init(Player* player, fw64Engine* engine, fw64Level* level, ProjectileController* projectile_controller, fw64Allocator* allocator);

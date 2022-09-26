@@ -70,6 +70,12 @@ void weapon_controller_reload_current_weapon(WeaponController* controller);
 
 /** 
  * immediately sets the ammo counts for the specified weapon.
- * use \ref weapon_controller_reload to perform a weapon reload
+ * use \ref weapon_controller_reload to perform a weapon reload action
  */
 void weapon_controller_set_weapon_ammo(WeaponController* controller, WeaponType weapon_type, uint32_t current_mag_count, uint32_t additional_rounds_count);
+
+/**
+ * immediately refills the current weapon's magazine from extra carried ammo.
+ * use \ref weapon_controller_reload to perform a weapon reload action
+ */
+void weapon_controller_refill_current_weapon_magazine(WeaponController* controller);

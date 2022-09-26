@@ -46,7 +46,13 @@ static fw64Scene* setup_level(TestLevel* hill_level) {
     info.scene_id = FW64_ASSET_scene_spooky_level;
     info.allocator = hill_level->allocator;
     uint32_t chunk_handle = fw64_level_load_chunk(&hill_level->level, &info);
-    return fw64_level_get_chunk_by_handle(&hill_level->level, chunk_handle);
+    fw64Scene* scene = fw64_level_get_chunk_by_handle(&hill_level->level, chunk_handle);
+
+    weapon_pickups_init(&hill_level->weapon_pickups, &hill_level->player);
+    weapon_pickups_add(&hill_level->weapon_pickups, WEAPON_TYPE_AR15, 180, fw64_scene_get_node(scene, FW64_scene_spooky_level_node_ar15_ammo_spawn));
+weapon_pickups_add(&hill_level->weapon_pickups, WEAPON_TYPE_SHOTGUN, 40, fw64_scene_get_node(scene, FW64_scene_spooky_level_node_shotgun_ammo_spawn));
+weapon_pickups_add(&hill_level->weapon_pickups, WEAPON_TYPE_UZI, 320, fw64_scene_get_node(scene, FW64_scene_spooky_level_node_uzi_ammo_spawn));
+    return scene;
 }
 
 void test_level_uninit(TestLevel* level) {
@@ -65,6 +71,7 @@ void test_level_update(TestLevel* level){
 
     player_update(&level->player);
     zombie_spawner_update(&level->zombie_spawner);
+    weapon_pickups_update(&level->weapon_pickups);
 }
 
 void test_level_draw(TestLevel* level) {

@@ -362,8 +362,7 @@ WeaponAmmo* weapon_controller_get_current_weapon_ammo(WeaponController* controll
     return &controller->weapon_ammo[controller->weapon.info->type];
 }
 
-static void reload_weapon_func(Weapon* current_weapon, WeaponControllerState complete_state, void* arg) {
-    WeaponController* controller = (WeaponController*)arg;
+void weapon_controller_refill_current_weapon_magazine(WeaponController* controller) {
     WeaponAmmo* weapon_ammo = weapon_controller_get_current_weapon_ammo(controller);
     uint32_t ammo_needed = controller->weapon.info->mag_size - weapon_ammo->current_mag_count;
     if (ammo_needed > weapon_ammo->additional_rounds_count) {
@@ -372,6 +371,11 @@ static void reload_weapon_func(Weapon* current_weapon, WeaponControllerState com
 
     weapon_ammo->current_mag_count += ammo_needed;
     weapon_ammo->additional_rounds_count -= ammo_needed;
+}
+
+static void reload_weapon_func(Weapon* current_weapon, WeaponControllerState complete_state, void* arg) {
+    WeaponController* controller = (WeaponController*)arg;
+    weapon_controller_refill_current_weapon_magazine(controller);
     
     fw64_audio_play_sound(controller->engine->audio, controller->weapon.info->reload_sound);
 
