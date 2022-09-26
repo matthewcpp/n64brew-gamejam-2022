@@ -34,6 +34,7 @@ void player_init(Player* player, fw64Engine* engine, fw64Level* level, Projectil
     // todo: investigate weapon allocator usage
     weapon_controller_init(&player->weapon_controller, engine, projectile_controller, allocator, &player->input_map, 0);
     player->weapon_controller.aim = &player->aim;
+    weapon_controller_set_weapon(&player->weapon_controller, WEAPON_TYPE_NONE);
 }
 
 void player_uninit(Player* player) {
@@ -120,9 +121,11 @@ int player_pickup_ammo(Player* player, WeaponType weapon_type, uint32_t amount) 
 
     weapon_ammo->additional_rounds_count += amount;
 
+    if (weapon_ammo->current_mag_count == 0)
+        weapon_controller_refill_weapon_magazine(&player->weapon_controller, weapon_type);
+
     if (player->weapon_controller.weapon.info->type == WEAPON_TYPE_NONE) {
         weapon_controller_set_weapon(&player->weapon_controller, weapon_type);
-        weapon_controller_refill_current_weapon_magazine(&player->weapon_controller);
         weapon_controller_raise_weapon(&player->weapon_controller, NULL, NULL);
     }
     

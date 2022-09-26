@@ -78,4 +78,4 @@ void weapon_controller_set_weapon_ammo(WeaponController* controller, WeaponType 
  * immediately refills the current weapon's magazine from extra carried ammo.
  * use \ref weapon_controller_reload to perform a weapon reload action
  */
-void weapon_controller_refill_current_weapon_magazine(WeaponController* controller);
+void weapon_controller_refill_weapon_magazine(WeaponController* controller, WeaponType weapon_type);

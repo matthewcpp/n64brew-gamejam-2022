@@ -20,8 +20,6 @@ void test_level_init(TestLevel* level, fw64Engine* engine) {
     projectile_controller_init(&level->projectile_controller, &level->level);
 
     player_init(&level->player, engine, &level->level, &level->projectile_controller, level->allocator);
-    player_set_weapon(&level->player, WEAPON_TYPE_AR15);
-    weapon_controller_set_weapon_ammo(&level->player.weapon_controller, WEAPON_TYPE_AR15, 30, 180);
 
     zombie_spawner_init(&level->zombie_spawner, engine, &level->level, FW64_scene_spooky_level_node_Zombie_Spawn, &level->player.movement.camera.transform, level->allocator);
 

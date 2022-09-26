@@ -20,7 +20,8 @@ void weapon_pickups_add(WeaponPickups* weapon_pickups, WeaponType weapon_type, u
 void weapon_pickups_update(WeaponPickups* weapon_pickups) {
     for (uint32_t i = 0; i < weapon_pickups->count; i++) {
         WeaponPickup* pickup = &weapon_pickups->items[i];
-        if (vec3_distance_squared(&pickup->node->transform.position, &weapon_pickups->player->node->transform.position) <= 4.0f) {
+        float dist_squared = vec3_distance_squared(&pickup->node->transform.position, &weapon_pickups->player->node->transform.position);
+        if (dist_squared <= 36.0f) {
             int picked_up = player_pickup_ammo(weapon_pickups->player, pickup->weapon_type, pickup->amount);
 
             if (picked_up) {

@@ -5,7 +5,7 @@
 
 #include <string.h>
 
-WeaponInfo weapon_infos[WEAPON_COUNT - 1];
+static WeaponInfo weapon_infos[WEAPON_COUNT];
 
 static void init_ar15_info(WeaponInfo* weapon) {
     weapon->type = WEAPON_TYPE_AR15;
@@ -80,11 +80,9 @@ WeaponInfo* weapon_get_info(WeaponType weapon_type) {
 void init_weapon_info() {
     memset(&weapon_infos[WEAPON_TYPE_NONE], 0 , sizeof(WeaponInfo));
     init_ar15_info(weapon_get_info(WEAPON_TYPE_AR15));
-    init_ar15_info(weapon_get_info(WEAPON_TYPE_SHOTGUN));
-    init_ar15_info(weapon_get_info(WEAPON_TYPE_UZI));
+    init_shotgun_info(weapon_get_info(WEAPON_TYPE_SHOTGUN));
+    init_uzi_info(weapon_get_info(WEAPON_TYPE_UZI));
 }
-
-
 
 void weapon_init(Weapon* weapon) {
     memset(weapon, 0, sizeof(Weapon));
@@ -110,6 +108,8 @@ void weapon_uninit(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* all
 void weapon_init_none(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator) {
     weapon_reomve_existing(weapon, assets, allocator);
     memset(weapon, 0, sizeof(Weapon));
+
+    weapon->info = &weapon_infos[WEAPON_TYPE_NONE];
 }
 
 /** TODO: this should probably be controlled in export? */
