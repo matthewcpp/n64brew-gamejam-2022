@@ -46,10 +46,23 @@ static fw64Scene* setup_level(TestLevel* hill_level) {
     uint32_t chunk_handle = fw64_level_load_chunk(&hill_level->level, &info);
     fw64Scene* scene = fw64_level_get_chunk_by_handle(&hill_level->level, chunk_handle);
 
+    fw64Mesh* shotgun_pickup = fw64_mesh_load(hill_level->engine->assets, FW64_ASSET_mesh_shotgun_pickup, hill_level->allocator);
+    fw64Mesh* uzi_pickup = fw64_mesh_load(hill_level->engine->assets, FW64_ASSET_mesh_uzi_pickup, hill_level->allocator);
+    fw64Mesh* ar15_pickup = fw64_mesh_load(hill_level->engine->assets, FW64_ASSET_mesh_ar15_pickup, hill_level->allocator);
+
+    fw64Node* shotgun_node = fw64_scene_get_node(scene, FW64_scene_spooky_level_node_shotgun_ammo_spawn);
+    fw64_node_set_mesh(shotgun_node, shotgun_pickup);
+
+    fw64Node* uzi_node = fw64_scene_get_node(scene, FW64_scene_spooky_level_node_uzi_ammo_spawn);
+    fw64_node_set_mesh(uzi_node, uzi_pickup);
+
+    fw64Node* ar15_node = fw64_scene_get_node(scene, FW64_scene_spooky_level_node_ar15_ammo_spawn);
+    fw64_node_set_mesh(ar15_node, ar15_pickup);
+
     weapon_pickups_init(&hill_level->weapon_pickups, &hill_level->player);
-    weapon_pickups_add(&hill_level->weapon_pickups, WEAPON_TYPE_AR15, 180, fw64_scene_get_node(scene, FW64_scene_spooky_level_node_ar15_ammo_spawn));
-weapon_pickups_add(&hill_level->weapon_pickups, WEAPON_TYPE_SHOTGUN, 40, fw64_scene_get_node(scene, FW64_scene_spooky_level_node_shotgun_ammo_spawn));
-weapon_pickups_add(&hill_level->weapon_pickups, WEAPON_TYPE_UZI, 320, fw64_scene_get_node(scene, FW64_scene_spooky_level_node_uzi_ammo_spawn));
+    weapon_pickups_add(&hill_level->weapon_pickups, WEAPON_TYPE_AR15, 180, ar15_node);
+    weapon_pickups_add(&hill_level->weapon_pickups, WEAPON_TYPE_SHOTGUN, 40, shotgun_node);
+    weapon_pickups_add(&hill_level->weapon_pickups, WEAPON_TYPE_UZI, 320, uzi_node);
     return scene;
 }
 
