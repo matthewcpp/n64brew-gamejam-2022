@@ -23,7 +23,7 @@
             "alphaMode" : "BLEND",
             "doubleSided" : true,
             "extras" : {
-                "renderMode" : "UnlitTextured"
+                "shadingMode" : "UnlitTextured"
             },
             "name" : "Uzi",
             "pbrMetallicRoughness" : {
