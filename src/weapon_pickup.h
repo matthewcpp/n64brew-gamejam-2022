@@ -23,3 +23,4 @@ typedef struct {
 void weapon_pickups_init(WeaponPickups* weapon_pickups, Player* player);
 void weapon_pickups_add(WeaponPickups* weapon_pickups, WeaponType weapon_type, uint32_t amount, fw64Node* node);
 void weapon_pickups_update(WeaponPickups* weapon_pickups);
+void weapon_pickups_draw(WeaponPickups* weapon_pickups, fw64Renderer* renderer);

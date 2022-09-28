@@ -93,6 +93,7 @@ void test_level_draw(TestLevel* level) {
     player_draw(&level->player);
     zombie_spawner_draw(&level->zombie_spawner);
     player_draw_weapon(&level->player);
+    weapon_pickups_draw(&level->weapon_pickups, level->engine->renderer);
 
     fw64_renderer_set_anti_aliasing_enabled(renderer, 0);
     ui_draw(&level->ui);
