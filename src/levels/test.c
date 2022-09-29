@@ -50,13 +50,13 @@ static fw64Scene* setup_level(TestLevel* hill_level) {
     fw64Mesh* uzi_pickup = fw64_mesh_load(hill_level->engine->assets, FW64_ASSET_mesh_uzi_pickup, hill_level->allocator);
     fw64Mesh* ar15_pickup = fw64_mesh_load(hill_level->engine->assets, FW64_ASSET_mesh_ar15_pickup, hill_level->allocator);
 
-    fw64Node* shotgun_node = fw64_scene_get_node(scene, FW64_scene_spooky_level_node_shotgun_ammo_spawn);
+    fw64Node* shotgun_node = fw64_scene_get_node(scene, FW64_scene_spooky_level_node_z_shotgun_ammo_spawn);
     fw64_node_set_mesh(shotgun_node, shotgun_pickup);
 
-    fw64Node* uzi_node = fw64_scene_get_node(scene, FW64_scene_spooky_level_node_uzi_ammo_spawn);
+    fw64Node* uzi_node = fw64_scene_get_node(scene, FW64_scene_spooky_level_node_z_uzi_ammo_spawn);
     fw64_node_set_mesh(uzi_node, uzi_pickup);
 
-    fw64Node* ar15_node = fw64_scene_get_node(scene, FW64_scene_spooky_level_node_ar15_ammo_spawn);
+    fw64Node* ar15_node = fw64_scene_get_node(scene, FW64_scene_spooky_level_node_z_ar15_ammo_spawn);
     fw64_node_set_mesh(ar15_node, ar15_pickup);
 
     weapon_pickups_init(&hill_level->weapon_pickups, &hill_level->player);
@@ -93,7 +93,7 @@ void test_level_draw(TestLevel* level) {
     player_draw(&level->player);
     zombie_spawner_draw(&level->zombie_spawner);
     player_draw_weapon(&level->player);
-    weapon_pickups_draw(&level->weapon_pickups, level->engine->renderer);
+    weapon_pickups_draw(&level->weapon_pickups);
 
     fw64_renderer_set_anti_aliasing_enabled(renderer, 0);
     ui_draw(&level->ui);

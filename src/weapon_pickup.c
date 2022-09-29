@@ -34,8 +34,8 @@ void weapon_pickups_update(WeaponPickups* weapon_pickups) {
     }
 }
 
-void weapon_pickups_draw(WeaponPickups* weapon_pickups, fw64Renderer* renderer) {
+void weapon_pickups_draw(WeaponPickups* weapon_pickups) {
     for (uint32_t i = 0; i < weapon_pickups->count; i++) {
-        fw64_node_billboard(weapon_pickups->items[i].node, fw64_renderer_get_camera(renderer));
+        fw64_node_billboard(weapon_pickups->items[i].node, &weapon_pickups->player->movement.camera);
     }
 }
