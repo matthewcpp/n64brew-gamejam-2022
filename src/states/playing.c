@@ -19,6 +19,10 @@ void game_state_playing_init(Playing* state, fw64Engine* engine, GameData* game_
             hill_level_init(&state->levels.church_hill, engine);
             break;
 
+        case LEVEL_TILES:
+            tiles_test_level_init(&state->levels.tiles_test, engine);
+            break;
+
         case LEVEL_NONE:
         case LEVEL_COUNT:
             game_data->transition_to_state = GAME_STATE_LEVEL_SELECT;
@@ -34,6 +38,10 @@ void game_state_playing_uninit(Playing* state) {
 
         case LEVEL_CHURCH_HILL:
             hill_level_uninit(&state->levels.church_hill);
+            break;
+
+        case LEVEL_TILES:
+            tiles_test_level_uninit(&state->levels.tiles_test);
             break;
 
         case LEVEL_NONE:
@@ -66,7 +74,12 @@ void game_state_playing_update(Playing* state) {
             hill_level_update(&state->levels.church_hill);
             break;
 
+        case LEVEL_TILES:
+            tiles_test_level_update(&state->levels.tiles_test);
+            break;
+
         case LEVEL_NONE:
+        case LEVEL_COUNT:
             break;
     }
 }
@@ -81,7 +94,12 @@ void game_state_playing_draw(Playing* state) {
             hill_level_draw(&state->levels.church_hill);
             break;
 
+        case LEVEL_TILES:
+            tiles_test_level_draw(&state->levels.tiles_test);
+            break;
+
         case LEVEL_NONE:
+        case LEVEL_COUNT:
             break;
     }
 }

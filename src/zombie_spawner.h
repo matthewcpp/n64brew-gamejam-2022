@@ -3,7 +3,7 @@
 #include "framework64/engine.h"
 #include "framework64/node.h"
 
-#include "level.h"
+#include "framework64/level.h"
 #include "zombie.h"
 #include "zombie_logic.h"
 

@@ -3,7 +3,7 @@
 /** \file zombie_logic.h */
 
 #include "behaviors.h"
-#include "level.h"
+#include "framework64/level.h"
 #include "framework64/transform.h"
 
 #define AI_TIMER_LENGTH_IDLE 	fw64_random_float_in_range(1.0f, 30.0f)

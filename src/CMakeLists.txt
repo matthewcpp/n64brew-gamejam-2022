@@ -4,7 +4,6 @@ set(core_files
     player.h player.c
     movement_controller.h movement_controller.c
     weapon.h weapon.c
-    level.h level.c
     projectile_controller.h projectile_controller.c
     weapon_controller.h weapon_controller.c
     trigger.h trigger.c
@@ -23,6 +22,7 @@ set(debug_logging_files
 set(level_files
     levels/church_hill.h levels/church_hill.c
     levels/test.h levels/test.c
+    levels/tiles_test.h levels/tiles_test.c
 )
 
 set(game_state_files

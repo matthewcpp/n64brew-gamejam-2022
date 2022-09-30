@@ -7,7 +7,7 @@
 #include "framework64/vec2.h"
 
 #include "mapped_input.h"
-#include "level.h"
+#include "framework64/level.h"
 
 typedef struct {
     fw64Level* level;

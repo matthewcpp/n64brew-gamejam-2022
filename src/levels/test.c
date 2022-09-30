@@ -7,14 +7,15 @@
 
 #define ROTATION_SPEED 90.0f
 
+static fw64Scene* setup_level(TestLevel* level);
+
 void test_level_init(TestLevel* level, fw64Engine* engine) {
     level->engine = engine;
 
     // TODO: need to figure out what to do here
     level->allocator = fw64_default_allocator();
 
-    fw64_level_init(&level->level, engine);
-    fw64_level_load_chunk(&level->level, engine->assets, FW64_ASSET_scene_spooky_level, level->allocator);
+    setup_level(level);
 
     projectile_controller_init(&level->projectile_controller, &level->level);
 
@@ -37,10 +38,20 @@ void test_level_init(TestLevel* level, fw64Engine* engine) {
     fw64_audio_set_sound_bank(engine->audio, level->sound);
 }
 
+static fw64Scene* setup_level(TestLevel* hill_level) {
+    fw64_level_init(&hill_level->level, hill_level->engine);
+    fw64LevelChunkInfo info;
+    fw64_level_chunk_info_init(&info);
+    info.scene_id = FW64_ASSET_scene_spooky_level;
+    info.allocator = hill_level->allocator;
+    uint32_t chunk_handle = fw64_level_load_chunk(&hill_level->level, &info);
+    return fw64_level_get_chunk_by_handle(&hill_level->level, chunk_handle);
+}
+
 void test_level_uninit(TestLevel* level) {
     player_uninit(&level->player);
     zombie_spawner_uninit(&level->zombie_spawner);
-    fw64_level_delete(&level->level);
+    fw64_level_uninit(&level->level);
     
     fw64_sound_bank_delete(level->engine->assets, level->sound, level->allocator);
     fw64_music_bank_delete(level->engine->assets, level->music, level->allocator);

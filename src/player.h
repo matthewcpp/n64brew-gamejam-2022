@@ -7,7 +7,7 @@
 #include "framework64/vec3.h"
 #include "movement_controller.h"
 
-#include "level.h"
+#include "framework64/level.h"
 #include "weapon_controller.h"
 #include "ray.h"
 #include "mapped_input.h"
