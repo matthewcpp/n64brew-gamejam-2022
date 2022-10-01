@@ -22,12 +22,14 @@ typedef struct {
     Vec3 lowered_position;
     Vec3 ejection_port_pos;
     int gunshot_sound;
+    int last_round_sound;
     int reload_sound;
+    int empty_mag_sound;
     Vec3 casing_pos;
     float fire_rate;
+    float dry_fire_rate;
     uint32_t mag_size;
     uint32_t max_additional_rounds;
-    Quat recoil_rotation;
     Vec3 recoil_pos;
     float recoil_time;
 } WeaponInfo;

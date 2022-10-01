@@ -47,6 +47,7 @@ typedef struct {
     float muzzle_flash_time_remaining;
     float recoil_time;
     RecoilState recoil_state;
+    int is_dry_firing;
 
     Weapon weapon;
     fw64Transform weapon_transform;

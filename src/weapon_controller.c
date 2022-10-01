@@ -25,6 +25,7 @@ void weapon_controller_init(WeaponController* controller, fw64Engine* engine, Pr
     controller->muzzle_flash_time_remaining = 0.0f;
     controller->recoil_time = 0.0f;
     controller->recoil_state = WEAPON_RECOIL_INACTIVE;
+    controller->is_dry_firing = 0;
 
     fw64_camera_init(&controller->weapon_camera);
     vec3_zero(&controller->weapon_camera.transform.position);
@@ -102,11 +103,9 @@ static void weapon_controller_update_recoil(WeaponController* controller) {
 
     if (controller->recoil_state == WEAPON_RECOIL_RECOILING) {
         vec3_lerp(&controller->weapon_transform.position, &weapon->info->default_position, &weapon->info->recoil_pos, smoothed_time);
-        quat_slerp(&controller->weapon_transform.rotation, &weapon->info->default_rotation, &weapon->info->recoil_rotation, smoothed_time);
     }
     else if (controller->recoil_state == WEAPON_RECOIL_RECOVERING) {
         vec3_lerp(&controller->weapon_transform.position, &weapon->info->recoil_pos, &weapon->info->default_position, smoothed_time);
-        quat_slerp(&controller->weapon_transform.rotation, &weapon->info->recoil_rotation, &weapon->info->default_rotation, smoothed_time);
     }
 
     fw64_transform_update_matrix(&controller->weapon_transform);
@@ -202,7 +201,7 @@ void weapon_controller_draw(WeaponController* controller) {
         fw64_renderer_draw_static_mesh(renderer, &controller->muzzle_flash_transform, weapon->muzzle_flash);
     }
 
-    if (controller->time_to_next_fire > 0.0f && weapon->casing) {
+    if (controller->time_to_next_fire > 0.0f && weapon->casing && !controller->is_dry_firing) {
         fw64_renderer_draw_static_mesh(renderer, &controller->casing_transform, controller->weapon.casing);
     }
 }
@@ -258,15 +257,17 @@ static void weapon_controller_fire(WeaponController* controller) {
     if (!weapon_controller_is_idle(controller))
         return;
 
-    WeaponAmmo* weapon_ammo = &controller->weapon_ammo[controller->weapon.info->type];
+    WeaponAmmo* weapon_ammo = weapon_controller_get_current_weapon_ammo(controller);
     if (weapon_ammo->current_mag_count <= 0) {
-        // todo play out of ammo sound
+        audio_controller_play(controller->audio_controller, AUDIO_CONTROLLER_CHANNEL_PLAYER_WEAPON, controller->weapon.info->empty_mag_sound);
+        controller->time_to_next_fire = controller->weapon.info->dry_fire_rate;
+        controller->is_dry_firing = 1;
         return;
     }
 
-    audio_controller_play(controller->audio_controller, AUDIO_CONTROLLER_CHANNEL_PLAYER_WEAPON, controller->weapon.info->gunshot_sound);
-    //fw64_audio_play_sound(controller->engine->audio, controller->weapon.info->gunshot_sound);
+    audio_controller_play(controller->audio_controller, AUDIO_CONTROLLER_CHANNEL_PLAYER_WEAPON, weapon_ammo->current_mag_count > 1 ? controller->weapon.info->gunshot_sound : controller->weapon.info->last_round_sound);
     controller->time_to_next_fire = controller->weapon.info->fire_rate;
+    controller->is_dry_firing = 0;
 
     controller->casing_transform.position = controller->weapon.info->ejection_port_pos;
     fw64_transform_update_matrix(&controller->casing_transform);
@@ -383,7 +384,6 @@ static void reload_weapon_func(Weapon* current_weapon, WeaponControllerState com
     weapon_controller_refill_weapon_magazine(controller, controller->weapon.info->type);
     
     audio_controller_play(controller->audio_controller, AUDIO_CONTROLLER_CHANNEL_PLAYER_WEAPON, controller->weapon.info->reload_sound);
-    //fw64_audio_play_sound(controller->engine->audio, controller->weapon.info->reload_sound);
 
     weapon_controller_raise_weapon(controller, NULL, NULL);
 }
