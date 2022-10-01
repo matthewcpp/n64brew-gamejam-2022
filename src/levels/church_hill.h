@@ -8,6 +8,7 @@
 #include "zombie_spawner.h"
 #include "trigger.h"
 #include "projectile_controller.h"
+#include "audio_controller.h"
 
 #define HILL_LEVEL_TRIGGER_CROW 0
 #define HILL_LEVEL_TRIGGER_HOWL 1
@@ -18,6 +19,7 @@ typedef struct {
     fw64Level level;
     Player player;
     ProjectileController projectile_controller;
+    AudioController audio_controller;
     UI ui;
     ZombieSpawner zombie_spawner[2];
     TriggerBox triggers[HILL_LEVEL_TRIGGER_COUNT];

@@ -9,7 +9,7 @@ static Vec3 default_player_dimensions = {0.75, 5.6f, 1.1f};
 
 static void setup_player_node(Player* player);
 
-void player_init(Player* player, fw64Engine* engine, fw64Level* level, ProjectileController* projectile_controller, fw64Allocator* allocator) {
+void player_init(Player* player, fw64Engine* engine, fw64Level* level, ProjectileController* projectile_controller, AudioController* audio_controller, fw64Allocator* allocator) {
     player->engine = engine;
     player->level = level;
     player->allocator = allocator;
@@ -32,7 +32,7 @@ void player_init(Player* player, fw64Engine* engine, fw64Level* level, Projectil
     player->aim.infinite = 1; //boolean true
 
     // todo: investigate weapon allocator usage
-    weapon_controller_init(&player->weapon_controller, engine, projectile_controller, allocator, &player->input_map, 0);
+    weapon_controller_init(&player->weapon_controller, engine, projectile_controller, audio_controller, allocator, &player->input_map, 0);
     player->weapon_controller.aim = &player->aim;
     weapon_controller_set_weapon(&player->weapon_controller, WEAPON_TYPE_NONE);
 }

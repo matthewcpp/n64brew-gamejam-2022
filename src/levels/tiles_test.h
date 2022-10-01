@@ -8,6 +8,7 @@
 
 #include "player.h"
 #include "ui.h"
+#include "audio_controller.h"
 #include "projectile_controller.h"
 
 #include "framework64/level.h"
@@ -19,6 +20,7 @@ typedef struct {
     fw64Level level;
     Player player;
     ProjectileController projectile_controller;
+    AudioController audio_controller;
     fw64BumpAllocator allocators[ACTIVE_TILE_COUNT];
     uint32_t chunk_handles[ACTIVE_TILE_COUNT];
     float next_row_pos;

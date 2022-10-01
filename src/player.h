@@ -8,6 +8,7 @@
 #include "movement_controller.h"
 
 #include "framework64/level.h"
+#include "audio_controller.h"
 #include "weapon_controller.h"
 #include "ray.h"
 #include "mapped_input.h"
@@ -23,7 +24,7 @@ typedef struct {
     Ray aim;    
 } Player;
 
-void player_init(Player* player, fw64Engine* engine, fw64Level* level, ProjectileController* projectile_controller, fw64Allocator* allocator);
+void player_init(Player* player, fw64Engine* engine, fw64Level* level, ProjectileController* projectile_controller, AudioController* audio_controller, fw64Allocator* allocator);
 void player_uninit(Player* player);
 void player_update(Player* player);
 void player_draw(Player* player);

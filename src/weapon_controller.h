@@ -7,6 +7,7 @@
 #include "ray.h"
 #include "mapped_input.h"
 #include "projectile_controller.h"
+#include "audio_controller.h"
 
 typedef enum {
     WEAPON_CONTROLLER_HOLDING,
@@ -31,6 +32,7 @@ typedef void(*WeaponTransitionFunc)(Weapon*, WeaponControllerState, void*);
 typedef struct {
     fw64Engine* engine;
     ProjectileController* projectile_controller;
+    AudioController* audio_controller;
     fw64Allocator* weapon_allocator;
     fw64Camera weapon_camera;
     Ray* aim;
@@ -56,7 +58,7 @@ typedef struct {
     void* transition_arg;
 } WeaponController;
 
-void weapon_controller_init(WeaponController* controller, fw64Engine* engine, ProjectileController* projectile_controller, fw64Allocator* weapon_allocator, InputMapping* input_map, int controller_index);
+void weapon_controller_init(WeaponController* controller, fw64Engine* engine, ProjectileController* projectile_controller, AudioController* audio_controller, fw64Allocator* weapon_allocator, InputMapping* input_map, int controller_index);
 void weapon_controller_uninit(WeaponController* controller);
 void weapon_controller_update(WeaponController* controller);
 void weapon_controller_draw(WeaponController* controller);

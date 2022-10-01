@@ -8,6 +8,7 @@
 #define ROTATION_SPEED 90.0f
 
 static fw64Scene* setup_level(TestLevel* level);
+static void setup_audio(TestLevel* level);
 
 void test_level_init(TestLevel* level, fw64Engine* engine) {
     level->engine = engine;
@@ -16,10 +17,10 @@ void test_level_init(TestLevel* level, fw64Engine* engine) {
     level->allocator = fw64_default_allocator();
 
     setup_level(level);
+    setup_audio(level);
 
     projectile_controller_init(&level->projectile_controller, &level->level);
-
-    player_init(&level->player, engine, &level->level, &level->projectile_controller, level->allocator);
+    player_init(&level->player, engine, &level->level, &level->projectile_controller, &level->audio_controller, level->allocator);
 
     zombie_spawner_init(&level->zombie_spawner, engine, &level->level, FW64_scene_spooky_level_node_Zombie_Spawn, &level->player.movement.camera.transform, level->allocator);
 
@@ -29,12 +30,16 @@ void test_level_init(TestLevel* level, fw64Engine* engine) {
     fw64_renderer_set_clear_color(renderer, 20, 4, 40);
     fw64_renderer_set_fog_color(renderer, 20, 4, 40);
     fw64_renderer_set_fog_positions(renderer, 0.45, 0.9f);
+}
 
-    level->music = fw64_music_bank_load(engine->assets, FW64_ASSET_musicbank_music, level->allocator);
-    fw64_audio_set_music_bank(engine->audio, level->music);
+static void setup_audio(TestLevel* level) {
+    level->music = fw64_music_bank_load(level->engine->assets, FW64_ASSET_musicbank_music, level->allocator);
+    fw64_audio_set_music_bank(level->engine->audio, level->music);
 
-    level->sound = fw64_sound_bank_load(engine->assets, FW64_ASSET_soundbank_sounds, level->allocator);
-    fw64_audio_set_sound_bank(engine->audio, level->sound);
+    level->sound = fw64_sound_bank_load(level->engine->assets, FW64_ASSET_soundbank_sounds, level->allocator);
+    fw64_audio_set_sound_bank(level->engine->audio, level->sound);
+
+    audio_controller_init(&level->audio_controller, level->engine->audio);
 }
 
 static fw64Scene* setup_level(TestLevel* hill_level) {
@@ -80,6 +85,7 @@ void test_level_update(TestLevel* level){
     //if (fw64_audio_get_music_status(level->engine->audio) == FW64_AUDIO_STOPPED)
     //    fw64_audio_play_music(level->engine->audio, 0);
 
+    audio_controller_update(&level->audio_controller);
     player_update(&level->player);
     zombie_spawner_update(&level->zombie_spawner);
     weapon_pickups_update(&level->weapon_pickups);

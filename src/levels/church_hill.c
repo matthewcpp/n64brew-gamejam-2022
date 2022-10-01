@@ -6,6 +6,8 @@
 
 static void setup_sound_trigger(HillLevel* hill_level, fw64Scene* scene, int trigger_box_index, int node_index);
 static fw64Scene* setup_level(HillLevel* hill_level);
+static void setup_audio(HillLevel* hill_level, fw64Scene* scene);
+
 void hill_level_init(HillLevel* hill_level, fw64Engine* engine) {
     hill_level->engine = engine;
 
@@ -13,9 +15,10 @@ void hill_level_init(HillLevel* hill_level, fw64Engine* engine) {
 
     fw64_renderer_set_clear_color(engine->renderer, 20, 4, 40);
     fw64Scene* scene = setup_level(hill_level);
+    setup_audio(hill_level, scene);
 
     projectile_controller_init(&hill_level->projectile_controller, &hill_level->level);
-    player_init(&hill_level->player, engine, &hill_level->level, &hill_level->projectile_controller, hill_level->allocator);
+    player_init(&hill_level->player, engine, &hill_level->level, &hill_level->projectile_controller, &hill_level->audio_controller, hill_level->allocator);
     fw64_level_add_dyanmic_node(&hill_level->level, hill_level->player.node);
 
     fw64Node* start_node = fw64_scene_get_node(scene, FW64_scene_church_hill_node_Player_Start);
@@ -27,8 +30,13 @@ void hill_level_init(HillLevel* hill_level, fw64Engine* engine) {
     
     ui_init(&hill_level->ui, engine, hill_level->allocator, &hill_level->player);
 
-    hill_level->sound = fw64_sound_bank_load(engine->assets, FW64_ASSET_soundbank_sounds, hill_level->allocator);
-    fw64_audio_set_sound_bank(engine->audio, hill_level->sound);
+
+}
+
+void setup_audio(HillLevel* hill_level, fw64Scene* scene) {
+    audio_controller_init(&hill_level->audio_controller, hill_level->engine->audio);
+    hill_level->sound = fw64_sound_bank_load(hill_level->engine->assets, FW64_ASSET_soundbank_sounds, hill_level->allocator);
+    fw64_audio_set_sound_bank(hill_level->engine->audio, hill_level->sound);
 
     setup_sound_trigger(hill_level, scene, HILL_LEVEL_TRIGGER_CROW, FW64_scene_church_hill_node_CrowTrigger);
     setup_sound_trigger(hill_level, scene, HILL_LEVEL_TRIGGER_HOWL, FW64_scene_church_hill_node_HowlTrigger);
@@ -72,6 +80,7 @@ void setup_sound_trigger(HillLevel* hill_level, fw64Scene* scene, int trigger_bo
 }
 
 void hill_level_update(HillLevel* hill_level) {
+    audio_controller_update(&hill_level->audio_controller);
     player_update(&hill_level->player);
     zombie_spawner_update(&hill_level->zombie_spawner[0]);
     zombie_spawner_update(&hill_level->zombie_spawner[1]);

@@ -13,9 +13,10 @@
 static void weapon_controller_fire(WeaponController* controller);
 static int weapon_controller_is_idle(WeaponController* controller);
 
-void weapon_controller_init(WeaponController* controller, fw64Engine* engine, ProjectileController* projectile_controller, fw64Allocator* weapon_allocator, InputMapping* input_map, int controller_index) {
+void weapon_controller_init(WeaponController* controller, fw64Engine* engine, ProjectileController* projectile_controller, AudioController* audio_controller, fw64Allocator* weapon_allocator, InputMapping* input_map, int controller_index) {
     controller->engine = engine;
     controller->projectile_controller = projectile_controller;
+    controller->audio_controller = audio_controller;
     controller->weapon_allocator = weapon_allocator;
     controller->controller_index = controller_index;
     controller->input_map = input_map;
@@ -262,7 +263,9 @@ static void weapon_controller_fire(WeaponController* controller) {
         // todo play out of ammo sound
         return;
     }
-    fw64_audio_play_sound(controller->engine->audio, controller->weapon.info->gunshot_sound);
+
+    audio_controller_play(controller->audio_controller, AUDIO_CONTROLLER_CHANNEL_PLAYER_WEAPON, controller->weapon.info->gunshot_sound);
+    //fw64_audio_play_sound(controller->engine->audio, controller->weapon.info->gunshot_sound);
     controller->time_to_next_fire = controller->weapon.info->fire_rate;
 
     controller->casing_transform.position = controller->weapon.info->ejection_port_pos;
@@ -379,7 +382,8 @@ static void reload_weapon_func(Weapon* current_weapon, WeaponControllerState com
     WeaponController* controller = (WeaponController*)arg;
     weapon_controller_refill_weapon_magazine(controller, controller->weapon.info->type);
     
-    fw64_audio_play_sound(controller->engine->audio, controller->weapon.info->reload_sound);
+    audio_controller_play(controller->audio_controller, AUDIO_CONTROLLER_CHANNEL_PLAYER_WEAPON, controller->weapon.info->reload_sound);
+    //fw64_audio_play_sound(controller->engine->audio, controller->weapon.info->reload_sound);
 
     weapon_controller_raise_weapon(controller, NULL, NULL);
 }

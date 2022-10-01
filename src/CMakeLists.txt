@@ -1,4 +1,5 @@
 set(core_files
+    audio_controller.h audio_controller.c
 	behaviors.h behaviors.c
 	mapped_input.h mapped_input.c
     player.h player.c
