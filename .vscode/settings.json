@@ -15,6 +15,7 @@
         "behaviors.h": "c",
         "memory": "cpp",
         "array": "cpp",
-        "zombie_spawner.h": "c"
+        "zombie_spawner.h": "c",
+        "player.h": "c"
     }
 }

@@ -1,10 +1,13 @@
 #include "playing.h"
 #include "framework64/random.h"
+#include "weapon.h"
 
 void game_state_playing_init(Playing* state, fw64Engine* engine, GameData* game_data) {
+    fw64Allocator* allocator = fw64_default_allocator();
     state->engine = engine;
     state->game_data = game_data;
     fw64_random_set_seed(*(uint32_t*)&engine->time->total_time); //intentional type punning
+    init_weapon_info();
     state->return_to_level_select_time = 0.0f;
 
     state->current_level = game_data->transition_to_level;

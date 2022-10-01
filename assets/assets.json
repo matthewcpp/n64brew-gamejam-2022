@@ -7,28 +7,34 @@
             "src": "us_ar33/us_ar33.gltf"
         },
         {
-            "src": "ar15_muzzle_flash/ar15_muzzle_flash.gltf",
-            "shadingModeOverride": "UnlitTextured"
+            "src": "ar15_muzzle_flash/ar15_muzzle_flash.gltf"
         },
         {
-            "src": "9mm_round/9mm_round.gltf"
+            "src": "ar15_pickup/ar15_pickup.gltf"
         },
         {
             "src": "uzi/uzi.gltf"
         },
         {
-            "src": "uzi_muzzle_flash/uzi_muzzle_flash.gltf",
-            "shadingModeOverride": "UnlitTextured"
+            "src": "uzi_pickup/uzi_pickup.gltf"
+        },
+        {
+            "src": "uzi_muzzle_flash/uzi_muzzle_flash.gltf"
+        },
+        {
+            "src": "9mm_round/9mm_round.gltf"
         },
         {
             "src": "shotgun/shotgun.gltf"
         },
         {
+            "src": "shotgun_pickup/shotgun_pickup.gltf"
+        },
+        {
             "src": "shotgun_shell/shotgun_shell.gltf"
         },
         {
-            "src": "shotgun_muzzle_flash/shotgun_muzzle_flash.gltf",
-            "shadingModeOverride": "UnlitTextured"
+            "src": "shotgun_muzzle_flash/shotgun_muzzle_flash.gltf"
         }
     ],
     "images": [
@@ -69,6 +75,12 @@
             "name": "level_select",
             "imageFormat": "rgba32",
             "sourceString": "abcdefghijklmnopqrstuvwxyz 0123456789_-.>"
+        },
+        {
+            "src": "Consolas.ttf",
+            "size": 12,
+            "name": "weapon_display",
+            "sourceString": "0123456789/ "
         }
     ],
     "layers": {

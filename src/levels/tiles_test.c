@@ -33,8 +33,9 @@ void tiles_test_level_init(TilesTestLevel* level, fw64Engine* engine) {
         fw64_bump_allocator_init(&level->allocators[i], BUMP_ALLOCATOR_SIZE);
     }
 
+    audio_controller_init(&level->audio_controller, engine->audio);
     projectile_controller_init(&level->projectile_controller, &level->level);
-    player_init(&level->player, engine, &level->level, &level->projectile_controller, fw64_default_allocator());
+    player_init(&level->player, engine, &level->level, &level->projectile_controller, &level->audio_controller, fw64_default_allocator());
     player_set_weapon(&level->player, WEAPON_TYPE_UZI);
     Vec3 starting_pos = {0.0f, 0.0f, 50.0f};
     player_set_position(&level->player, &starting_pos);
@@ -90,6 +91,7 @@ void tiles_test_level_uninit(TilesTestLevel* level) {
 void tiles_test_level_update(TilesTestLevel* level) {
     Player* player = &level->player;
 
+    audio_controller_update(&level->audio_controller);
     fw64_level_update(&level->level);
     player_update(player);
 
