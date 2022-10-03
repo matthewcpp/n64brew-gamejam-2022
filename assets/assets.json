@@ -82,12 +82,6 @@
             "name": "ui_hud",
             "imageFormat": "rgba32",
             "sourceString": "0123456789/ "
-        },
-        {
-            "src": "Consolas.ttf",
-            "size": 12,
-            "name": "weapon_display",
-            "sourceString": "0123456789/ "
         }
     ],
     "layers": {

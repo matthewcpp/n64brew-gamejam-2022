@@ -44,7 +44,6 @@ void init_weapon_pickups(TestLevel* level, fw64Scene* scene) {
     fw64Node* ar15_node = fw64_scene_get_node(scene, FW64_scene_spooky_level_node_z_ar15_ammo_spawn);
     fw64_node_set_mesh(ar15_node, ar15_pickup);
 
-    weapon_pickups_init(weapon_pickups, &level->base.player);
     weapon_pickups_add(weapon_pickups, WEAPON_TYPE_AR15, 180, ar15_node);
     weapon_pickups_add(weapon_pickups, WEAPON_TYPE_SHOTGUN, 40, shotgun_node);
     weapon_pickups_add(weapon_pickups, WEAPON_TYPE_UZI, 320, uzi_node);

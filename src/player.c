@@ -113,7 +113,7 @@ void player_set_position(Player* player, Vec3* position) {
     fw64_node_update(player->node);
 }
 
-int player_pickup_ammo(Player* player, WeaponType weapon_type, uint32_t amount) {
+int player_add_ammo(Player* player, WeaponType weapon_type, uint32_t amount) {
     WeaponInfo* weapon_info = weapon_get_info(weapon_type);
     WeaponAmmo* weapon_ammo = &player->weapon_controller.weapon_ammo[weapon_type];
 
@@ -129,11 +129,19 @@ int player_pickup_ammo(Player* player, WeaponType weapon_type, uint32_t amount) 
     if (weapon_ammo->current_mag_count == 0)
         weapon_controller_refill_weapon_magazine(&player->weapon_controller, weapon_type);
 
+    return 1;
+}
+
+int player_pickup_ammo(Player* player, WeaponType weapon_type, uint32_t amount) {
+    if (player_add_ammo(player, weapon_type, amount))
+        return 0;
+
     if (player->weapon_controller.weapon.info->type == WEAPON_TYPE_NONE) {
         weapon_controller_set_weapon(&player->weapon_controller, weapon_type);
         weapon_controller_raise_weapon(&player->weapon_controller, NULL, NULL);
     }
     
+    WeaponInfo* weapon_info = weapon_get_info(weapon_type);
     fw64_audio_play_sound(player->engine->audio, weapon_info->reload_sound);
 
     return 1;

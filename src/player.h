@@ -33,8 +33,13 @@ void player_update(Player* player);
 void player_draw(Player* player);
 void player_draw_weapon(Player* player);
 
-/** player attempts to pick up ammo.  will return false if their inventory is maxed out. */
+/** 
+ * player attempts to pick up ammo.  will return false if their inventory is maxed out.
+ * note this will also play a weapon animation and pickup sound.
+ * so simply add ammo to the player use \ref player_add_ammo
+ * */
 int player_pickup_ammo(Player* player, WeaponType weapon_type, uint32_t amount);
+int player_add_ammo(Player* player, WeaponType weapon_type, uint32_t amount);
 
 void player_set_weapon(Player* player, WeaponType weapon_type);
 void player_set_position(Player* player, Vec3* position);

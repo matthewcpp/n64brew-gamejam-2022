@@ -9,22 +9,17 @@
 #include "trigger.h"
 #include "projectile_controller.h"
 #include "audio_controller.h"
+#include "level_base.h"
 
 #define HILL_LEVEL_TRIGGER_CROW 0
 #define HILL_LEVEL_TRIGGER_HOWL 1
 #define HILL_LEVEL_TRIGGER_COUNT 2
 
 typedef struct {
-    fw64Engine* engine;
-    fw64Level level;
-    Player player;
-    ProjectileController projectile_controller;
-    AudioController audio_controller;
-    UI ui;
+    LevelBase base;
     ZombieSpawner zombie_spawner[2];
     TriggerBox triggers[HILL_LEVEL_TRIGGER_COUNT];
-    fw64Allocator* allocator;
-    fw64SoundBank* sound;
+
 } HillLevel;
 
 void hill_level_init(HillLevel* hill_level, fw64Engine* engine);
