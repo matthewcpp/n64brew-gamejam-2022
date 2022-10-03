@@ -9,11 +9,12 @@ void ui_init(UI* ui, fw64Engine* engine, fw64Allocator* allocator, Player* playe
     ui->allocator = allocator;
     ui->player = player;
 
-    ui->ammo_font = fw64_font_load(ui->engine->assets, FW64_ASSET_font_weapon_display, ui->allocator);
+    ui->hud_font = fw64_font_load(ui->engine->assets, FW64_ASSET_font_ui_hud, ui->allocator);
+    healthbar_init(&ui->healthbar, player, ui->hud_font, engine->renderer);
 }
 
 void ui_uninit(UI* ui) {
-    fw64_font_delete(ui->engine->assets, ui->ammo_font, ui->allocator);
+    fw64_font_delete(ui->engine->assets, ui->hud_font, ui->allocator);
 }
 
 static void ui_draw_player_weapon_crosshair(UI* ui) {
@@ -33,7 +34,7 @@ static void ui_draw_player_ammo_status(UI* ui) {
     char ammo_text[16];
     sprintf(ammo_text, "%d / %d", weapon_ammo->current_mag_count, weapon_ammo->additional_rounds_count);
 
-    fw64_renderer_draw_text(ui->engine->renderer, ui->ammo_font, 10, 10, &ammo_text[0]);
+    fw64_renderer_draw_text(ui->engine->renderer, ui->hud_font, 10, 10, &ammo_text[0]);
 }
 
 void ui_draw(UI* ui) {
@@ -42,4 +43,5 @@ void ui_draw(UI* ui) {
         ui_draw_player_ammo_status(ui);
     }
 
+    healthbar_draw(&ui->healthbar);
 }

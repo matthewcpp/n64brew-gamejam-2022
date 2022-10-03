@@ -12,7 +12,12 @@ set(core_files
     zombie.h zombie.c
     zombie_logic.h zombie_logic.c
     zombie_spawner.h zombie_spawner.c
+    
+)
+
+set(ui_files
     ui.h ui.c
+    healthbar.h healthbar.c
 )
 
 set(level_files
@@ -35,4 +40,4 @@ set(main_game_files
 
 create_game(
     TARGET spooky
-    SOURCES ${main_game_files} ${core_files} ${level_files} ${game_state_files} ${main_game_files})
+    SOURCES ${main_game_files} ${core_files} ${level_files} ${game_state_files} ${ui_files} ${main_game_files})

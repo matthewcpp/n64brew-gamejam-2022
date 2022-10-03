@@ -13,6 +13,8 @@
 #include "ray.h"
 #include "mapped_input.h"
 
+#define PLAYER_MAX_HEALTH 100
+
 typedef struct {
     fw64Engine* engine;
     fw64Allocator* allocator;
@@ -21,7 +23,8 @@ typedef struct {
     MovementController movement;
     WeaponController weapon_controller;
     InputMapping input_map;
-    Ray aim;    
+    Ray aim;
+    int current_health;
 } Player;
 
 void player_init(Player* player, fw64Engine* engine, fw64Level* level, ProjectileController* projectile_controller, AudioController* audio_controller, fw64Allocator* allocator);
@@ -35,3 +38,4 @@ int player_pickup_ammo(Player* player, WeaponType weapon_type, uint32_t amount);
 
 void player_set_weapon(Player* player, WeaponType weapon_type);
 void player_set_position(Player* player, Vec3* position);
+void player_take_damage(Player* player, int amount);

@@ -35,6 +35,7 @@ void player_init(Player* player, fw64Engine* engine, fw64Level* level, Projectil
     weapon_controller_init(&player->weapon_controller, engine, projectile_controller, audio_controller, allocator, &player->input_map, 0);
     player->weapon_controller.aim = &player->aim;
     weapon_controller_set_weapon(&player->weapon_controller, WEAPON_TYPE_NONE);
+    player->current_health = 100;
 }
 
 void player_uninit(Player* player) {
@@ -132,4 +133,8 @@ int player_pickup_ammo(Player* player, WeaponType weapon_type, uint32_t amount) 
     fw64_audio_play_sound(player->engine->audio, weapon_info->reload_sound);
 
     return 1;
+}
+
+void player_take_damage(Player* player, int amount) {
+    player->current_health -= amount;
 }
