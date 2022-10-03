@@ -25,6 +25,7 @@ typedef struct {
     InputMapping input_map;
     Ray aim;
     int current_health;
+    float damage_overlay_time;
 } Player;
 
 void player_init(Player* player, fw64Engine* engine, fw64Level* level, ProjectileController* projectile_controller, AudioController* audio_controller, fw64Allocator* allocator);

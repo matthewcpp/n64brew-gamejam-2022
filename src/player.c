@@ -5,6 +5,8 @@
 #include "assets/sound_bank_sounds.h"
 #include "assets/layers.h"
 
+#define DAMAGE_OVERLAY_DURATION 0.1f
+
 static Vec3 default_player_dimensions = {0.75, 5.6f, 1.1f};
 
 static void setup_player_node(Player* player);
@@ -36,6 +38,8 @@ void player_init(Player* player, fw64Engine* engine, fw64Level* level, Projectil
     player->weapon_controller.aim = &player->aim;
     weapon_controller_set_weapon(&player->weapon_controller, WEAPON_TYPE_NONE);
     player->current_health = 100;
+
+    player->damage_overlay_time = 0.0f;
 }
 
 void player_uninit(Player* player) {
@@ -83,6 +87,10 @@ void player_update(Player* player) {
     if(mapped_input_controller_read(&player->input_map, 0, INPUT_MAP_WEAPON_SWAP, NULL)) {
         weapon_controller_switch_to_next_weapon(&player->weapon_controller);
     }
+
+    player->damage_overlay_time -= player->engine->time->time_delta;
+    if (player->damage_overlay_time < 0.0f)
+        player->damage_overlay_time = 0.0f;
 }
 
 void player_draw(Player* player) {
@@ -149,4 +157,5 @@ int player_pickup_ammo(Player* player, WeaponType weapon_type, uint32_t amount) 
 
 void player_take_damage(Player* player, int amount) {
     player->current_health -= amount;
+    player->damage_overlay_time = DAMAGE_OVERLAY_DURATION;
 }
