@@ -77,7 +77,7 @@
             "sourceString": "abcdefghijklmnopqrstuvwxyz 0123456789_-.>"
         },
         {
-            "src": "texgyreadventor-bold.otf",
+            "src": "texgyreadventor-bold.ttf",
             "size": 12,
             "name": "ui_hud",
             "imageFormat": "rgba32",
