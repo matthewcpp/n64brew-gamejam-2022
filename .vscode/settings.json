@@ -16,6 +16,10 @@
         "memory": "cpp",
         "array": "cpp",
         "zombie_spawner.h": "c",
-        "player.h": "c"
+        "player.h": "c",
+        "xiosbase": "c",
+        "layers.h": "c",
+        "level_base.h": "c",
+        "tiles_test.h": "c"
     }
 }

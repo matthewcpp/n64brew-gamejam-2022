@@ -53,11 +53,15 @@ void setup_player_node(Player* player) {
     fw64Collider* collider = allocator->malloc(allocator, sizeof(fw64Node));
     fw64_node_set_collider(player->node, collider);
 
+    player->node->layer_mask = FW64_layer_player;
+    player->node->data = player;
+
     Box player_box;
     vec3_set(&player_box.min, -default_player_dimensions.x / 2.0f, 0.0f, -default_player_dimensions.z /2.0f);
     vec3_set(&player_box.max, default_player_dimensions.x / 2.0f, default_player_dimensions.y, default_player_dimensions.z / 2.0f);
 
     fw64_collider_set_type_box(collider, &player_box);
+    fw64_level_add_dyanmic_node(player->level, player->node);
 }
 
 void player_aim_update(Player* player) {

@@ -11,20 +11,13 @@
 #include "projectile_controller.h"
 #include "weapon_pickup.h"
 
+#include "levels/level_base.h"
+
 #include "framework64/level.h"
 
 typedef struct {
-    fw64Engine* engine;
-    Player player;
-    ProjectileController projectile_controller;
-    UI ui;
+    LevelBase base;
     ZombieSpawner zombie_spawner;
-    AudioController audio_controller;
-    WeaponPickups weapon_pickups;
-    fw64Level level;
-    fw64MusicBank* music;
-    fw64SoundBank* sound;
-    fw64Allocator* allocator;
 } TestLevel;
 
 #ifdef __cplusplus

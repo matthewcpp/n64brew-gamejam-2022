@@ -99,8 +99,27 @@ static void zombie_update_dying(Zombie* zombie) {
     }
 }
 
+//matthew temp to test damage
+#include "player.h"
+static void damage_player(Zombie* zombie) {
+	uint32_t dyanmic_node_count = fw64_level_get_dynamic_node_count(zombie->level);
+	Player* player = NULL;
+
+	for (uint32_t i = 0; i < dyanmic_node_count; i++) {
+		fw64Node* node = fw64_level_get_dynamic_node(zombie->level, i);
+		if (node->layer_mask & FW64_layer_player) {
+			player = (Player*)node->data;
+			break;
+		}
+	}
+
+	if (player)
+		player_take_damage(player, 15);
+}
+
 static void zombie_update_attack(Zombie* zombie) {
     if (zombie->animation_controller.state == FW64_ANIMATION_STATE_STOPPED) {
+        damage_player(zombie);
         if(zombie->health > 0) {
             zombie_ai_set_logic_state(&zombie->ai, ZLS_AGGRO);
             zombie_set_new_state(zombie, ZOMBIE_STATE_RUNNING);

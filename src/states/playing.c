@@ -85,6 +85,10 @@ void game_state_playing_update(Playing* state) {
         case LEVEL_COUNT:
             break;
     }
+
+    if (state->levels.current.player.current_health <= 0) {
+        state->game_data->transition_to_state = GAME_STATE_LEVEL_SELECT;
+    }
 }
 
 void game_state_playing_draw(Playing* state) {

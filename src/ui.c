@@ -34,10 +34,12 @@ static void ui_draw_player_ammo_status(UI* ui) {
     char ammo_text[16];
     sprintf(ammo_text, "%d / %d", weapon_ammo->current_mag_count, weapon_ammo->additional_rounds_count);
 
-    fw64_renderer_draw_text(ui->engine->renderer, ui->hud_font, 10, 10, &ammo_text[0]);
+    fw64_renderer_draw_text(ui->engine->renderer, ui->hud_font, 20, 16, &ammo_text[0]);
 }
 
 void ui_draw(UI* ui) {
+    fw64_renderer_set_fill_color(ui->engine->renderer, 255, 255, 255, 255);
+
     if (ui->player->weapon_controller.weapon.info->type != WEAPON_TYPE_NONE) {
         ui_draw_player_weapon_crosshair(ui);
         ui_draw_player_ammo_status(ui);

@@ -99,7 +99,8 @@
             "tree": 5,
             "left": 6,
             "right": 7,
-            "back": 8
+            "back": 8,
+            "player": 9
     },
     "skinnedMeshes": [
         {

@@ -21,6 +21,7 @@ set(ui_files
 )
 
 set(level_files
+    levels/level_base.h levels/level_base.c
     levels/church_hill.h levels/church_hill.c
     levels/test.h levels/test.c
     levels/tiles_test.h levels/tiles_test.c
