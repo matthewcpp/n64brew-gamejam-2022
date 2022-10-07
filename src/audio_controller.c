@@ -28,3 +28,7 @@ int audio_controller_play(AudioController* controller, AudioControllerChannel ch
 
     return handle;
 }
+
+int audio_controller_channel_is_playing(AudioController* controller, AudioControllerChannel channel) {
+    return controller->channels[channel] >= 0;
+}
