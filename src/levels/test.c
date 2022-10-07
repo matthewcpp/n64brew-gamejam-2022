@@ -20,6 +20,9 @@ void test_level_init(TestLevel* level, fw64Engine* engine) {
 
     zombie_spawner_init(&level->zombie_spawner, engine, &level->base.level, FW64_scene_spooky_level_node_Zombie_Spawn, &level->base.player.movement.camera.transform, level->base.allocator);
 
+    fw64Node* player_spawn_node = fw64_scene_get_node(scene, FW64_scene_spooky_level_node_Player_Spawn);
+    player_set_position(&level->base.player, &player_spawn_node->transform.position);
+
     fw64Renderer* renderer = engine->renderer;
     fw64_renderer_set_clear_color(renderer, 20, 4, 40);
     fw64_renderer_set_fog_color(renderer, 20, 4, 40);

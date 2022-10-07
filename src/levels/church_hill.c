@@ -3,6 +3,7 @@
 #include "assets/assets.h"
 #include "assets/scene_church_hill.h"
 #include "assets/sound_bank_sounds.h"
+#include "framework64/util/renderer_util.h"
 
 static void setup_sound_trigger(HillLevel* hill_level, fw64Scene* scene, int trigger_box_index, int node_index);
 static fw64Scene* setup_level(HillLevel* hill_level);
@@ -11,6 +12,8 @@ void hill_level_init(HillLevel* level, fw64Engine* engine) {
     level_base_init(&level->base, engine, fw64_default_allocator(), FW64_ASSET_musicbank_music, FW64_ASSET_soundbank_sounds);
 
     fw64_renderer_set_clear_color(engine->renderer, 20, 4, 40);
+    fw64_renderer_set_fog_color(engine->renderer, 20, 4, 40);
+    fw64_renderer_set_fog_positions(engine->renderer, 0.8, 1.0f);
 
     fw64Scene* scene = setup_level(level);
     setup_sound_trigger(level, scene, HILL_LEVEL_TRIGGER_CROW, FW64_scene_church_hill_node_CrowTrigger);
@@ -73,14 +76,18 @@ void hill_level_update(HillLevel* level) {
 void hill_level_draw(HillLevel* level) {
     fw64Renderer* renderer = level->base.engine->renderer;
 
-    fw64_renderer_set_anti_aliasing_enabled(renderer, 1);
+    fw64_renderer_set_fog_enabled(renderer, 1);
     fw64_renderer_begin(renderer, FW64_RENDERER_MODE_TRIANGLES,  FW64_RENDERER_FLAG_CLEAR);
     player_draw(&level->base.player);
     zombie_spawner_draw(&level->zombie_spawner[0]);
     zombie_spawner_draw(&level->zombie_spawner[1]);
+
+    fw64_renderer_set_fog_enabled(renderer, 0);
     player_draw_weapon(&level->base.player);
 
-    fw64_renderer_set_anti_aliasing_enabled(renderer, 0);
+    if (level->base.player.damage_overlay_time > 0.0f)
+        fw64_renderer_util_fullscreen_overlay(renderer, 165, 0, 0, 100);
+
     ui_draw(&level->base.ui);
     fw64_renderer_end(renderer, FW64_RENDERER_FLAG_SWAP);
 }
