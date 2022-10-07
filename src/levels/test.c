@@ -23,7 +23,7 @@ void test_level_init(TestLevel* level, fw64Engine* engine) {
     fw64Renderer* renderer = engine->renderer;
     fw64_renderer_set_clear_color(renderer, 20, 4, 40);
     fw64_renderer_set_fog_color(renderer, 20, 4, 40);
-    fw64_renderer_set_fog_positions(renderer, 0.45, 0.9f);
+    fw64_renderer_set_fog_positions(renderer, 0.8, 1.0f);
 }
 
 
@@ -75,20 +75,17 @@ void test_level_draw(TestLevel* level) {
     weapon_pickups_draw(&level->base.weapon_pickups);
     fw64Renderer* renderer = level->base.engine->renderer;
 
-    fw64_renderer_set_anti_aliasing_enabled(renderer, 1);
-    fw64_renderer_begin(renderer, FW64_RENDERER_MODE_TRIANGLES,  FW64_RENDERER_FLAG_CLEAR);
-
-    fw64_renderer_set_anti_aliasing_enabled(renderer, 1);
+    fw64_renderer_set_fog_enabled(renderer, 1);
     fw64_renderer_begin(renderer, FW64_RENDERER_MODE_TRIANGLES,  FW64_RENDERER_FLAG_CLEAR);
     player_draw(&level->base.player);
     zombie_spawner_draw(&level->zombie_spawner);
     
+    fw64_renderer_set_fog_enabled(renderer, 0);
     player_draw_weapon(&level->base.player);
     
     if (level->base.player.damage_overlay_time > 0.0f)
         fw64_renderer_util_fullscreen_overlay(renderer, 165, 0, 0, 100);
 
-    fw64_renderer_set_anti_aliasing_enabled(renderer, 0);
     ui_draw(&level->base.ui);
     fw64_renderer_end(renderer, FW64_RENDERER_FLAG_SWAP);
 }
