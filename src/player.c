@@ -5,6 +5,8 @@
 #include "assets/sound_bank_sounds.h"
 #include "assets/layers.h"
 
+#define DAMAGE_OVERLAY_DURATION 0.1f
+
 static Vec3 default_player_dimensions = {0.75, 5.6f, 1.1f};
 
 static void setup_player_node(Player* player);
@@ -35,6 +37,9 @@ void player_init(Player* player, fw64Engine* engine, fw64Level* level, Projectil
     weapon_controller_init(&player->weapon_controller, engine, projectile_controller, audio_controller, allocator, &player->input_map, 0);
     player->weapon_controller.aim = &player->aim;
     weapon_controller_set_weapon(&player->weapon_controller, WEAPON_TYPE_NONE);
+    player->current_health = 100;
+
+    player->damage_overlay_time = 0.0f;
 }
 
 void player_uninit(Player* player) {
@@ -52,11 +57,15 @@ void setup_player_node(Player* player) {
     fw64Collider* collider = allocator->malloc(allocator, sizeof(fw64Node));
     fw64_node_set_collider(player->node, collider);
 
+    player->node->layer_mask = FW64_layer_player;
+    player->node->data = player;
+
     Box player_box;
     vec3_set(&player_box.min, -default_player_dimensions.x / 2.0f, 0.0f, -default_player_dimensions.z /2.0f);
     vec3_set(&player_box.max, default_player_dimensions.x / 2.0f, default_player_dimensions.y, default_player_dimensions.z / 2.0f);
 
     fw64_collider_set_type_box(collider, &player_box);
+    fw64_level_add_dyanmic_node(player->level, player->node);
 }
 
 void player_aim_update(Player* player) {
@@ -78,6 +87,10 @@ void player_update(Player* player) {
     if(mapped_input_controller_read(&player->input_map, 0, INPUT_MAP_WEAPON_SWAP, NULL)) {
         weapon_controller_switch_to_next_weapon(&player->weapon_controller);
     }
+
+    player->damage_overlay_time -= player->engine->time->time_delta;
+    if (player->damage_overlay_time < 0.0f)
+        player->damage_overlay_time = 0.0f;
 }
 
 void player_draw(Player* player) {
@@ -108,7 +121,7 @@ void player_set_position(Player* player, Vec3* position) {
     fw64_node_update(player->node);
 }
 
-int player_pickup_ammo(Player* player, WeaponType weapon_type, uint32_t amount) {
+int player_add_ammo(Player* player, WeaponType weapon_type, uint32_t amount) {
     WeaponInfo* weapon_info = weapon_get_info(weapon_type);
     WeaponAmmo* weapon_ammo = &player->weapon_controller.weapon_ammo[weapon_type];
 
@@ -124,12 +137,25 @@ int player_pickup_ammo(Player* player, WeaponType weapon_type, uint32_t amount) 
     if (weapon_ammo->current_mag_count == 0)
         weapon_controller_refill_weapon_magazine(&player->weapon_controller, weapon_type);
 
+    return 1;
+}
+
+int player_pickup_ammo(Player* player, WeaponType weapon_type, uint32_t amount) {
+    if (player_add_ammo(player, weapon_type, amount))
+        return 0;
+
     if (player->weapon_controller.weapon.info->type == WEAPON_TYPE_NONE) {
         weapon_controller_set_weapon(&player->weapon_controller, weapon_type);
         weapon_controller_raise_weapon(&player->weapon_controller, NULL, NULL);
     }
     
+    WeaponInfo* weapon_info = weapon_get_info(weapon_type);
     fw64_audio_play_sound(player->engine->audio, weapon_info->reload_sound);
 
     return 1;
+}
+
+void player_take_damage(Player* player, int amount) {
+    player->current_health -= amount;
+    player->damage_overlay_time = DAMAGE_OVERLAY_DURATION;
 }

@@ -77,9 +77,10 @@
             "sourceString": "abcdefghijklmnopqrstuvwxyz 0123456789_-.>"
         },
         {
-            "src": "Consolas.ttf",
+            "src": "texgyreadventor-bold.ttf",
             "size": 12,
-            "name": "weapon_display",
+            "name": "ui_hud",
+            "imageFormat": "rgba32",
             "sourceString": "0123456789/ "
         }
     ],
@@ -92,7 +93,8 @@
             "tree": 5,
             "left": 6,
             "right": 7,
-            "back": 8
+            "back": 8,
+            "player": 9
     },
     "skinnedMeshes": [
         {

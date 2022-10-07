@@ -10,17 +10,14 @@
 #include "ui.h"
 #include "audio_controller.h"
 #include "projectile_controller.h"
+#include "level_base.h"
 
 #include "framework64/level.h"
 
 #define ACTIVE_TILE_COUNT 6
 
 typedef struct {
-    fw64Engine* engine;
-    fw64Level level;
-    Player player;
-    ProjectileController projectile_controller;
-    AudioController audio_controller;
+    LevelBase base;
     fw64BumpAllocator allocators[ACTIVE_TILE_COUNT];
     uint32_t chunk_handles[ACTIVE_TILE_COUNT];
     float next_row_pos;

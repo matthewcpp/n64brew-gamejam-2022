@@ -22,23 +22,20 @@ static void tiles_test_load_tile(TilesTestLevel* level, int index, Vec3* pos);
 static void tiles_test_load_next_row(TilesTestLevel* level);
 
 void tiles_test_level_init(TilesTestLevel* level, fw64Engine* engine) {
-    level->engine = engine;
+    level_base_init(&level->base, engine, fw64_default_allocator(), FW64_INVALID_ASSET_ID, FW64_ASSET_soundbank_sounds);
     level->next_row_pos = 0.0f;
     level->handle_index = 0;
-
-    fw64_level_init(&level->level, engine);
 
     for (int i = 0; i < ACTIVE_TILE_COUNT; i++) {
         level->chunk_handles[i] = FW64_LEVEL_INVALID_CHUNK_HANDLE;
         fw64_bump_allocator_init(&level->allocators[i], BUMP_ALLOCATOR_SIZE);
     }
 
-    audio_controller_init(&level->audio_controller, engine->audio);
-    projectile_controller_init(&level->projectile_controller, &level->level);
-    player_init(&level->player, engine, &level->level, &level->projectile_controller, &level->audio_controller, fw64_default_allocator());
-    player_set_weapon(&level->player, WEAPON_TYPE_UZI);
+    player_add_ammo(&level->base.player, WEAPON_TYPE_UZI, 320);
+    player_set_weapon(&level->base.player, WEAPON_TYPE_UZI);
+
     Vec3 starting_pos = {0.0f, 0.0f, 50.0f};
-    player_set_position(&level->player, &starting_pos);
+    player_set_position(&level->base.player, &starting_pos);
     level->player_previous_z = starting_pos.z;
 
     tiles_test_load_next_row(level);
@@ -67,7 +64,7 @@ void tiles_test_load_next_row(TilesTestLevel* level) {
 
 void tiles_test_load_tile(TilesTestLevel* level, int index, Vec3* pos) {
     // eject previous chunk in this index
-    fw64_level_unload_chunk(&level->level, level->chunk_handles[index]);
+    fw64_level_unload_chunk(&level->base.level, level->chunk_handles[index]);
     fw64_bump_allocator_reset(&level->allocators[index]);
 
     fw64LevelChunkInfo info;
@@ -76,12 +73,12 @@ void tiles_test_load_tile(TilesTestLevel* level, int index, Vec3* pos) {
     info.allocator = &level->allocators[index].interface;
 
 
-    level->chunk_handles[index] = fw64_level_load_chunk_at_pos(&level->level, &info, pos);
+    level->chunk_handles[index] = fw64_level_load_chunk_at_pos(&level->base.level, &info, pos);
 }
 
 void tiles_test_level_uninit(TilesTestLevel* level) {
-    player_uninit(&level->player);
-    fw64_level_uninit(&level->level);
+    player_uninit(&level->base.player);
+    fw64_level_uninit(&level->base.level);
 
     for (int i = 0; i < ACTIVE_TILE_COUNT; i++) {
         fw64_bump_allocator_uninit(&level->allocators[i]);
@@ -89,11 +86,8 @@ void tiles_test_level_uninit(TilesTestLevel* level) {
 }
 
 void tiles_test_level_update(TilesTestLevel* level) {
-    Player* player = &level->player;
-
-    audio_controller_update(&level->audio_controller);
-    fw64_level_update(&level->level);
-    player_update(player);
+    level_base_update(&level->base);
+    Player* player = &level->base.player;
 
     float player_z = player->node->transform.position.z;
     
@@ -104,12 +98,12 @@ void tiles_test_level_update(TilesTestLevel* level) {
 }
 
 void tiles_test_level_draw(TilesTestLevel* level) {
-    fw64Renderer* renderer = level->engine->renderer;
+    fw64Renderer* renderer = level->base.engine->renderer;
 
     fw64_renderer_set_anti_aliasing_enabled(renderer, 1);
     fw64_renderer_begin(renderer, FW64_RENDERER_MODE_TRIANGLES,  FW64_RENDERER_FLAG_CLEAR);
-    player_draw(&level->player);
-    player_draw_weapon(&level->player);
+    player_draw(&level->base.player);
+    player_draw_weapon(&level->base.player);
 
     fw64_renderer_set_anti_aliasing_enabled(renderer, 0);
     fw64_renderer_end(renderer, FW64_RENDERER_FLAG_SWAP);

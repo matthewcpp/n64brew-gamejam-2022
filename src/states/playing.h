@@ -4,12 +4,14 @@
 
 #include "framework64/engine.h"
 
+#include "levels/level_base.h"
 #include "levels/levels.h"
 #include "levels/test.h"
 #include "levels/church_hill.h"
 #include "levels/tiles_test.h"
 
 typedef union {
+    LevelBase current;
     TestLevel test_level;
     HillLevel church_hill;
     TilesTestLevel tiles_test;

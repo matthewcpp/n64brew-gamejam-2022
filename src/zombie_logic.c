@@ -403,6 +403,7 @@ static void zombie_ai_update_aggro(ZombieAI* zombie_ai, float deltaTime) {
 	}
 }
 
+
 static void zombie_ai_update_attack(ZombieAI* zombie_ai, float deltaTime) {
 		if(zombie_ai->attack_cooldown <= 0.0f) {
 			zombie_ai->attack_cooldown = 0.0f;

@@ -1,6 +1,6 @@
 {
     "asset" : {
-        "generator" : "Khronos glTF Blender I/O v1.8.19",
+        "generator" : "Khronos glTF Blender I/O v3.2.40",
         "version" : "2.0"
     },
     "scene" : 0,
@@ -8,8 +8,8 @@
         {
             "name" : "Scene",
             "nodes" : [
-                25,
-                26
+                26,
+                27
             ]
         }
     ],
@@ -197,12 +197,20 @@
             "name" : "gorund plane"
         },
         {
+            "name" : "Player Spawn",
+            "translation" : [
+                0,
+                0,
+                31
+            ]
+        },
+        {
             "mesh" : 6,
             "name" : "z_ar15_ammo_spawn",
             "translation" : [
                 -14.328980445861816,
                 0,
-                -10.916799545288086
+                7.6817626953125
             ]
         },
         {
@@ -211,7 +219,7 @@
             "translation" : [
                 0.6462078094482422,
                 0,
-                -10.916799545288086
+                7.6817626953125
             ]
         },
         {
@@ -220,7 +228,7 @@
             "translation" : [
                 14.45822811126709,
                 0,
-                -10.916799545288086
+                7.6817626953125
             ]
         },
         {
@@ -261,13 +269,14 @@
                 20,
                 21,
                 22,
-                23
+                23,
+                24
             ],
             "name" : "Scene"
         },
         {
             "children" : [
-                24
+                25
             ],
             "name" : "Spooky Level"
         },
