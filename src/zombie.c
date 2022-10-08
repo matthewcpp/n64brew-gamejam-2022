@@ -2,6 +2,7 @@
 #include "assets/zombie_animation.h"
 #include "assets/layers.h"
 #include "framework64/random.h"
+#include "framework64/collision.h"
 
 #define ZOMBIE_SCALE 0.025f
 
@@ -39,10 +40,7 @@ static void zombie_update_idle(Zombie* zombie) {
 
 static void zombie_move(Zombie* zombie) {
 
-    //this chunk just adjusts the rotation of the zombie's model when drawn.
-    //I'm sure it can be done better without any atan2 nonsense
-    //atan2 return from -pi to + pi.
-    //so there's a spot where the function is not continuous, which is annoying
+    // rotate mesh to face direction of vel vector
     Vec3 ref_zero;
     vec3_zero(&ref_zero);
     if((vec3_distance_squared(&ref_zero, &zombie->ai.velocity.linear )) > 0.01f)
@@ -60,24 +58,37 @@ static void zombie_move(Zombie* zombie) {
 
     Vec3 delta_vel;
     vec3_scale(&delta_vel, &zombie->ai.velocity.linear, zombie->engine->time->time_delta);
-    
-    //attempt smooth resolution of collisions
+
+    if(vec3_dot(&delta_vel, &delta_vel) < EPSILON)
+        return;
+
     uint32_t mask = (uint32_t)(FW64_layer_obstacles | FW64_layer_tree | FW64_layer_wall);
-    fw64IntersectMovingBoxQuery query;
-    if (fw64_level_moving_box_intersection(zombie->level, &zombie->collider.bounding, &delta_vel, mask, &query)) {
+    fw64IntersectMovingSphereQuery statics_query, dynamics_query;
+    int hit_statics = fw64_level_moving_sphere_intersection( zombie->level,
+                                                            &zombie->node.transform.position,
+                                                            0.5f, &delta_vel, mask, &statics_query);
+    mask = (uint32_t)ZOMBIE_LAYER;
+    int hit_dynamics = fw64_level_moving_spheres_dynamic_intersection( zombie->level,
+                                                                      &zombie->node.transform.position,
+                                                                      0.5f, &delta_vel, mask, &dynamics_query);
     
-        Box testBox;
-        Vec3 origin;
-        float radius = 5.0f;
-        vec3_add(&origin, &zombie->node.transform.position, &delta_vel);
-        float speed = vec3_distance(&zombie->node.transform.position, &origin);
-        testBox = query.results[0].node->collider->bounding;
-        Vec3 point;
-        if((speed > 0.01) && fw64_collision_test_box_sphere(&testBox, &origin, radius, &point)) {
-            vec3_scale(&delta_vel, &delta_vel, vec3_distance(&zombie->node.transform.position, &point));
-        }    
+    if(hit_dynamics && dynamics_query.count <= 1) { hit_dynamics = 0; }
+    
+    Vec3 collision_normal = {0.0f, 0.0f, 0.0f};
+    
+    if(hit_statics) {
+        fw64_collision_get_normal_box_point(&statics_query.results[0].point,
+                                    &statics_query.results[0].node->collider->bounding,
+                                    &collision_normal);
+    } else if (hit_dynamics) { // use node 1 for dynamics, collision 0 is always self
+        vec3_subtract(&collision_normal,
+                &dynamics_query.results[1].point,
+                &dynamics_query.results[1].node->transform.position);
+        vec3_normalize(&collision_normal);
     }
 
+    float strength = fw64_fabsf(vec3_dot(&delta_vel, &collision_normal));
+    vec3_add_and_scale(&delta_vel, &delta_vel, &collision_normal, strength);
     vec3_add(&zombie->node.transform.position, &zombie->node.transform.position, &delta_vel);   
     zombie_set_to_ground_height(zombie);
     fw64_node_update(&zombie->node);
@@ -100,21 +111,21 @@ static void zombie_update_dying(Zombie* zombie) {
 }
 
 //matthew temp to test damage
-#include "player.h"
+//#include "player.h"
 static void damage_player(Zombie* zombie) {
-	uint32_t dyanmic_node_count = fw64_level_get_dynamic_node_count(zombie->level);
-	Player* player = NULL;
+	// uint32_t dyanmic_node_count = fw64_level_get_dynamic_node_count(zombie->level);
+	// Player* player = NULL;
 
-	for (uint32_t i = 0; i < dyanmic_node_count; i++) {
-		fw64Node* node = fw64_level_get_dynamic_node(zombie->level, i);
-		if (node->layer_mask & FW64_layer_player) {
-			player = (Player*)node->data;
-			break;
-		}
-	}
+	// for (uint32_t i = 0; i < dyanmic_node_count; i++) {
+	// 	fw64Node* node = fw64_level_get_dynamic_node(zombie->level, i);
+	// 	if (node->layer_mask & FW64_layer_player) {
+	// 		player = (Player*)node->data;
+	// 		break;
+	// 	}
+	// }
 
-	if (player)
-		player_take_damage(player, 15);
+	// if (player)
+	// 	player_take_damage(player, 15);
 }
 
 static void zombie_update_attack(Zombie* zombie) {
