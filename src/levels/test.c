@@ -5,8 +5,6 @@
 
 #include "framework64/n64/controller_button.h"
 
-#include "framework64/util/renderer_util.h"
-
 #define ROTATION_SPEED 90.0f
 
 static fw64Scene* setup_level(TestLevel* level);
@@ -81,14 +79,10 @@ void test_level_draw(TestLevel* level) {
     fw64_renderer_set_fog_enabled(renderer, 1);
     fw64_renderer_begin(renderer, FW64_RENDERER_MODE_TRIANGLES,  FW64_RENDERER_FLAG_CLEAR);
     player_draw(&level->base.player);
-    zombie_spawner_draw(&level->zombie_spawner);
-    
+    zombie_spawner_draw(&level->zombie_spawner);    
     fw64_renderer_set_fog_enabled(renderer, 0);
     player_draw_weapon(&level->base.player);
-    
-    if (level->base.player.damage_overlay_time > 0.0f)
-        fw64_renderer_util_fullscreen_overlay(renderer, 165, 0, 0, 100);
-
+    player_draw_damage(&level->base.player);
     ui_draw(&level->base.ui);
     fw64_renderer_end(renderer, FW64_RENDERER_FLAG_SWAP);
 }

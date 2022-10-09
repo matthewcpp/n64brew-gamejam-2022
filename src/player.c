@@ -1,11 +1,10 @@
 #include "player.h"
-
 #include "framework64/n64/controller_button.h"
 #include "framework64/util/renderer_util.h"
 #include "assets/sound_bank_sounds.h"
 #include "assets/layers.h"
 
-#define DAMAGE_OVERLAY_DURATION 0.1f
+#define DAMAGE_OVERLAY_DURATION 0.025f
 
 static Vec3 default_player_dimensions = {0.75, 5.6f, 1.1f};
 
@@ -40,6 +39,7 @@ void player_init(Player* player, fw64Engine* engine, fw64Level* level, Projectil
     player->current_health = 100;
 
     player->damage_overlay_time = 0.0f;
+    player->damage_overlay_initial_time = 1.0;
 }
 
 void player_uninit(Player* player) {
@@ -157,5 +157,17 @@ int player_pickup_ammo(Player* player, WeaponType weapon_type, uint32_t amount) 
 
 void player_take_damage(Player* player, int amount) {
     player->current_health -= amount;
-    player->damage_overlay_time = DAMAGE_OVERLAY_DURATION;
+    if((float)amount * DAMAGE_OVERLAY_DURATION > player->damage_overlay_time) {
+        player->damage_overlay_time = (float)amount * DAMAGE_OVERLAY_DURATION;
+        player->damage_overlay_initial_time = player->damage_overlay_time;
+    }
+}
+
+void player_draw_damage(Player* player) {
+    fw64Renderer* renderer = player->engine->renderer;
+    if (player->damage_overlay_time > 0.0f) {
+        uint8_t alpha = (uint8_t)(100.0f * (1.0f - ((player->damage_overlay_initial_time - player->damage_overlay_time)/player->damage_overlay_initial_time)));
+        fw64_renderer_util_fullscreen_overlay(renderer, 165, 0, 0, alpha);
+    }
+    
 }
