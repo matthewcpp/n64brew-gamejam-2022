@@ -137,7 +137,7 @@ int mapped_input_controller_read(InputMapping* mapping, int controller, MappedBu
 			return 0;
 		default:
 			if(safety_check_button_value(mapping->buttons[button - INPUT_MAP_START])) {
-				return fw64_input_controller_button_down(mapping->fw64_input, controller, mapping->buttons[button - INPUT_MAP_START]);
+				return !!(fw64_input_controller_button_down(mapping->fw64_input, controller, mapping->buttons[button - INPUT_MAP_START]));
 			}
 			break;
 	}
