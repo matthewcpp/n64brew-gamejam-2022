@@ -315,6 +315,7 @@ static void zombie_ai_behavior_apply(ZombieAI* zombie_ai, SteeringBehavior behav
         default: break;
     }
     vec3_add(&zombie_ai->velocity.linear, &zombie_ai->velocity.linear, &zombie_ai->sb_data.linearAccel);
+	zombie_ai->velocity.linear.y = 0.0f;
 	zombie_ai->velocity.angular += zombie_ai->sb_data.angularAccel;
 }
 

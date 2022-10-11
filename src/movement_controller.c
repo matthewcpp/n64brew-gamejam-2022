@@ -105,9 +105,17 @@ static void move_camera(MovementController* controller, float time_delta, Vec2* 
         vec3_scale(&move, &move, controller->movement_speed * time_delta);
     }
 
-    fw64IntersectMovingBoxQuery query;
-    if (fw64_level_moving_box_intersection(controller->level, &controller->collider->bounding, &move, controller->collision_mask, &query)) {
-        vec3_scale(&move, &move, query.results[0].tfirst - 0.1);
+    fw64IntersectMovingSphereQuery query;
+    int remaining_checks = 10;
+    while (remaining_checks > 0 && fw64_level_moving_sphere_intersection(controller->level, &controller->camera.transform.position, 1.0f, &move, controller->collision_mask, &query)) {
+        remaining_checks--; //prevent weird infinite loop of collisions condition
+        Vec3 collision_normal = {0.0f, 0.0f, 0.0f};
+        fw64_collision_get_normal_box_point(&query.results[0].point,
+                                    &query.results[0].node->collider->bounding,
+                                    &collision_normal);
+        float strength = fw64_fabsf(vec3_dot(&move, &collision_normal));
+        vec3_add_and_scale(&move, &move, &collision_normal, strength); 
+        //vec3_scale(&move, &move, query.results[0].tfirst - 0.1);
     }
 
     vec3_add(&controller->camera.transform.position, &controller->camera.transform.position, &move);
