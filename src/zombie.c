@@ -129,8 +129,30 @@ static void damage_player(Zombie* zombie) {
 }
 
 static void zombie_update_attack(Zombie* zombie) {
+    static const float attack_radius = 7.0f;
+    if(zombie->animation_controller.current_time > (zombie->animation_controller.current_animation->total_time*0.55f)){
+        if(!zombie->this_attack_hit) {
+            Vec3 pos, target_pos;
+            vec3_copy(&pos, &zombie->node.transform.position);
+            pos.y = 0.0f;
+            vec3_copy(&target_pos, &zombie->ai.target->position);
+            target_pos.y = 0.0f;
+            float dist_sq = vec3_distance_squared(&pos, &target_pos);
+            if(dist_sq <= attack_radius*attack_radius) {
+                Vec3 dir;
+                vec3_subtract(&dir, &target_pos, &pos);
+                vec3_normalize(&dir);
+                Vec3 facing = {0.0f, 0.0f, 1.0f};
+                quat_transform_vec3(&facing, &zombie->node.transform.rotation, &facing);
+                if(vec3_dot(&dir, &facing) > 0) {
+                    damage_player(zombie);
+                    zombie->this_attack_hit = 1;
+                }
+            }
+        }
+    }
     if (zombie->animation_controller.state == FW64_ANIMATION_STATE_STOPPED) {
-        damage_player(zombie);
+        // damage_player(zombie);
         if(zombie->health > 0) {
             zombie_ai_set_logic_state(&zombie->ai, ZLS_AGGRO);
             zombie_set_new_state(zombie, ZOMBIE_STATE_RUNNING);
@@ -165,8 +187,10 @@ int zombie_update(Zombie* zombie) {
         if(zombie->state == ZOMBIE_STATE_RUNNING || zombie->state == ZOMBIE_STATE_WALKING)
             zombie_set_new_state(zombie, ZOMBIE_STATE_IDLE);
     } else if (zombie->ai.state == ZLS_ATTACK && zombie->health > 0) {
-        if(zombie->state != ZOMBIE_STATE_ATTACK)
+        if(zombie->state != ZOMBIE_STATE_ATTACK) {
             zombie_set_new_state(zombie, ZOMBIE_STATE_ATTACK);
+            zombie->this_attack_hit = 0;
+        }
     } else {
         Vec3 ref_zero = {0.0f, 0.0f, 0.0f};
         float speed_sq = vec3_distance_squared(&ref_zero, &zombie->ai.velocity.linear);

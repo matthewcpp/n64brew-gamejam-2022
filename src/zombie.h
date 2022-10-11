@@ -40,6 +40,7 @@ typedef struct {
     int health;
     float rotation; // current angular offset. radians about the y axis. stored to easily update
     ZombieAI ai;
+    int this_attack_hit;
 } Zombie;
 
 void zombie_init(Zombie* zombie, fw64Engine* engine, fw64Level* level, fw64Mesh* mesh, fw64AnimationData* animation_data);
