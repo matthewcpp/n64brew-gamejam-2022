@@ -60,7 +60,7 @@ static void weapon_controller_update_casing(WeaponController* controller) {
     float x_scale = 16.0f;
     float y_scale = 8.5f;
 
-    controller->casing_transform.position = controller->weapon.info->ejection_port_pos;
+    vec3_add(&controller->casing_transform.position, &controller->weapon.info->ejection_port_pos, &controller->weapon_bob->translation);
     controller->casing_transform.position.x += x * x_scale;
     controller->casing_transform.position.x += y * y_scale;
 
@@ -81,9 +81,6 @@ static void weapon_controller_update_muzzle_flash(WeaponController* controller) 
 
 static void weapon_controller_update_recoil(WeaponController* controller) {
     Weapon* weapon = &controller->weapon;
-
-    if (controller->recoil_state == WEAPON_RECOIL_INACTIVE)
-        return;
 
     controller->recoil_time += controller->engine->time->time_delta;
 
@@ -109,6 +106,12 @@ static void weapon_controller_update_recoil(WeaponController* controller) {
         vec3_lerp(&controller->weapon_transform.position, &weapon->info->recoil_pos, &weapon->info->default_position, smoothed_time);
     }
 
+    vec3_add(&controller->weapon_transform.position, &controller->weapon_transform.position, &controller->weapon_bob->translation);
+    fw64_transform_update_matrix(&controller->weapon_transform);
+}
+
+static void weapon_controller_update_moving(WeaponController* controller) {
+    vec3_add(&controller->weapon_transform.position, &controller->weapon.info->default_position, &controller->weapon_bob->translation);
     fw64_transform_update_matrix(&controller->weapon_transform);
 }
 
@@ -116,7 +119,11 @@ static void weapon_controller_update_holding(WeaponController* controller) {
     if (controller->weapon.info->type == WEAPON_TYPE_NONE)
         return;
 
-    weapon_controller_update_recoil(controller);
+    if (controller->recoil_state == WEAPON_RECOIL_INACTIVE)
+        weapon_controller_update_moving(controller);
+    else
+        weapon_controller_update_recoil(controller);
+
     weapon_controller_update_muzzle_flash(controller);
 
     if (controller->time_to_next_fire > 0.0f) {

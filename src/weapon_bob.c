@@ -4,9 +4,9 @@
 
 #include <string.h>
 
-#define WEAPON_BOB_SCALE_X 1.0f
-#define WEAPON_BOB_SCALE_Y 1.0f
-#define WEAPON_BOB_CYCLE_TIME 1.0f
+#define WEAPON_BOB_SCALE_X 0.25f
+#define WEAPON_BOB_SCALE_Y 0.25f
+#define WEAPON_BOB_CYCLE_TIME 1.5f
 
 void weapon_bob_init(WeaponBob* weapon_bob) {
     memset(weapon_bob, 0, sizeof(WeaponBob));

@@ -17,8 +17,9 @@ void player_init(Player* player, fw64Engine* engine, fw64Level* level, Projectil
 
     setup_player_node(player);
     mapped_input_init(&player->input_map, engine->input);
+    weapon_bob_init(&player->weapon_bob);
 
-    movement_controller_init(&player->movement, &player->input_map, level, player->node->collider);
+    movement_controller_init(&player->movement, &player->input_map, &player->weapon_bob, level, player->node->collider);
     player->movement.height = 5.0f;
     player->movement.collision_mask = FW64_layer_obstacles | FW64_layer_wall;
     player->movement.movement_speed = 40.0f;
@@ -33,10 +34,9 @@ void player_init(Player* player, fw64Engine* engine, fw64Level* level, Projectil
     player->aim.infinite = 1; //boolean true
 
     // todo: investigate weapon allocator usage
-    weapon_controller_init(&player->weapon_controller, engine, projectile_controller, audio_controller, allocator, &player->input_map, 0);
+    weapon_controller_init(&player->weapon_controller, engine, &player->weapon_bob, projectile_controller, audio_controller, allocator, &player->input_map, 0);
     player->weapon_controller.aim = &player->aim;
     weapon_controller_set_weapon(&player->weapon_controller, WEAPON_TYPE_NONE);
-    weapon_bob_init(&player->weapon_bob);
     player->current_health = 100;
 
     player->damage_overlay_time = 0.0f;
