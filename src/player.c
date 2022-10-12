@@ -36,6 +36,7 @@ void player_init(Player* player, fw64Engine* engine, fw64Level* level, Projectil
     weapon_controller_init(&player->weapon_controller, engine, projectile_controller, audio_controller, allocator, &player->input_map, 0);
     player->weapon_controller.aim = &player->aim;
     weapon_controller_set_weapon(&player->weapon_controller, WEAPON_TYPE_NONE);
+    weapon_bob_init(&player->weapon_bob);
     player->current_health = 100;
 
     player->damage_overlay_time = 0.0f;
@@ -78,7 +79,9 @@ void player_aim_update(Player* player) {
 }
 
 void player_update(Player* player) {
+    player->weapon_bob.is_active = 0;
     movement_controller_update(&player->movement, player->engine->time->time_delta);
+    weapon_bob_update(&player->weapon_bob, player->engine->time->time_delta);
     player_aim_update(player); // should be updated after fps camera
     weapon_controller_update(&player->weapon_controller);
 

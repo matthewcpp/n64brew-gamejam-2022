@@ -3,6 +3,7 @@
 #include "assets/layers.h"
 #include "framework64/random.h"
 #include "framework64/collision.h"
+#include "player.h"
 
 #define ZOMBIE_SCALE 0.025f
 
@@ -110,22 +111,20 @@ static void zombie_update_dying(Zombie* zombie) {
     }
 }
 
-//matthew temp to test damage
-//#include "player.h"
 static void damage_player(Zombie* zombie) {
-	// uint32_t dyanmic_node_count = fw64_level_get_dynamic_node_count(zombie->level);
-	// Player* player = NULL;
+	uint32_t dyanmic_node_count = fw64_level_get_dynamic_node_count(zombie->level);
+	Player* player = NULL;
 
-	// for (uint32_t i = 0; i < dyanmic_node_count; i++) {
-	// 	fw64Node* node = fw64_level_get_dynamic_node(zombie->level, i);
-	// 	if (node->layer_mask & FW64_layer_player) {
-	// 		player = (Player*)node->data;
-	// 		break;
-	// 	}
-	// }
+	for (uint32_t i = 0; i < dyanmic_node_count; i++) {
+		fw64Node* node = fw64_level_get_dynamic_node(zombie->level, i);
+		if (node->layer_mask & FW64_layer_player) {
+			player = (Player*)node->data;
+			break;
+		}
+	}
 
-	// if (player)
-	// 	player_take_damage(player, 15);
+	if (player)
+	    player_take_damage(player, 15);
 }
 
 static void zombie_update_attack(Zombie* zombie) {

@@ -13,8 +13,9 @@
 static void weapon_controller_fire(WeaponController* controller);
 static int weapon_controller_is_idle(WeaponController* controller);
 
-void weapon_controller_init(WeaponController* controller, fw64Engine* engine, ProjectileController* projectile_controller, AudioController* audio_controller, fw64Allocator* weapon_allocator, InputMapping* input_map, int controller_index) {
+void weapon_controller_init(WeaponController* controller, fw64Engine* engine, WeaponBob* weapon_bob, ProjectileController* projectile_controller, AudioController* audio_controller, fw64Allocator* weapon_allocator, InputMapping* input_map, int controller_index) {
     controller->engine = engine;
+    controller->weapon_bob = weapon_bob;
     controller->projectile_controller = projectile_controller;
     controller->audio_controller = audio_controller;
     controller->weapon_allocator = weapon_allocator;

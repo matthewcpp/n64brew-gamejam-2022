@@ -12,8 +12,9 @@
 
 static void movement_controller_get_ground_height(MovementController* controller);
 
-void movement_controller_init(MovementController* controller, InputMapping* input_map, fw64Level* level, fw64Collider* collider){
+void movement_controller_init(MovementController* controller, InputMapping* input_map, WeaponBob* weapon_bob, fw64Level* level, fw64Collider* collider){
     controller->input_map = input_map;
+    controller->weapon_bob = weapon_bob;
     controller->level = level;
     controller->collider = collider;
 
@@ -97,6 +98,7 @@ static void move_camera(MovementController* controller, float time_delta, Vec2* 
     if (!did_move)
         return;
 
+    controller->weapon_bob->is_active = 1;
     // prevent running faster by moving diagonally
     Vec3 ref_zero = {0.0f, 0.0f, 0.0f};
     if(vec3_distance(&move, &ref_zero) > (controller->movement_speed * time_delta))

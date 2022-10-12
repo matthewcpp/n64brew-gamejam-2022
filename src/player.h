@@ -12,6 +12,7 @@
 #include "weapon_controller.h"
 #include "ray.h"
 #include "mapped_input.h"
+#include "weapon_bob.h"
 
 #define PLAYER_MAX_HEALTH 100
 
@@ -20,6 +21,7 @@ typedef struct {
     fw64Allocator* allocator;
     fw64Level* level;
     fw64Node* node;
+    WeaponBob weapon_bob;
     MovementController movement;
     WeaponController weapon_controller;
     InputMapping input_map;
