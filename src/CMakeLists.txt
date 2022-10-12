@@ -6,6 +6,7 @@ set(core_files
     movement_controller.h movement_controller.c
     weapon.h weapon.c
     projectile_controller.h projectile_controller.c
+    weapon_bob.h weapon_bob.c
     weapon_controller.h weapon_controller.c
     weapon_pickup.h weapon_pickup.c
     trigger.h trigger.c
