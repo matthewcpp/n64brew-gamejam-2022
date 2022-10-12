@@ -54,6 +54,9 @@
         },
         {
             "src": "tiles_test/tiles_test.gltf"
+        },
+        {
+            "src": "interior_grid/interior_grid.gltf"
         }
     ],
     "musicBanks": [
