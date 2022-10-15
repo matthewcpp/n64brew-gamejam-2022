@@ -53,7 +53,7 @@ static void fps_cam_left(MovementController* fps, Vec3* out) {
     vec3_negate(out);
 }
 
-static void move_camera(MovementController* controller, float time_delta, Vec2* stick) {
+static float move_camera(MovementController* controller, float time_delta, Vec2* stick) {
     int did_move = 0;
     int move_test;
     float analog_mod = 1.0f;
@@ -106,7 +106,8 @@ static void move_camera(MovementController* controller, float time_delta, Vec2* 
         vec3_normalize(&move);
         vec3_scale(&move, &move, controller->movement_speed * time_delta);
     }
-
+    // prepare to return intended translation vector length, not affected by hitting walls etc
+    float return_val = vec3_distance(&ref_zero, &move) / (time_delta); 
     fw64IntersectMovingSphereQuery query;
     int remaining_checks = 10;
     while (remaining_checks > 0 && fw64_level_moving_sphere_intersection(controller->level, &controller->camera.transform.position, 1.0f, &move, controller->collision_mask, &query)) {
@@ -121,6 +122,7 @@ static void move_camera(MovementController* controller, float time_delta, Vec2* 
     }
 
     vec3_add(&controller->camera.transform.position, &controller->camera.transform.position, &move);
+    return  return_val;
 }
 
 static void tilt_camera(MovementController* fps, float time_delta, Vec2* stick) {
@@ -158,14 +160,11 @@ static void tilt_camera(MovementController* fps, float time_delta, Vec2* stick) 
     }
 }
 
-void movement_controller_update(MovementController* fps, float time_delta) {
-    Vec2 stick;
-    stick.x = 0;
-    stick.y = 0;
-    //fw64_input_controller_stick(fps->_input, fps->player_index, &stick);
-
+// returns the translation vector length
+float movement_controller_update(MovementController* fps, float time_delta) {
+    Vec2 stick = {0.0f, 0.0f};   
+    float travel = move_camera(fps, time_delta, &stick);
     movement_controller_get_ground_height(fps);
-    move_camera(fps, time_delta, &stick);
     
     stick.x = 0;
     stick.y = 0;
@@ -183,6 +182,7 @@ void movement_controller_update(MovementController* fps, float time_delta) {
 
     fw64_transform_look_at(&fps->camera.transform, &tar, &up);
     fw64_camera_update_view_matrix(&fps->camera);
+    return travel;
 }
 
 void movement_controller_get_ground_height(MovementController* controller) {
