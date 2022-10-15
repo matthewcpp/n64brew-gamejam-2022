@@ -80,8 +80,8 @@ void player_aim_update(Player* player) {
 
 void player_update(Player* player) {
     player->weapon_bob.is_active = 0;
-    float move_speed = movement_controller_update(&player->movement, player->engine->time->time_delta);
-    weapon_bob_update(&player->weapon_bob, player->engine->time->time_delta, move_speed);
+    movement_controller_update(&player->movement, player->engine->time->time_delta);
+    weapon_bob_update(&player->weapon_bob, player->engine->time->time_delta);
     player_aim_update(player); // should be updated after fps camera
     weapon_controller_update(&player->weapon_controller);
 

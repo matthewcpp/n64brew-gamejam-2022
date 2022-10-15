@@ -14,8 +14,7 @@ void weapon_bob_init(WeaponBob* weapon_bob) {
     memset(weapon_bob, 0, sizeof(WeaponBob));
 }
 
-void weapon_bob_update(WeaponBob* weapon_bob, float time_delta, float move_speed) {   
-    weapon_bob->step_speed = move_speed;
+void weapon_bob_update(WeaponBob* weapon_bob, float time_delta) {   
     if (!weapon_bob->is_active) {
         if(fw64_fabsf(weapon_bob->current_time) > EPSILON) {
             weapon_bob->current_time *= 0.5f;
@@ -25,7 +24,7 @@ void weapon_bob_update(WeaponBob* weapon_bob, float time_delta, float move_speed
         return;
     }
     
-    weapon_bob->current_time += time_delta * (move_speed / MAX_MOVE_SPEED);
+    weapon_bob->current_time += time_delta * (weapon_bob->step_speed / MAX_MOVE_SPEED);
     if (weapon_bob->current_time >= WEAPON_BOB_CYCLE_TIME) {
         weapon_bob->current_time -= WEAPON_BOB_CYCLE_TIME;
     }

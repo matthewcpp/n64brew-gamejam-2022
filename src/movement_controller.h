@@ -30,7 +30,7 @@ extern "C" {
 #endif
 
 void movement_controller_init(MovementController* controller, InputMapping* input_map, WeaponBob* weapon_bob, fw64Level* level, fw64Collider* collider);
-float movement_controller_update(MovementController* controller, float time_delta);
+void movement_controller_update(MovementController* controller, float time_delta);
 
 #ifdef __cplusplus
 }
