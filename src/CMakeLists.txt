@@ -26,6 +26,7 @@ set(level_files
     levels/church_hill.h levels/church_hill.c
     levels/test.h levels/test.c
     levels/tiles_test.h levels/tiles_test.c
+    levels/interior.h levels/interior.c
 )
 
 set(game_state_files

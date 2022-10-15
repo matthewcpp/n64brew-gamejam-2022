@@ -26,6 +26,10 @@ void game_state_playing_init(Playing* state, fw64Engine* engine, GameData* game_
             tiles_test_level_init(&state->levels.tiles_test, engine);
             break;
 
+        case LEVEL_INTERIOR:
+            interior_level_init(&state->levels.interior, engine);
+            break;
+
         case LEVEL_NONE:
         case LEVEL_COUNT:
             game_data->transition_to_state = GAME_STATE_LEVEL_SELECT;
@@ -45,6 +49,10 @@ void game_state_playing_uninit(Playing* state) {
 
         case LEVEL_TILES:
             tiles_test_level_uninit(&state->levels.tiles_test);
+            break;
+
+        case LEVEL_INTERIOR:
+            interior_level_uninit(&state->levels.interior);
             break;
 
         case LEVEL_NONE:
@@ -81,6 +89,10 @@ void game_state_playing_update(Playing* state) {
             tiles_test_level_update(&state->levels.tiles_test);
             break;
 
+        case LEVEL_INTERIOR:
+            interior_level_update(&state->levels.interior);
+            break;
+
         case LEVEL_NONE:
         case LEVEL_COUNT:
             break;
@@ -103,6 +115,10 @@ void game_state_playing_draw(Playing* state) {
 
         case LEVEL_TILES:
             tiles_test_level_draw(&state->levels.tiles_test);
+            break;
+
+        case LEVEL_INTERIOR:
+            interior_level_draw(&state->levels.interior);
             break;
 
         case LEVEL_NONE:

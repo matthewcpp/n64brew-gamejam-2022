@@ -9,12 +9,14 @@
 #include "levels/test.h"
 #include "levels/church_hill.h"
 #include "levels/tiles_test.h"
+#include "levels/interior.h"
 
 typedef union {
     LevelBase current;
     TestLevel test_level;
     HillLevel church_hill;
     TilesTestLevel tiles_test;
+    InteriorLevel interior;
 } Levels;
 
 typedef struct {
