@@ -62,7 +62,8 @@ void interior_level_init(InteriorLevel* level, fw64Engine* engine) {
 	vec3_copy(&current_room->pos, &start_room_pos);
 	current_room->doors = 0;
 
-	current_room->parent_dir = 1 << fw64_random_int_in_range(0, 3);
+	//current_room->parent_dir = 1 << fw64_random_int_in_range(0, 3);
+	current_room->parent_dir = ROOM_DIR_S;
 	do {
 		current_room->doors = fw64_random_int_in_range(1, 15);
 	} while(current_room->doors == current_room->parent_dir);
@@ -105,23 +106,23 @@ void interior_level_init(InteriorLevel* level, fw64Engine* engine) {
 	for(int i = 0; i < ROOM_COUNT; i++) {
 		if(all_rooms[i].doors & ROOM_DIR_N) {
 		    int taken = room_taken(&all_rooms[0], ROOM_COUNT, all_rooms[i].cell.x, all_rooms[i].cell.y - 1); 
-			if(taken) { all_rooms[taken-1].doors |= ROOM_DIR_S; } 
-			else { all_rooms[i].doors &= ~ROOM_DIR_N; }			
+			if(taken > 1) { all_rooms[taken-1].doors |= ROOM_DIR_S; } 
+			else if (!taken) { all_rooms[i].doors &= ~ROOM_DIR_N; }			
 		}
 		if(all_rooms[i].doors & ROOM_DIR_S) {
 		    int taken = room_taken(&all_rooms[0], ROOM_COUNT, all_rooms[i].cell.x, all_rooms[i].cell.y + 1); 
-			if(taken) { all_rooms[taken-1].doors |= ROOM_DIR_N; } 
-			else { all_rooms[i].doors &= ~ROOM_DIR_S; }			
+			if(taken > 1) { all_rooms[taken-1].doors |= ROOM_DIR_N; } 
+			else if (!taken)  { all_rooms[i].doors &= ~ROOM_DIR_S; }			
 		}
 		if(all_rooms[i].doors & ROOM_DIR_W) {
 		    int taken = room_taken(&all_rooms[0], ROOM_COUNT, all_rooms[i].cell.x - 1, all_rooms[i].cell.y); 
-			if(taken) { all_rooms[taken-1].doors |= ROOM_DIR_E; } 
-			else { all_rooms[i].doors &= ~ROOM_DIR_W; }			
+			if(taken > 1) { all_rooms[taken-1].doors |= ROOM_DIR_E; } 
+			else if (!taken)  { all_rooms[i].doors &= ~ROOM_DIR_W; }			
 		}
 		if(all_rooms[i].doors & ROOM_DIR_E) {
 		    int taken = room_taken(&all_rooms[0], ROOM_COUNT, all_rooms[i].cell.x + 1, all_rooms[i].cell.y); 
-			if(taken) { all_rooms[taken-1].doors |= ROOM_DIR_W; } 
-			else { all_rooms[i].doors &= ~ROOM_DIR_E; }			
+			if(taken > 1) { all_rooms[taken-1].doors |= ROOM_DIR_W; } 
+			else if (!taken)  { all_rooms[i].doors &= ~ROOM_DIR_E; }			
 		}
 	}
 
@@ -132,7 +133,7 @@ void interior_level_init(InteriorLevel* level, fw64Engine* engine) {
     player_add_ammo(&level->base.player, WEAPON_TYPE_UZI, 320);
     player_set_weapon(&level->base.player, WEAPON_TYPE_UZI);
 
-    Vec3 starting_pos = {0.0f, 5.0f, 0.0f};
+    Vec3 starting_pos = {0.0f, 5.0f, 15.0f};
     player_set_position(&level->base.player, &starting_pos);
 
     fw64_renderer_set_clear_color(engine->renderer, 32, 32, 32);
