@@ -4,19 +4,14 @@
 
 #include "framework64/random.h"
 
-#define TILE_COUNT 6
+#define TILE_COUNT 1
 
 int tile_scenes[TILE_COUNT] = {
-    FW64_ASSET_scene_tile_arches,
-    FW64_ASSET_scene_tile_cubes,
-    FW64_ASSET_scene_tile_trees,
-    FW64_ASSET_scene_tile_cylinders,
-    FW64_ASSET_scene_tile_spheres,
-    FW64_ASSET_scene_tile_torus
+    FW64_ASSET_scene_tile1
 };
 
-#define BUMP_ALLOCATOR_SIZE (16 * 1024)
-#define TILE_SIZE 100.0f
+#define BUMP_ALLOCATOR_SIZE (32 * 1024)
+#define TILE_SIZE 200.0f
 
 
 static void tiles_test_load_tile(TilesTestLevel* level, int index, Vec3* pos);
@@ -76,11 +71,12 @@ void tiles_test_level_init(TilesTestLevel* level, fw64Engine* engine) {
     player_set_position(&level->base.player, &starting_pos);
     vec3_copy(&level->player_prev_position, &level->base.player.node->transform.position); 
 
-    fw64_renderer_set_clear_color(engine->renderer, 147, 204, 234); // happy sky blue
-    fw64_renderer_set_fog_color(engine->renderer, 147, 204, 234);
-    // fw64_renderer_set_clear_color(engine->renderer, 20, 4, 40); // spoopy blurple
-    // fw64_renderer_set_fog_color(engine->renderer, 20, 4, 40);
-    fw64_renderer_set_fog_positions(engine->renderer, 0.95f, 1.0f);
+    //fw64_renderer_set_clear_color(engine->renderer, 147, 204, 234); // happy sky blue
+    //fw64_renderer_set_fog_color(engine->renderer, 147, 204, 234);
+    fw64_renderer_set_clear_color(engine->renderer, 20, 4, 40); // spoopy blurple
+    fw64_renderer_set_fog_color(engine->renderer, 20, 4, 40);
+    fw64_renderer_set_fog_positions(engine->renderer, 0.9, 1.0f);
+    //fw64_renderer_set_fog_positions(engine->renderer, 0.95f, 1.0f);
     // fw64_renderer_set_ambient_light_color(engine->renderer, 20, 4, 40);
     //fw64_renderer_set_light_color(engine->renderer, 0, 40, 16, 80);
 }
