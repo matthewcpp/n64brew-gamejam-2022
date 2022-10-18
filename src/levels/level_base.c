@@ -1,4 +1,5 @@
 #include "levels/level_base.h"
+#include "assets/layers.h"
 
 static void level_base_init_audio(LevelBase* level, int music_bank, int sound_bank);
 
@@ -15,6 +16,7 @@ void level_base_init(LevelBase* level, fw64Engine* engine, fw64Allocator* alloca
     weapon_pickups_init(&level->weapon_pickups, &level->player);
 
     ui_init(&level->ui, engine, level->allocator, &level->player);
+    interaction_init(&level->interaction, &level->level, &level->player.node->transform, FW64_layer_interactable);
 }
 
 void level_base_init_audio(LevelBase* level, int music_bank, int sound_bank) {
@@ -57,4 +59,5 @@ void level_base_update(LevelBase* level) {
     audio_controller_update(&level->audio_controller);
     player_update(&level->player);
     weapon_pickups_update(&level->weapon_pickups);
+    interaction_update(&level->interaction);
 }

@@ -3,6 +3,7 @@
 #include "player.h"
 #include "ui.h"
 #include "weapon_pickup.h"
+#include "interact.h"
 
 /**
  * Contains common level elements.
@@ -16,6 +17,7 @@ typedef struct LevelBase{
     AudioController audio_controller;
     WeaponPickups weapon_pickups;
     fw64Level level;
+    Interaction interaction;
     fw64MusicBank* music;
     fw64SoundBank* sound;
     fw64Allocator* allocator;

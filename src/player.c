@@ -174,3 +174,8 @@ void player_draw_damage(Player* player) {
     }
     
 }
+
+int player_is_interacting(Player* player) {
+    Vec2 stick;
+    return mapped_input_controller_read(&player->input_map, player->movement.player_index, INPUT_MAP_INTERACT, &stick);
+}
