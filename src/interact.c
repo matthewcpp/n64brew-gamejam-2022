@@ -37,6 +37,10 @@ void interaction_update(Interaction* interaction) {
 
     if (current_scene != interaction->active_scene) {
         interaction->active_scene = current_scene;
+
+        if (interaction->active_scene == NULL)
+            return;
+
         interaction->interactables_count = fw64_scene_find_nodes_with_layer_mask(interaction->active_scene, interaction->layer_mask, &interaction->interactables[0], MAX_INTERACTABLE_SIZE);
     }
 
