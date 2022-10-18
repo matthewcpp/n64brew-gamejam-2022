@@ -98,7 +98,9 @@
             "right": 7,
             "back": 8,
             "player": 9,
-            "buildings": 10
+            "buildings": 10,
+            "entrance": 11,
+            "interactable": 12
     },
     "skinnedMeshes": [
         {

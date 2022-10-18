@@ -1,6 +1,7 @@
 set(core_files
     audio_controller.h audio_controller.c
 	behaviors.h behaviors.c
+    interact.h interact.c
 	mapped_input.h mapped_input.c
     player.h player.c
     movement_controller.h movement_controller.c
@@ -13,7 +14,6 @@ set(core_files
     zombie.h zombie.c
     zombie_logic.h zombie_logic.c
     zombie_spawner.h zombie_spawner.c
-    
 )
 
 set(ui_files

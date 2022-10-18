@@ -1,13 +1,14 @@
 #include "tiles_test.h"
 
 #include "assets/assets.h"
+#include "assets/sound_bank_sounds.h"
 
 #include "framework64/random.h"
 
 #define TILE_COUNT 1
 
 int tile_scenes[TILE_COUNT] = {
-    FW64_ASSET_scene_tile1
+    FW64_ASSET_scene_tile_block1
 };
 
 #define BUMP_ALLOCATOR_SIZE (32 * 1024)
@@ -169,7 +170,7 @@ void tiles_test_load_tile(TilesTestLevel* level, int index, Vec3* pos) {
     int32_t grid_x = pos->x / TILE_SIZE;
     int32_t grid_y = pos->z / TILE_SIZE;
 
-    info.scene_id = tile_scenes[get_rand_tile(grid_x, grid_y)];
+    info.scene_id = (grid_x == 0 && grid_y == 0) ? FW64_ASSET_scene_tile_mall : tile_scenes[get_rand_tile(grid_x, grid_y)];
     info.allocator = &level->allocators[index].interface;
 
     level->chunk_handles[index] = fw64_level_load_chunk_at_pos(&level->base.level, &info, pos);
@@ -233,6 +234,11 @@ void tiles_test_level_update(TilesTestLevel* level) {
     }
     
     vec3_copy(&level->player_prev_position, &player_position);
+
+    // TODO: add logic to enter interior building here (maybe if door isnt locked...hehehehe)
+    if (level->base.interaction.interesting_node && player_is_interacting(&level->base.player) && !audio_controller_channel_is_playing(&level->base.audio_controller, AUDIO_CONTROLLER_CHANNEL_PLAYER_ACTION)) {
+        audio_controller_play(&level->base.audio_controller, AUDIO_CONTROLLER_CHANNEL_PLAYER_ACTION, sound_bank_sounds_door_locked);
+    }
 }
 
 void tiles_test_level_draw(TilesTestLevel* level) {

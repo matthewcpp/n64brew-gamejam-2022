@@ -48,3 +48,4 @@ int player_add_ammo(Player* player, WeaponType weapon_type, uint32_t amount);
 void player_set_weapon(Player* player, WeaponType weapon_type);
 void player_set_position(Player* player, Vec3* position);
 void player_take_damage(Player* player, int amount);
+int player_is_interacting(Player* player);
