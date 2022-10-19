@@ -44,6 +44,7 @@ void weapon_controller_init(WeaponController* controller, fw64Engine* engine, We
     memset(&controller->weapon_ammo[0], 0, sizeof(WeaponAmmo) * WEAPON_COUNT);
 
     weapon_init(&controller->weapon);
+    weapon_init_none(&controller->weapon, controller->engine->assets, controller->weapon_allocator);
 }
 
 void weapon_controller_uninit(WeaponController* controller) {
@@ -215,6 +216,8 @@ void weapon_controller_draw(WeaponController* controller) {
 }
 
 void weapon_controller_set_weapon(WeaponController* controller, WeaponType weapon_type) {
+    WeaponType previous_weapon_type = controller->weapon.info->type;
+
     Weapon* weapon = &controller->weapon;
     switch(weapon_type) {
         case WEAPON_TYPE_AR15:
@@ -238,11 +241,11 @@ void weapon_controller_set_weapon(WeaponController* controller, WeaponType weapo
     controller->time_to_next_fire = 0.0f; // i think this is OK?
 
     // TODO: does this need to be investigated more?
-    if (controller->state == WEAPON_CONTROLLER_HOLDING) {
-        controller->weapon_transform.position = weapon->info->default_position;
-    }
-    else if (controller->state == WEAPON_CONTROLLER_LOWERED) {
+    if (controller->state == WEAPON_CONTROLLER_LOWERED || previous_weapon_type == WEAPON_TYPE_NONE) {
         controller->weapon_transform.position = weapon->info->lowered_position;
+    }
+    else if (controller->state == WEAPON_CONTROLLER_HOLDING) {
+        controller->weapon_transform.position = weapon->info->default_position;
     }
     
     controller->weapon_transform.scale = weapon->info->default_scale;
