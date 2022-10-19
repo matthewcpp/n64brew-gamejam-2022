@@ -98,7 +98,7 @@ void player_update(Player* player) {
 
 void player_draw(Player* player) {
     fw64_renderer_set_camera(player->engine->renderer, &player->movement.camera);
-    fw64_level_draw_camera(player->level, &player->movement.camera);
+    fw64_level_draw_camera_all(player->level, &player->movement.camera);
 }
 
 void player_draw_weapon(Player* player) {
