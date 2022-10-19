@@ -1,6 +1,6 @@
 #pragma once
 
-#include "framework64/Vec3.h"
+#include "framework64/vec3.h"
 #include "mapped_input.h"
 
 typedef struct {

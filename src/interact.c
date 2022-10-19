@@ -9,7 +9,7 @@ void interaction_init(Interaction* interaction, fw64Level* level, fw64Transform*
     
     interaction->interesting_node = NULL;
     interaction->active_scene = NULL;
-    memset(&interaction->interactables[0], 0, sizeof(fw64Node) * MAX_INTERACTABLE_SIZE);
+    memset(&interaction->interactables[0], 0, sizeof(fw64Node*) * MAX_INTERACTABLE_SIZE);
     interaction->interactables_count = 0;
 }
 
