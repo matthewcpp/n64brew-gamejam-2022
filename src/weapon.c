@@ -34,7 +34,7 @@ static void init_shotgun_info(WeaponInfo* weapon){
     weapon->type = WEAPON_TYPE_SHOTGUN;
     weapon->fire_rate = 1.6f;
     weapon->dry_fire_rate = 0.5f;
-    weapon->gunshot_sound = sound_bank_sounds_shotgun_shot_and_reload;
+    weapon->gunshot_sound = sound_bank_sounds_shotgun_shot;
     weapon->last_round_sound = sound_bank_sounds_shotgun_shot;
     weapon->reload_sound = sound_bank_sounds_shotgun_reload;
     weapon->empty_mag_sound = sound_bank_sounds_shotgun_empty;
