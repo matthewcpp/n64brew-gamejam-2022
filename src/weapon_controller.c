@@ -220,6 +220,10 @@ void weapon_controller_set_weapon(WeaponController* controller, WeaponType weapo
 
     Weapon* weapon = &controller->weapon;
     switch(weapon_type) {
+        case WEAPON_TYPE_HANDGUN:
+            weapon_init_handgun(weapon, controller->engine->assets, controller->weapon_allocator);
+        break;
+
         case WEAPON_TYPE_AR15:
             weapon_init_ar15(weapon, controller->engine->assets, controller->weapon_allocator);
         break;
