@@ -22,6 +22,9 @@
         {
             "alphaMode" : "BLEND",
             "doubleSided" : true,
+            "extras" : {
+                "shadingMode" : "UnlitTextured"
+            },
             "name" : "Flash L",
             "pbrMetallicRoughness" : {
                 "baseColorTexture" : {
@@ -34,6 +37,9 @@
         {
             "alphaMode" : "BLEND",
             "doubleSided" : true,
+            "extras" : {
+                "shadingMode" : "UnlitTextured"
+            },
             "name" : "Flash R",
             "pbrMetallicRoughness" : {
                 "baseColorTexture" : {
