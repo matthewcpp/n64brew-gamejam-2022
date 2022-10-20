@@ -1,5 +1,6 @@
 #pragma once
 
+#include "game_data.h"
 #include "player.h"
 #include "ui.h"
 #include "weapon_pickup.h"
@@ -11,6 +12,7 @@
  */
 typedef struct LevelBase{
     fw64Engine* engine;
+    GameData* game_data;
     Player player;
     ProjectileController projectile_controller;
     UI ui;
@@ -23,6 +25,6 @@ typedef struct LevelBase{
     fw64Allocator* allocator;
 } LevelBase;
 
-void level_base_init(LevelBase* level, fw64Engine* engine, fw64Allocator* allocator, int music_bank, int sound_bank);
+void level_base_init(LevelBase* level, fw64Engine* engine, GameData* game_data, fw64Allocator* allocator, int music_bank, int sound_bank);
 void level_base_uninit(LevelBase* level);
 void level_base_update(LevelBase* level);

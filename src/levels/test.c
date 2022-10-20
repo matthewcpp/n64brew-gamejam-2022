@@ -10,9 +10,8 @@
 static fw64Scene* setup_level(TestLevel* level);
 static void init_weapon_pickups(TestLevel* level, fw64Scene* scene);
 
-void test_level_init(TestLevel* level, fw64Engine* engine) {
-    level_base_init(&level->base, engine, fw64_default_allocator(), FW64_ASSET_musicbank_music, FW64_ASSET_soundbank_sounds);
-
+void test_level_init(TestLevel* level, fw64Engine* engine, GameData* game_data) {
+    level_base_init(&level->base, engine, game_data, fw64_default_allocator(), FW64_ASSET_musicbank_music, FW64_ASSET_soundbank_sounds);
     fw64Scene* scene = setup_level(level);
     init_weapon_pickups(level, scene);
 

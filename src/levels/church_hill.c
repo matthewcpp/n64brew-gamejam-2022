@@ -8,8 +8,8 @@
 static void setup_sound_trigger(HillLevel* hill_level, fw64Scene* scene, int trigger_box_index, int node_index);
 static fw64Scene* setup_level(HillLevel* hill_level);
 
-void hill_level_init(HillLevel* level, fw64Engine* engine) {
-    level_base_init(&level->base, engine, fw64_default_allocator(), FW64_ASSET_musicbank_music, FW64_ASSET_soundbank_sounds);
+void hill_level_init(HillLevel* level, fw64Engine* engine, GameData* game_data) {
+    level_base_init(&level->base, engine, game_data, fw64_default_allocator(), FW64_ASSET_musicbank_music, FW64_ASSET_soundbank_sounds);
 
     fw64_renderer_set_clear_color(engine->renderer, 20, 4, 40);
     fw64_renderer_set_fog_color(engine->renderer, 20, 4, 40);

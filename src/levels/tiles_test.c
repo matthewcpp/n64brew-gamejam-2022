@@ -1,5 +1,5 @@
 #include "tiles_test.h"
-
+#include "levels.h"
 #include "assets/assets.h"
 #include "assets/sound_bank_sounds.h"
 
@@ -21,8 +21,8 @@ static void rotate_all_handles(TilesTestLevel* level, CompassDirections dir);
 static void rotate_one_handle(TilesTestLevel* level, int* handle, CompassDirections dir);
 static int  get_rand_tile(int32_t x, int32_t y);
 
-void tiles_test_level_init(TilesTestLevel* level, fw64Engine* engine) {
-    level_base_init(&level->base, engine, fw64_default_allocator(), FW64_INVALID_ASSET_ID, FW64_ASSET_soundbank_sounds);
+void tiles_test_level_init(TilesTestLevel* level, fw64Engine* engine, GameData* game_data) {
+    level_base_init(&level->base, engine, game_data, fw64_default_allocator(), FW64_INVALID_ASSET_ID, FW64_ASSET_soundbank_sounds);
     
     level->handle_nw = 0;
     level->handle_ne =  TILE_ROW_CELLS  - 1;
@@ -42,6 +42,8 @@ void tiles_test_level_init(TilesTestLevel* level, fw64Engine* engine) {
      *  for larger (5x5 etc) grids the center chunk stays at the world origin
      */
     Vec3 pos = { -(TILE_SIZE * (TILE_ROW_CELLS / 2)), 0.0f, -(TILE_SIZE * (TILE_ROW_CELLS / 2))};
+    pos.x += TILE_SIZE * level->base.game_data->door_data.city_cell.x;
+    pos.z += TILE_SIZE * level->base.game_data->door_data.city_cell.y;
     
     level->next_row_pos[NORTH] = pos.z -  TILE_SIZE;
     level->next_row_pos[SOUTH] = pos.z + (TILE_SIZE * TILE_COL_CELLS);
@@ -65,21 +67,17 @@ void tiles_test_level_init(TilesTestLevel* level, fw64Engine* engine) {
         }
     }
 
-    player_add_ammo(&level->base.player, WEAPON_TYPE_UZI, 320);
-    player_set_weapon(&level->base.player, WEAPON_TYPE_UZI);
+    player_add_ammo(&level->base.player, WEAPON_TYPE_HANDGUN, 45);
+    player_set_weapon(&level->base.player, WEAPON_TYPE_HANDGUN);
 
     Vec3 starting_pos = {0.0f, 0.0f, 0.0f};
+    vec3_add(&starting_pos, &starting_pos, &level->base.game_data->player_data.transform);
     player_set_position(&level->base.player, &starting_pos);
     vec3_copy(&level->player_prev_position, &level->base.player.node->transform.position); 
 
-    //fw64_renderer_set_clear_color(engine->renderer, 147, 204, 234); // happy sky blue
-    //fw64_renderer_set_fog_color(engine->renderer, 147, 204, 234);
-    fw64_renderer_set_clear_color(engine->renderer, 20, 4, 40); // spoopy blurple
+    fw64_renderer_set_clear_color(engine->renderer, 20, 4, 40);
     fw64_renderer_set_fog_color(engine->renderer, 20, 4, 40);
     fw64_renderer_set_fog_positions(engine->renderer, 0.9, 1.0f);
-    //fw64_renderer_set_fog_positions(engine->renderer, 0.95f, 1.0f);
-    // fw64_renderer_set_ambient_light_color(engine->renderer, 20, 4, 40);
-    //fw64_renderer_set_light_color(engine->renderer, 0, 40, 16, 80);
 }
 
 void tiles_test_load_next_row(TilesTestLevel* level, CompassDirections dir) {
@@ -156,6 +154,7 @@ void tiles_test_load_next_row(TilesTestLevel* level, CompassDirections dir) {
             break;
     }
 
+    // update the cell numbers that correspond to the nw, ne, sw, and se corners of the grid
     rotate_all_handles(level, dir);
 }
 
@@ -235,9 +234,21 @@ void tiles_test_level_update(TilesTestLevel* level) {
     
     vec3_copy(&level->player_prev_position, &player_position);
 
-    // TODO: add logic to enter interior building here (maybe if door isnt locked...hehehehe)
-    if (level->base.interaction.interesting_node && player_is_interacting(&level->base.player) && !audio_controller_channel_is_playing(&level->base.audio_controller, AUDIO_CONTROLLER_CHANNEL_PLAYER_ACTION)) {
-        audio_controller_play(&level->base.audio_controller, AUDIO_CONTROLLER_CHANNEL_PLAYER_ACTION, sound_bank_sounds_door_locked);
+    if (level->base.interaction.interesting_node && player_is_interacting(&level->base.player)) {
+        if(1) {  // can open door. temp set to always true
+            level->base.game_data->door_data.node_id = level->base.interaction.node_uid;
+            
+            level->base.game_data->player_data.transform = level->base.player.node->transform;
+            
+            level->base.game_data->door_data.city_cell.x = (int)(level->next_row_trigger[WEST] / TILE_SIZE);
+            level->base.game_data->door_data.city_cell.y = (int)(level->next_row_trigger[NORTH] / TILE_SIZE);
+
+            level->base.game_data->transition_to_level = LEVEL_INTERIOR;
+            level->base.game_data->transition_to_state = GAME_STATE_PLAYING;
+        }
+        else if(!audio_controller_channel_is_playing(&level->base.audio_controller, AUDIO_CONTROLLER_CHANNEL_PLAYER_ACTION)) {
+            audio_controller_play(&level->base.audio_controller, AUDIO_CONTROLLER_CHANNEL_PLAYER_ACTION, sound_bank_sounds_door_locked);
+        }
     }
 }
 

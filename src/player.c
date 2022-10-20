@@ -176,6 +176,14 @@ void player_draw_damage(Player* player) {
 }
 
 int player_is_interacting(Player* player) {
-    Vec2 stick;
-    return mapped_input_controller_read(&player->input_map, player->movement.player_index, INPUT_MAP_INTERACT, &stick);
+    static int button_released = 0;
+    if(mapped_input_controller_read(&player->input_map, player->movement.player_index, INPUT_MAP_INTERACT, NULL)) {
+        if(button_released) {
+            button_released = 0;
+            return 1;
+        }
+    } else {
+        button_released = 1;
+    }
+    return 0;
 }

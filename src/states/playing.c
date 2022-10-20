@@ -15,19 +15,19 @@ void game_state_playing_init(Playing* state, fw64Engine* engine, GameData* game_
 
     switch(state->current_level) {
         case LEVEL_TEST:
-            test_level_init(&state->levels.test_level, engine);
+            test_level_init(&state->levels.test_level, engine, game_data);
             break;
 
         case LEVEL_CHURCH_HILL:
-            hill_level_init(&state->levels.church_hill, engine);
+            hill_level_init(&state->levels.church_hill, engine, game_data);
             break;
 
         case LEVEL_TILES:
-            tiles_test_level_init(&state->levels.tiles_test, engine);
+            tiles_test_level_init(&state->levels.tiles_test, engine, game_data);
             break;
 
         case LEVEL_INTERIOR:
-            interior_level_init(&state->levels.interior, engine);
+            interior_level_init(&state->levels.interior, engine, game_data);
             break;
 
         case LEVEL_NONE:

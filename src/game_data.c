@@ -2,6 +2,52 @@
 
 #include <string.h>
 
+static void player_cool_stats_init(PlayerCoolStats* stats) {
+    memset(stats, 0, sizeof(PlayerCoolStats));
+}
+
+static void player_data_init(PlayerData* data) {
+    fw64_transform_init(&data->transform);
+    data->health = PLAYER_MAX_HEALTH;
+    data->equipped_weapon = WEAPON_TYPE_NONE;
+    for(int i = 0; i < WEAPON_COUNT; i++) {
+        data->ammo[i].current_mag_count = 0;
+        data->ammo[i].additional_rounds_count = 0;
+    }
+    mapped_input_set_map_layout(&data->input_map, INPUT_MAP_LAYOUT_MODERN_TWINSTICK); // does not set mapping's fw64Input*
+    player_cool_stats_init(&data->stats);
+}
+
+static void door_data_init(DoorData* data) {
+    data->city_cell.x = 0;
+    data->city_cell.y = 0;
+    data->node_id = -1;
+}
+
 void game_data_init(GameData* game_data) {
     memset(game_data, 0, sizeof(GameData));
+    player_data_init(&game_data->player_data);
+    door_data_init(&game_data->door_data);
+}
+
+void game_data_save_player_data(GameData* game_data, Player* player) {
+    game_data->player_data.transform = player->node->transform;
+    game_data->player_data.health = player->current_health;
+    game_data->player_data.equipped_weapon = player->weapon_controller.weapon.info->type;
+    for(int i = 0; i < WEAPON_COUNT; i++) {
+        game_data->player_data.ammo[i].current_mag_count = player->weapon_controller.weapon_ammo[i].current_mag_count;
+        game_data->player_data.ammo[i].additional_rounds_count = player->weapon_controller.weapon_ammo[i].additional_rounds_count;
+    }
+    game_data->player_data.input_map = player->input_map;
+}
+void game_data_load_player_data(GameData* game_data, Player* player) {
+    player->node->transform = game_data->player_data.transform;
+    player->current_health = game_data->player_data.health;
+    weapon_controller_set_weapon(&player->weapon_controller, game_data->player_data.equipped_weapon);
+    for(int i = 0; i < WEAPON_COUNT; i++) {
+        weapon_controller_set_weapon_ammo(  &player->weapon_controller, i,
+                                            game_data->player_data.ammo[i].current_mag_count,
+                                            game_data->player_data.ammo[i].additional_rounds_count);
+    }
+    game_data->player_data.input_map = player->input_map;
 }
