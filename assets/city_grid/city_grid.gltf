@@ -9,8 +9,9 @@
             "name" : "Scene",
             "nodes" : [
                 24,
-                35,
-                50
+                39,
+                48,
+                69
             ]
         }
     ],
@@ -94,7 +95,9 @@
         },
         {
             "extras" : {
-                "layers" : "buildings"
+                "layers" : "buildings",
+                "data" : "7",
+                "mesh" : "ignore"
             },
             "mesh" : 0,
             "name" : "gt_blue_building",
@@ -112,7 +115,9 @@
         },
         {
             "extras" : {
-                "layers" : "buildings"
+                "layers" : "buildings",
+                "data" : "5",
+                "mesh" : "ignore"
             },
             "mesh" : 1,
             "name" : "gt_orange",
@@ -130,7 +135,9 @@
         },
         {
             "extras" : {
-                "layers" : "buildings"
+                "layers" : "buildings",
+                "data" : "5",
+                "mesh" : "ignore"
             },
             "mesh" : 2,
             "name" : "gt_orange.001",
@@ -142,7 +149,9 @@
         },
         {
             "extras" : {
-                "layers" : "buildings"
+                "layers" : "buildings",
+                "data" : "4",
+                "mesh" : "ignore"
             },
             "mesh" : 3,
             "name" : "gt_red_building",
@@ -160,7 +169,9 @@
         },
         {
             "extras" : {
-                "layers" : "buildings"
+                "layers" : "buildings",
+                "data" : "4",
+                "mesh" : "ignore"
             },
             "mesh" : 4,
             "name" : "gt_red_building.001",
@@ -178,7 +189,9 @@
         },
         {
             "extras" : {
-                "layers" : "buildings"
+                "layers" : "buildings",
+                "data" : "6",
+                "mesh" : "ignore"
             },
             "mesh" : 5,
             "name" : "gt_tan_highrise.001",
@@ -196,7 +209,9 @@
         },
         {
             "extras" : {
-                "layers" : "buildings"
+                "layers" : "buildings",
+                "data" : "3",
+                "mesh" : "ignore"
             },
             "mesh" : 6,
             "name" : "gt_teal",
@@ -214,7 +229,9 @@
         },
         {
             "extras" : {
-                "layers" : "ground"
+                "layers" : "ground",
+                "data" : "2",
+                "mesh" : "ignore"
             },
             "mesh" : 7,
             "name" : "street",
@@ -232,7 +249,9 @@
         },
         {
             "extras" : {
-                "layers" : "ground"
+                "layers" : "ground",
+                "data" : "2",
+                "mesh" : "ignore"
             },
             "mesh" : 7,
             "name" : "street.001",
@@ -250,7 +269,9 @@
         },
         {
             "extras" : {
-                "layers" : "ground"
+                "layers" : "ground",
+                "data" : "2",
+                "mesh" : "ignore"
             },
             "mesh" : 7,
             "name" : "street.002",
@@ -268,7 +289,9 @@
         },
         {
             "extras" : {
-                "layers" : "ground"
+                "layers" : "ground",
+                "data" : "2",
+                "mesh" : "ignore"
             },
             "mesh" : 7,
             "name" : "street.003",
@@ -280,7 +303,9 @@
         },
         {
             "extras" : {
-                "layers" : "ground"
+                "layers" : "ground",
+                "data" : "1",
+                "mesh" : "ignore"
             },
             "mesh" : 8,
             "name" : "street_corner.001",
@@ -298,7 +323,9 @@
         },
         {
             "extras" : {
-                "layers" : "ground"
+                "layers" : "ground",
+                "data" : "1",
+                "mesh" : "ignore"
             },
             "mesh" : 8,
             "name" : "street_corner.002",
@@ -310,7 +337,9 @@
         },
         {
             "extras" : {
-                "layers" : "ground"
+                "layers" : "ground",
+                "data" : "1",
+                "mesh" : "ignore"
             },
             "mesh" : 8,
             "name" : "street_corner.003",
@@ -328,7 +357,9 @@
         },
         {
             "extras" : {
-                "layers" : "ground"
+                "layers" : "ground",
+                "data" : "1",
+                "mesh" : "ignore"
             },
             "mesh" : 8,
             "name" : "street_corner.004",
@@ -393,171 +424,6 @@
         },
         {
             "extras" : {
-                "layers" : "ground"
-            },
-            "mesh" : 7,
-            "name" : "street.004",
-            "rotation" : [
-                0,
-                0.7071068286895752,
-                0,
-                0.7071068286895752
-            ],
-            "translation" : [
-                12,
-                1,
-                79
-            ]
-        },
-        {
-            "extras" : {
-                "layers" : "ground"
-            },
-            "mesh" : 7,
-            "name" : "street.005",
-            "rotation" : [
-                0,
-                -0.7071068286895752,
-                0,
-                0.7071068286895752
-            ],
-            "translation" : [
-                -12,
-                1,
-                -79
-            ]
-        },
-        {
-            "extras" : {
-                "layers" : "ground"
-            },
-            "mesh" : 7,
-            "name" : "street.006",
-            "rotation" : [
-                0,
-                -1,
-                0,
-                4.371138828673793e-08
-            ],
-            "translation" : [
-                79,
-                1,
-                -12
-            ]
-        },
-        {
-            "extras" : {
-                "layers" : "ground"
-            },
-            "mesh" : 7,
-            "name" : "street.007",
-            "translation" : [
-                -79,
-                1,
-                12
-            ]
-        },
-        {
-            "extras" : {
-                "layers" : "ground"
-            },
-            "mesh" : 8,
-            "name" : "street_corner.005",
-            "rotation" : [
-                0,
-                0.7071068286895752,
-                0,
-                0.7071068286895752
-            ],
-            "translation" : [
-                74,
-                1,
-                79
-            ]
-        },
-        {
-            "extras" : {
-                "layers" : "ground"
-            },
-            "mesh" : 8,
-            "name" : "street_corner.006",
-            "translation" : [
-                -79,
-                1,
-                74
-            ]
-        },
-        {
-            "extras" : {
-                "layers" : "ground"
-            },
-            "mesh" : 8,
-            "name" : "street_corner.007",
-            "rotation" : [
-                0,
-                -1,
-                0,
-                4.371138828673793e-08
-            ],
-            "translation" : [
-                79,
-                1,
-                -74
-            ]
-        },
-        {
-            "extras" : {
-                "layers" : "ground"
-            },
-            "mesh" : 8,
-            "name" : "street_corner.008",
-            "rotation" : [
-                0,
-                -0.7071068286895752,
-                0,
-                0.7071068286895752
-            ],
-            "translation" : [
-                -74,
-                1,
-                -79
-            ]
-        },
-        {
-            "children" : [
-                25,
-                26,
-                27,
-                28,
-                29,
-                30,
-                31,
-                32
-            ],
-            "name" : "Scene.002"
-        },
-        {
-            "name" : "Tile Template.002",
-            "scale" : [
-                100,
-                1,
-                100
-            ]
-        },
-        {
-            "children" : [
-                33,
-                34
-            ],
-            "name" : "_template",
-            "translation" : [
-                0,
-                0,
-                -221
-            ]
-        },
-        {
-            "extras" : {
                 "layers" : "buildings"
             },
             "mesh" : 9,
@@ -616,7 +482,9 @@
         },
         {
             "extras" : {
-                "layers" : "ground"
+                "layers" : "ground",
+                "data" : "2",
+                "mesh" : "ignore"
             },
             "mesh" : 7,
             "name" : "street.008",
@@ -634,7 +502,9 @@
         },
         {
             "extras" : {
-                "layers" : "ground"
+                "layers" : "ground",
+                "data" : "2",
+                "mesh" : "ignore"
             },
             "mesh" : 7,
             "name" : "street.009",
@@ -652,7 +522,9 @@
         },
         {
             "extras" : {
-                "layers" : "ground"
+                "layers" : "ground",
+                "data" : "2",
+                "mesh" : "ignore"
             },
             "mesh" : 7,
             "name" : "street.010",
@@ -670,7 +542,9 @@
         },
         {
             "extras" : {
-                "layers" : "ground"
+                "layers" : "ground",
+                "data" : "2",
+                "mesh" : "ignore"
             },
             "mesh" : 7,
             "name" : "street.011",
@@ -682,7 +556,9 @@
         },
         {
             "extras" : {
-                "layers" : "ground"
+                "layers" : "ground",
+                "data" : "1",
+                "mesh" : "ignore"
             },
             "mesh" : 8,
             "name" : "street_corner.009",
@@ -700,7 +576,9 @@
         },
         {
             "extras" : {
-                "layers" : "ground"
+                "layers" : "ground",
+                "data" : "1",
+                "mesh" : "ignore"
             },
             "mesh" : 8,
             "name" : "street_corner.010",
@@ -712,7 +590,9 @@
         },
         {
             "extras" : {
-                "layers" : "ground"
+                "layers" : "ground",
+                "data" : "1",
+                "mesh" : "ignore"
             },
             "mesh" : 8,
             "name" : "street_corner.011",
@@ -730,7 +610,9 @@
         },
         {
             "extras" : {
-                "layers" : "ground"
+                "layers" : "ground",
+                "data" : "1",
+                "mesh" : "ignore"
             },
             "mesh" : 8,
             "name" : "street_corner.012",
@@ -748,18 +630,18 @@
         },
         {
             "children" : [
-                36,
-                37,
-                38,
-                39,
-                40,
-                41,
-                42,
-                43,
-                44,
-                45,
-                46,
-                47
+                25,
+                26,
+                27,
+                28,
+                29,
+                30,
+                31,
+                32,
+                33,
+                34,
+                35,
+                36
             ],
             "name" : "Scene.001"
         },
@@ -773,14 +655,468 @@
         },
         {
             "children" : [
-                48,
-                49
+                37,
+                38
             ],
             "name" : "Tile_mall",
             "translation" : [
                 -100,
                 0,
                 0
+            ]
+        },
+        {
+            "extras" : {
+                "layers" : "buildings",
+                "data" : "7"
+            },
+            "mesh" : 13,
+            "name" : "gt_blue_building.001",
+            "translation" : [
+                46.12762451171875,
+                0,
+                46.533172607421875
+            ]
+        },
+        {
+            "extras" : {
+                "layers" : "buildings",
+                "data" : "5"
+            },
+            "mesh" : 14,
+            "name" : "gt_orange.003",
+            "translation" : [
+                -3.9646148681640625,
+                0,
+                53.642822265625
+            ]
+        },
+        {
+            "extras" : {
+                "layers" : "buildings",
+                "data" : "4"
+            },
+            "mesh" : 15,
+            "name" : "gt_red_building.002",
+            "translation" : [
+                -47.80907440185547,
+                0,
+                44.51429748535156
+            ]
+        },
+        {
+            "extras" : {
+                "layers" : "buildings",
+                "data" : "6"
+            },
+            "mesh" : 16,
+            "name" : "gt_tan_highrise.002",
+            "translation" : [
+                108.23484802246094,
+                0,
+                34.773895263671875
+            ]
+        },
+        {
+            "extras" : {
+                "layers" : "buildings",
+                "data" : "3"
+            },
+            "mesh" : 17,
+            "name" : "gt_teal.001",
+            "translation" : [
+                163.06915283203125,
+                0,
+                43.805816650390625
+            ]
+        },
+        {
+            "extras" : {
+                "layers" : "ground",
+                "data" : "2"
+            },
+            "mesh" : 18,
+            "name" : "street.015",
+            "translation" : [
+                -82,
+                1,
+                12
+            ]
+        },
+        {
+            "extras" : {
+                "layers" : "ground",
+                "data" : "1"
+            },
+            "mesh" : 19,
+            "name" : "street_corner.016",
+            "translation" : [
+                -41,
+                1,
+                -54
+            ]
+        },
+        {
+            "children" : [
+                40,
+                41,
+                42,
+                43,
+                44,
+                45,
+                46
+            ],
+            "name" : "Scene.003"
+        },
+        {
+            "children" : [
+                47
+            ],
+            "name" : "City_Mesh_Collection",
+            "translation" : [
+                107,
+                0,
+                -216
+            ]
+        },
+        {
+            "extras" : {
+                "layers" : "entrance interactable"
+            },
+            "name" : "entrance_blue_building.002",
+            "translation" : [
+                63,
+                7,
+                57
+            ]
+        },
+        {
+            "extras" : {
+                "layers" : "entrance interactable"
+            },
+            "name" : "entrance_orange_building_1.002",
+            "translation" : [
+                -3,
+                7,
+                67
+            ]
+        },
+        {
+            "extras" : {
+                "layers" : "entrance interactable"
+            },
+            "name" : "entrance_red_building_1.002",
+            "translation" : [
+                -13,
+                5,
+                -66
+            ]
+        },
+        {
+            "extras" : {
+                "layers" : "entrance interactable"
+            },
+            "name" : "entrance_teal_building.002",
+            "translation" : [
+                -68,
+                5,
+                -45
+            ]
+        },
+        {
+            "extras" : {
+                "layers" : "entrance interactable"
+            },
+            "name" : "entrance_white_building.002",
+            "translation" : [
+                50,
+                5,
+                -67
+            ]
+        },
+        {
+            "extras" : {
+                "layers" : "buildings",
+                "data" : "7",
+                "mesh" : "ignore"
+            },
+            "mesh" : 20,
+            "name" : "gt_blue_building.002",
+            "rotation" : [
+                0,
+                0.7071068286895752,
+                0,
+                0.7071068286895752
+            ],
+            "translation" : [
+                46.12762451171875,
+                0,
+                37.533172607421875
+            ]
+        },
+        {
+            "extras" : {
+                "layers" : "buildings",
+                "data" : "5",
+                "mesh" : "ignore"
+            },
+            "mesh" : 21,
+            "name" : "gt_orange.004",
+            "translation" : [
+                -3.9646148681640625,
+                0,
+                53.642822265625
+            ]
+        },
+        {
+            "extras" : {
+                "layers" : "buildings",
+                "data" : "4",
+                "mesh" : "ignore"
+            },
+            "mesh" : 22,
+            "name" : "gt_red_building.004",
+            "rotation" : [
+                0,
+                -1,
+                0,
+                4.371138828673793e-08
+            ],
+            "translation" : [
+                -12.80908203125,
+                0,
+                -45.4857177734375
+            ]
+        },
+        {
+            "extras" : {
+                "layers" : "buildings",
+                "data" : "6",
+                "mesh" : "ignore"
+            },
+            "mesh" : 23,
+            "name" : "gt_tan_highrise.003",
+            "rotation" : [
+                0,
+                -1,
+                0,
+                4.371138828673793e-08
+            ],
+            "translation" : [
+                41.23484802246094,
+                0,
+                -37.226104736328125
+            ]
+        },
+        {
+            "extras" : {
+                "layers" : "buildings",
+                "data" : "3",
+                "mesh" : "ignore"
+            },
+            "mesh" : 24,
+            "name" : "gt_teal.002",
+            "rotation" : [
+                0,
+                -0.7071068286895752,
+                0,
+                0.7071068286895752
+            ],
+            "translation" : [
+                -53.93086242675781,
+                0,
+                -46.194183349609375
+            ]
+        },
+        {
+            "extras" : {
+                "layers" : "ground",
+                "data" : "2",
+                "mesh" : "ignore"
+            },
+            "mesh" : 25,
+            "name" : "street.012",
+            "rotation" : [
+                0,
+                0.7071068286895752,
+                0,
+                0.7071068286895752
+            ],
+            "translation" : [
+                12,
+                1,
+                79
+            ]
+        },
+        {
+            "extras" : {
+                "layers" : "ground",
+                "data" : "2",
+                "mesh" : "ignore"
+            },
+            "mesh" : 25,
+            "name" : "street.013",
+            "rotation" : [
+                0,
+                -0.7071068286895752,
+                0,
+                0.7071068286895752
+            ],
+            "translation" : [
+                -12,
+                1,
+                -79
+            ]
+        },
+        {
+            "extras" : {
+                "layers" : "ground",
+                "data" : "2",
+                "mesh" : "ignore"
+            },
+            "mesh" : 25,
+            "name" : "street.014",
+            "rotation" : [
+                0,
+                -1,
+                0,
+                4.371138828673793e-08
+            ],
+            "translation" : [
+                79,
+                1,
+                -12
+            ]
+        },
+        {
+            "extras" : {
+                "layers" : "ground",
+                "data" : "2",
+                "mesh" : "ignore"
+            },
+            "mesh" : 25,
+            "name" : "street.016",
+            "translation" : [
+                -79,
+                1,
+                12
+            ]
+        },
+        {
+            "extras" : {
+                "layers" : "ground",
+                "data" : "1",
+                "mesh" : "ignore"
+            },
+            "mesh" : 26,
+            "name" : "street_corner.013",
+            "rotation" : [
+                0,
+                0.7071068286895752,
+                0,
+                0.7071068286895752
+            ],
+            "translation" : [
+                74,
+                1,
+                79
+            ]
+        },
+        {
+            "extras" : {
+                "layers" : "ground",
+                "data" : "1",
+                "mesh" : "ignore"
+            },
+            "mesh" : 26,
+            "name" : "street_corner.014",
+            "translation" : [
+                -79,
+                1,
+                74
+            ]
+        },
+        {
+            "extras" : {
+                "layers" : "ground",
+                "data" : "1",
+                "mesh" : "ignore"
+            },
+            "mesh" : 26,
+            "name" : "street_corner.015",
+            "rotation" : [
+                0,
+                -1,
+                0,
+                4.371138828673793e-08
+            ],
+            "translation" : [
+                79,
+                1,
+                -74
+            ]
+        },
+        {
+            "extras" : {
+                "layers" : "ground",
+                "data" : "1",
+                "mesh" : "ignore"
+            },
+            "mesh" : 26,
+            "name" : "street_corner.017",
+            "rotation" : [
+                0,
+                -0.7071068286895752,
+                0,
+                0.7071068286895752
+            ],
+            "translation" : [
+                -74,
+                1,
+                -79
+            ]
+        },
+        {
+            "children" : [
+                49,
+                50,
+                51,
+                52,
+                53,
+                54,
+                55,
+                56,
+                57,
+                58,
+                59,
+                60,
+                61,
+                62,
+                63,
+                64,
+                65,
+                66
+            ],
+            "name" : "Scene.004"
+        },
+        {
+            "name" : "Tile Template.003",
+            "scale" : [
+                100,
+                1,
+                100
+            ]
+        },
+        {
+            "children" : [
+                67,
+                68
+            ],
+            "name" : "_tile_template",
+            "translation" : [
+                -121,
+                0,
+                -236
             ]
         }
     ],
@@ -1042,6 +1378,202 @@
                         "TEXCOORD_0" : 48
                     },
                     "indices" : 49,
+                    "material" : 5
+                }
+            ]
+        },
+        {
+            "name" : "Cube.007",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "POSITION" : 50,
+                        "NORMAL" : 51,
+                        "TEXCOORD_0" : 52
+                    },
+                    "indices" : 3,
+                    "material" : 0
+                }
+            ]
+        },
+        {
+            "name" : "Cube.013",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "POSITION" : 53,
+                        "NORMAL" : 54,
+                        "TEXCOORD_0" : 55
+                    },
+                    "indices" : 7,
+                    "material" : 1
+                }
+            ]
+        },
+        {
+            "name" : "Cube.011",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "POSITION" : 56,
+                        "NORMAL" : 57,
+                        "TEXCOORD_0" : 58
+                    },
+                    "indices" : 14,
+                    "material" : 2
+                }
+            ]
+        },
+        {
+            "name" : "Cube.012",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "POSITION" : 59,
+                        "NORMAL" : 60,
+                        "TEXCOORD_0" : 61
+                    },
+                    "indices" : 21,
+                    "material" : 3
+                }
+            ]
+        },
+        {
+            "name" : "Cube.010",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "POSITION" : 62,
+                        "NORMAL" : 63,
+                        "TEXCOORD_0" : 64
+                    },
+                    "indices" : 25,
+                    "material" : 4
+                }
+            ]
+        },
+        {
+            "name" : "street.001",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "POSITION" : 65,
+                        "NORMAL" : 66,
+                        "TEXCOORD_0" : 67
+                    },
+                    "indices" : 29,
+                    "material" : 5
+                }
+            ]
+        },
+        {
+            "name" : "street corner.001",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "POSITION" : 68,
+                        "NORMAL" : 69,
+                        "TEXCOORD_0" : 70
+                    },
+                    "indices" : 33,
+                    "material" : 5
+                }
+            ]
+        },
+        {
+            "name" : "Cube.015",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "POSITION" : 71,
+                        "NORMAL" : 72,
+                        "TEXCOORD_0" : 73
+                    },
+                    "indices" : 3,
+                    "material" : 0
+                }
+            ]
+        },
+        {
+            "name" : "Cube.020",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "POSITION" : 74,
+                        "NORMAL" : 75,
+                        "TEXCOORD_0" : 76
+                    },
+                    "indices" : 7,
+                    "material" : 1
+                }
+            ]
+        },
+        {
+            "name" : "Cube.021",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "POSITION" : 77,
+                        "NORMAL" : 78,
+                        "TEXCOORD_0" : 79
+                    },
+                    "indices" : 14,
+                    "material" : 2
+                }
+            ]
+        },
+        {
+            "name" : "Cube.019",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "POSITION" : 80,
+                        "NORMAL" : 81,
+                        "TEXCOORD_0" : 82
+                    },
+                    "indices" : 21,
+                    "material" : 3
+                }
+            ]
+        },
+        {
+            "name" : "Cube.017",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "POSITION" : 83,
+                        "NORMAL" : 84,
+                        "TEXCOORD_0" : 85
+                    },
+                    "indices" : 25,
+                    "material" : 4
+                }
+            ]
+        },
+        {
+            "name" : "street.002",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "POSITION" : 86,
+                        "NORMAL" : 87,
+                        "TEXCOORD_0" : 88
+                    },
+                    "indices" : 29,
+                    "material" : 5
+                }
+            ]
+        },
+        {
+            "name" : "street corner.002",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "POSITION" : 89,
+                        "NORMAL" : 90,
+                        "TEXCOORD_0" : 91
+                    },
+                    "indices" : 33,
                     "material" : 5
                 }
             ]
@@ -1544,6 +2076,398 @@
             "componentType" : 5123,
             "count" : 48,
             "type" : "SCALAR"
+        },
+        {
+            "bufferView" : 50,
+            "componentType" : 5126,
+            "count" : 94,
+            "max" : [
+                26.82201385498047,
+                68.87884521484375,
+                16.89841651916504
+            ],
+            "min" : [
+                -29.506040573120117,
+                -0.8164026737213135,
+                -22.531225204467773
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 51,
+            "componentType" : 5126,
+            "count" : 94,
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 52,
+            "componentType" : 5126,
+            "count" : 94,
+            "type" : "VEC2"
+        },
+        {
+            "bufferView" : 53,
+            "componentType" : 5126,
+            "count" : 78,
+            "max" : [
+                19.074222564697266,
+                41.883995056152344,
+                16.601238250732422
+            ],
+            "min" : [
+                -18.866859436035156,
+                0,
+                -21.700246810913086
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 54,
+            "componentType" : 5126,
+            "count" : 78,
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 55,
+            "componentType" : 5126,
+            "count" : 78,
+            "type" : "VEC2"
+        },
+        {
+            "bufferView" : 56,
+            "componentType" : 5126,
+            "count" : 59,
+            "max" : [
+                20,
+                35,
+                20
+            ],
+            "min" : [
+                -20,
+                0,
+                -20
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 57,
+            "componentType" : 5126,
+            "count" : 59,
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 58,
+            "componentType" : 5126,
+            "count" : 59,
+            "type" : "VEC2"
+        },
+        {
+            "bufferView" : 59,
+            "componentType" : 5126,
+            "count" : 80,
+            "max" : [
+                27,
+                75,
+                29
+            ],
+            "min" : [
+                -27,
+                -1,
+                -30
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 60,
+            "componentType" : 5126,
+            "count" : 80,
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 61,
+            "componentType" : 5126,
+            "count" : 80,
+            "type" : "VEC2"
+        },
+        {
+            "bufferView" : 62,
+            "componentType" : 5126,
+            "count" : 64,
+            "max" : [
+                21,
+                23,
+                15
+            ],
+            "min" : [
+                -21,
+                -1,
+                -15
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 63,
+            "componentType" : 5126,
+            "count" : 64,
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 64,
+            "componentType" : 5126,
+            "count" : 64,
+            "type" : "VEC2"
+        },
+        {
+            "bufferView" : 65,
+            "componentType" : 5126,
+            "count" : 96,
+            "max" : [
+                11.000000953674316,
+                0,
+                56
+            ],
+            "min" : [
+                -21.000001907348633,
+                -1,
+                -80
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 66,
+            "componentType" : 5126,
+            "count" : 96,
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 67,
+            "componentType" : 5126,
+            "count" : 96,
+            "type" : "VEC2"
+        },
+        {
+            "bufferView" : 68,
+            "componentType" : 5126,
+            "count" : 24,
+            "max" : [
+                11.000003814697266,
+                0,
+                26
+            ],
+            "min" : [
+                -21.000003814697266,
+                -1,
+                -6
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 69,
+            "componentType" : 5126,
+            "count" : 24,
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 70,
+            "componentType" : 5126,
+            "count" : 24,
+            "type" : "VEC2"
+        },
+        {
+            "bufferView" : 71,
+            "componentType" : 5126,
+            "count" : 94,
+            "max" : [
+                26.82201385498047,
+                68.87884521484375,
+                16.89841651916504
+            ],
+            "min" : [
+                -29.506040573120117,
+                -0.8164026737213135,
+                -22.531225204467773
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 72,
+            "componentType" : 5126,
+            "count" : 94,
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 73,
+            "componentType" : 5126,
+            "count" : 94,
+            "type" : "VEC2"
+        },
+        {
+            "bufferView" : 74,
+            "componentType" : 5126,
+            "count" : 78,
+            "max" : [
+                19.074222564697266,
+                41.883995056152344,
+                16.601238250732422
+            ],
+            "min" : [
+                -18.866859436035156,
+                0,
+                -21.700246810913086
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 75,
+            "componentType" : 5126,
+            "count" : 78,
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 76,
+            "componentType" : 5126,
+            "count" : 78,
+            "type" : "VEC2"
+        },
+        {
+            "bufferView" : 77,
+            "componentType" : 5126,
+            "count" : 59,
+            "max" : [
+                20,
+                35,
+                20
+            ],
+            "min" : [
+                -20,
+                0,
+                -20
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 78,
+            "componentType" : 5126,
+            "count" : 59,
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 79,
+            "componentType" : 5126,
+            "count" : 59,
+            "type" : "VEC2"
+        },
+        {
+            "bufferView" : 80,
+            "componentType" : 5126,
+            "count" : 80,
+            "max" : [
+                27,
+                75,
+                29
+            ],
+            "min" : [
+                -27,
+                -1,
+                -30
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 81,
+            "componentType" : 5126,
+            "count" : 80,
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 82,
+            "componentType" : 5126,
+            "count" : 80,
+            "type" : "VEC2"
+        },
+        {
+            "bufferView" : 83,
+            "componentType" : 5126,
+            "count" : 64,
+            "max" : [
+                21,
+                23,
+                15
+            ],
+            "min" : [
+                -21,
+                -1,
+                -15
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 84,
+            "componentType" : 5126,
+            "count" : 64,
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 85,
+            "componentType" : 5126,
+            "count" : 64,
+            "type" : "VEC2"
+        },
+        {
+            "bufferView" : 86,
+            "componentType" : 5126,
+            "count" : 96,
+            "max" : [
+                11.000000953674316,
+                0,
+                56
+            ],
+            "min" : [
+                -21.000001907348633,
+                -1,
+                -80
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 87,
+            "componentType" : 5126,
+            "count" : 96,
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 88,
+            "componentType" : 5126,
+            "count" : 96,
+            "type" : "VEC2"
+        },
+        {
+            "bufferView" : 89,
+            "componentType" : 5126,
+            "count" : 24,
+            "max" : [
+                11.000003814697266,
+                0,
+                26
+            ],
+            "min" : [
+                -21.000003814697266,
+                -1,
+                -6
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 90,
+            "componentType" : 5126,
+            "count" : 24,
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 91,
+            "componentType" : 5126,
+            "count" : 24,
+            "type" : "VEC2"
         }
     ],
     "bufferViews" : [
@@ -1796,6 +2720,216 @@
             "buffer" : 0,
             "byteLength" : 96,
             "byteOffset" : 29280
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 1128,
+            "byteOffset" : 29376
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 1128,
+            "byteOffset" : 30504
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 752,
+            "byteOffset" : 31632
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 936,
+            "byteOffset" : 32384
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 936,
+            "byteOffset" : 33320
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 624,
+            "byteOffset" : 34256
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 708,
+            "byteOffset" : 34880
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 708,
+            "byteOffset" : 35588
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 472,
+            "byteOffset" : 36296
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 960,
+            "byteOffset" : 36768
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 960,
+            "byteOffset" : 37728
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 640,
+            "byteOffset" : 38688
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 768,
+            "byteOffset" : 39328
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 768,
+            "byteOffset" : 40096
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 512,
+            "byteOffset" : 40864
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 1152,
+            "byteOffset" : 41376
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 1152,
+            "byteOffset" : 42528
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 768,
+            "byteOffset" : 43680
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 288,
+            "byteOffset" : 44448
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 288,
+            "byteOffset" : 44736
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 192,
+            "byteOffset" : 45024
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 1128,
+            "byteOffset" : 45216
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 1128,
+            "byteOffset" : 46344
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 752,
+            "byteOffset" : 47472
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 936,
+            "byteOffset" : 48224
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 936,
+            "byteOffset" : 49160
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 624,
+            "byteOffset" : 50096
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 708,
+            "byteOffset" : 50720
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 708,
+            "byteOffset" : 51428
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 472,
+            "byteOffset" : 52136
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 960,
+            "byteOffset" : 52608
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 960,
+            "byteOffset" : 53568
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 640,
+            "byteOffset" : 54528
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 768,
+            "byteOffset" : 55168
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 768,
+            "byteOffset" : 55936
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 512,
+            "byteOffset" : 56704
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 1152,
+            "byteOffset" : 57216
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 1152,
+            "byteOffset" : 58368
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 768,
+            "byteOffset" : 59520
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 288,
+            "byteOffset" : 60288
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 288,
+            "byteOffset" : 60576
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 192,
+            "byteOffset" : 60864
         }
     ],
     "samplers" : [
@@ -1806,7 +2940,7 @@
     ],
     "buffers" : [
         {
-            "byteLength" : 29376,
+            "byteLength" : 61056,
             "uri" : "city_grid.bin"
         }
     ]

@@ -23,6 +23,7 @@ static int  get_rand_tile(int32_t x, int32_t y);
 
 void tiles_test_level_init(TilesTestLevel* level, fw64Engine* engine) {
     level_base_init(&level->base, engine, fw64_default_allocator(), FW64_INVALID_ASSET_ID, FW64_ASSET_soundbank_sounds);
+    mesh_collection_init(&level->mesh_collection, engine->assets, FW64_ASSET_scene_city_mesh_collection, fw64_default_allocator());
     
     level->handle_nw = 0;
     level->handle_ne =  TILE_ROW_CELLS  - 1;
@@ -159,6 +160,11 @@ void tiles_test_load_next_row(TilesTestLevel* level, CompassDirections dir) {
     rotate_all_handles(level, dir);
 }
 
+void setup_city_level(uint32_t chunk_id, int scene_id, fw64Scene* scene, void* arg) {
+    TilesTestLevel* level = (TilesTestLevel*)arg;
+    mesh_collection_set_scene_meshes(&level->mesh_collection, scene);
+}
+
 void tiles_test_load_tile(TilesTestLevel* level, int index, Vec3* pos) {
     // eject previous chunk in this index
     fw64_level_unload_chunk(&level->base.level, level->chunk_handles[index]);
@@ -166,6 +172,8 @@ void tiles_test_load_tile(TilesTestLevel* level, int index, Vec3* pos) {
 
     fw64LevelChunkInfo info;
     fw64_level_chunk_info_init(&info);
+    info.init_func = setup_city_level;
+    info.callback_arg = level;
     
     int32_t grid_x = pos->x / TILE_SIZE;
     int32_t grid_y = pos->z / TILE_SIZE;

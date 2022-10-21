@@ -34,7 +34,7 @@ void mesh_collection_set_scene_meshes(MeshCollection* collection, fw64Scene* sce
 
         uint32_t data_index = (uint32_t)node->data;
 
-        if (data_index == 0 || data_index < MESH_COLLECTION_CAPACITY)
+        if (data_index == 0 || data_index >= MESH_COLLECTION_CAPACITY)
             continue;
 
         fw64Mesh* mesh = collection->meshes[data_index];
@@ -47,4 +47,6 @@ void mesh_collection_set_scene_meshes(MeshCollection* collection, fw64Scene* sce
         fw64_mesh_get_bounding_box(mesh, &mesh_bounding);
         fw64_collider_set_type_box(node->collider, &mesh_bounding);
     }
+
+    fw64_scene_update_bounding(scene);
 }
