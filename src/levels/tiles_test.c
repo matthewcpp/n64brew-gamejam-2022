@@ -4,6 +4,7 @@
 #include "assets/sound_bank_sounds.h"
 
 #include "framework64/random.h"
+#include "framework64/math.h"
 
 #define TILE_COUNT 1
 
@@ -69,13 +70,20 @@ void tiles_test_level_init(TilesTestLevel* level, fw64Engine* engine, GameData* 
         }
     }
 
-    player_add_ammo(&level->base.player, WEAPON_TYPE_HANDGUN, 45);
-    player_set_weapon(&level->base.player, WEAPON_TYPE_HANDGUN);
+    
 
     Vec3 starting_pos = {0.0f, 0.0f, 0.0f};
     vec3_add(&starting_pos, &starting_pos, &level->base.game_data->player_data.transform);
     player_set_position(&level->base.player, &starting_pos);
-    vec3_copy(&level->player_prev_position, &level->base.player.node->transform.position); 
+    vec3_copy(&level->player_prev_position, &level->base.player.node->transform.position);
+
+    game_data_load_player_data(level->base.game_data, &level->base.player);
+    //player_pickup_ammo(&level->base.player, WEAPON_TYPE_HANDGUN, 0);
+    WeaponAmmo* ammo = &level->base.player.weapon_controller.weapon_ammo[WEAPON_TYPE_HANDGUN];
+    int total_handgun_ammo = (ammo->current_mag_count + ammo->additional_rounds_count);
+    if(total_handgun_ammo < 45) {
+        player_add_ammo(&level->base.player, WEAPON_TYPE_HANDGUN, 45 - total_handgun_ammo);
+    }
 
     fw64_renderer_set_clear_color(engine->renderer, 20, 4, 40);
     fw64_renderer_set_fog_color(engine->renderer, 20, 4, 40);
@@ -238,12 +246,14 @@ void tiles_test_level_update(TilesTestLevel* level) {
 
     if (level->base.interaction.interesting_node && player_is_interacting(&level->base.player)) {
         if(1) {  // can open door. temp set to always true
-            level->base.game_data->door_data.node_id = level->base.interaction.node_uid;
-            
-            level->base.game_data->player_data.transform = level->base.player.node->transform;
-            
+            // save location to reload later
+            level->base.game_data->door_data.node_id = level->base.interaction.node_uid;                        
             level->base.game_data->door_data.city_cell.x = (int)((level->next_row_pos[WEST] / TILE_SIZE)+2);
             level->base.game_data->door_data.city_cell.y = (int)((level->next_row_pos[NORTH] / TILE_SIZE)+2);
+            // preserve player's data between level loads
+            level->base.game_data->player_data.transform = level->base.player.node->transform;
+
+            game_data_save_player_data(level->base.game_data, &level->base.player);
 
             level->base.game_data->transition_to_level = LEVEL_INTERIOR;
             level->base.game_data->transition_to_state = GAME_STATE_PLAYING;

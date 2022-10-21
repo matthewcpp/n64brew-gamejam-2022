@@ -31,23 +31,31 @@ void game_data_init(GameData* game_data) {
 }
 
 void game_data_save_player_data(GameData* game_data, Player* player) {
-    game_data->player_data.transform = player->node->transform;
     game_data->player_data.health = player->current_health;
     game_data->player_data.equipped_weapon = player->weapon_controller.weapon.info->type;
     for(int i = 0; i < WEAPON_COUNT; i++) {
         game_data->player_data.ammo[i].current_mag_count = player->weapon_controller.weapon_ammo[i].current_mag_count;
         game_data->player_data.ammo[i].additional_rounds_count = player->weapon_controller.weapon_ammo[i].additional_rounds_count;
     }
-    game_data->player_data.input_map = player->input_map;
+
+    for(int i = 0; i < INPUT_MAP_TOTAL_ACTIONS; i++) {
+        game_data->player_data.input_map.buttons[i] = player->input_map.buttons[i];
+    }
+    game_data->player_data.input_map.threshold.x = player->input_map.threshold.x;
+    game_data->player_data.input_map.threshold.y = player->input_map.threshold.y;
 }
-void game_data_load_player_data(GameData* game_data, Player* player) {
-    player->node->transform = game_data->player_data.transform;
+void game_data_load_player_data(GameData* game_data, Player* player) {    
     player->current_health = game_data->player_data.health;
-    weapon_controller_set_weapon(&player->weapon_controller, game_data->player_data.equipped_weapon);
     for(int i = 0; i < WEAPON_COUNT; i++) {
         weapon_controller_set_weapon_ammo(  &player->weapon_controller, i,
                                             game_data->player_data.ammo[i].current_mag_count,
                                             game_data->player_data.ammo[i].additional_rounds_count);
     }
-    game_data->player_data.input_map = player->input_map;
+    weapon_controller_set_weapon(&player->weapon_controller, game_data->player_data.equipped_weapon);
+
+    for(int i = 0; i < INPUT_MAP_TOTAL_ACTIONS; i++) {
+        player->input_map.buttons[i] = game_data->player_data.input_map.buttons[i];
+    }
+    player->input_map.threshold.x = game_data->player_data.input_map.threshold.x;
+    player->input_map.threshold.y = game_data->player_data.input_map.threshold.y;
 }

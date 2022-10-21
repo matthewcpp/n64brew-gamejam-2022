@@ -136,10 +136,16 @@ void interior_level_init(InteriorLevel* level, fw64Engine* engine, GameData* gam
     level->total_floors = 1 + get_rand_tile(level) % 4; // would be nicer to tie this to the building exterior mesh
 	level->has_exit_type[BUILDING_EXIT] = 1;
 
-    player_add_ammo(&level->base.player, WEAPON_TYPE_HANDGUN, 45);
-    player_set_weapon(&level->base.player, WEAPON_TYPE_HANDGUN);
-
+    // player_add_ammo(&level->base.player, WEAPON_TYPE_HANDGUN, 45);
+    // player_set_weapon(&level->base.player, WEAPON_TYPE_HANDGUN);
 	//game_data_load_player_data(&level->base.game_data, &level->base.player);
+	game_data_load_player_data(level->base.game_data, &level->base.player);
+    //player_pickup_ammo(&level->base.player, WEAPON_TYPE_HANDGUN, 0);
+    WeaponAmmo* ammo = &level->base.player.weapon_controller.weapon_ammo[WEAPON_TYPE_HANDGUN];
+    int total_handgun_ammo = (ammo->current_mag_count + ammo->additional_rounds_count);
+    if(total_handgun_ammo < 45) {
+        player_add_ammo(&level->base.player, WEAPON_TYPE_HANDGUN, 45 - total_handgun_ammo);
+    }
 
     Vec3 starting_pos = {0.0f, 5.0f, 15.0f};
 	vec3_copy(&level->exits[BUILDING_EXIT], &starting_pos);
