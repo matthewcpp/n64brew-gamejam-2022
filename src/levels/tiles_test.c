@@ -42,8 +42,10 @@ void tiles_test_level_init(TilesTestLevel* level, fw64Engine* engine, GameData* 
      *  for larger (5x5 etc) grids the center chunk stays at the world origin
      */
     Vec3 pos = { -(TILE_SIZE * (TILE_ROW_CELLS / 2)), 0.0f, -(TILE_SIZE * (TILE_ROW_CELLS / 2))};
-    pos.x += TILE_SIZE * level->base.game_data->door_data.city_cell.x;
-    pos.z += TILE_SIZE * level->base.game_data->door_data.city_cell.y;
+    float x_offset = TILE_SIZE * level->base.game_data->door_data.city_cell.x;
+    float z_offset = TILE_SIZE * level->base.game_data->door_data.city_cell.y;
+    pos.x += x_offset;
+    pos.z += z_offset;
     
     level->next_row_pos[NORTH] = pos.z -  TILE_SIZE;
     level->next_row_pos[SOUTH] = pos.z + (TILE_SIZE * TILE_COL_CELLS);
@@ -61,7 +63,7 @@ void tiles_test_level_init(TilesTestLevel* level, fw64Engine* engine, GameData* 
         fw64_bump_allocator_init(&level->allocators[i], BUMP_ALLOCATOR_SIZE);
         tiles_test_load_tile(level, i, &pos);
         pos.x += TILE_SIZE;
-        if( pos.x >= (TILE_SIZE * ((TILE_ROW_CELLS / 2) + 1))) {
+        if( pos.x >= x_offset + (TILE_SIZE * ((TILE_ROW_CELLS / 2) + 1))) {
             pos.x -= TILE_SIZE * TILE_ROW_CELLS;
             pos.z += TILE_SIZE;
         }
@@ -240,8 +242,8 @@ void tiles_test_level_update(TilesTestLevel* level) {
             
             level->base.game_data->player_data.transform = level->base.player.node->transform;
             
-            level->base.game_data->door_data.city_cell.x = (int)(level->next_row_trigger[WEST] / TILE_SIZE);
-            level->base.game_data->door_data.city_cell.y = (int)(level->next_row_trigger[NORTH] / TILE_SIZE);
+            level->base.game_data->door_data.city_cell.x = (int)((level->next_row_pos[WEST] / TILE_SIZE)+2);
+            level->base.game_data->door_data.city_cell.y = (int)((level->next_row_pos[NORTH] / TILE_SIZE)+2);
 
             level->base.game_data->transition_to_level = LEVEL_INTERIOR;
             level->base.game_data->transition_to_state = GAME_STATE_PLAYING;

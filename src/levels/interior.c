@@ -197,9 +197,7 @@ void interior_level_update(InteriorLevel* level) {
 
 	float dist_sq = vec3_distance_squared(&level->base.player.node->transform.position, &level->exits[BUILDING_EXIT]);
 	if ((dist_sq < INTERACTION_DISTANCE_SQ) && player_is_interacting(&level->base.player)) {
-        //fw64Transform transform_backup = level->base.game_data->player_data.transform;
-		//game_data_save_player_data(&level->base.game_data, &level->base.player);
-		//level->base.game_data->player_data.transform = transform_backup;
+
 		level->base.game_data->transition_to_level = LEVEL_TILES;
         level->base.game_data->transition_to_state = GAME_STATE_PLAYING;
 	}
