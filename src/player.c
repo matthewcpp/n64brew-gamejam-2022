@@ -45,6 +45,7 @@ void player_init(Player* player, fw64Engine* engine, fw64Level* level, Projectil
 void player_uninit(Player* player) {
     fw64Allocator* allocator = player->allocator;
 
+    weapon_controller_uninit(&player->weapon_controller);
     allocator->free(allocator, player->node->collider);
     allocator->free(allocator, player->node);
 }

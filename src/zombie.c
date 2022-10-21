@@ -32,6 +32,7 @@ void zombie_init(Zombie* zombie, fw64Engine* engine, fw64Level* level, fw64Mesh*
 }
 
 void zombie_uninit(Zombie* zombie) {
+    fw64_animation_controller_uninit(&zombie->animation_controller, fw64_default_allocator());
     fw64_level_remove_dynamic_node(zombie->level, &zombie->node);
 }
 

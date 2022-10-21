@@ -21,10 +21,15 @@ void zombie_spawner_init(ZombieSpawner* spawner, fw64Engine* engine, fw64Level* 
     spawner->zombie_mesh = fw64_mesh_load(engine->assets, FW64_ASSET_mesh_zombie, allocator);
     spawner->active_nodes = 0;
     for(int i = 0; i < 16; i++)
-        spawner->spawner_nodes[i] = 0;
+        spawner->spawner_nodes[i] = NULL;
 }
 
 void zombie_spawner_uninit(ZombieSpawner* spawner) {
+    
+    for(int i = 0; i < spawner->active_zombies; i++) {
+        Zombie* zombie = &spawner->zombies[i];
+        zombie_uninit(zombie);
+    }
     fw64_mesh_delete(spawner->engine->assets, spawner->zombie_mesh, spawner->allocator);
     fw64_animation_data_delete(spawner->animation_data, spawner->allocator);
 }
@@ -91,12 +96,16 @@ void spawn_next_zombie(ZombieSpawner* spawner) {
 }
 
 void zombie_spawner_update(ZombieSpawner* spawner) {
-    if(spawner->active_nodes < 1)
+    if(spawner->active_zombies < 1)
         return;
 
     int zombiesUpdated = 0;
 
-    for(int i = 0; i < spawner->active_zombies; i++) {
+    for(int i = 0; i < ZOMBIE_SPAWNER_MAX_COUNT; i++) {
+        
+        if(!((1<<i) & spawner->zombie_slot_active))
+            continue;
+
         Zombie* zombie = &spawner->zombies[i];
         if(zombie_update(zombie)) {
             zombiesUpdated++;
@@ -107,16 +116,19 @@ void zombie_spawner_update(ZombieSpawner* spawner) {
         }
     }
 
-    if (zombiesUpdated < ZOMBIE_SPAWNER_SMALL_GROUP) {
-        spawn_next_zombie(spawner);
-    }
+    // if (zombiesUpdated < ZOMBIE_SPAWNER_SMALL_GROUP) {
+    //     spawn_next_zombie(spawner);
+    // }
 }
 
 void zombie_spawner_draw(ZombieSpawner* spawner) {
     if(spawner->active_zombies < 1)
         return;
 
-    for(int i = 0; i < spawner->active_zombies; i++) {
+    for(int i = 0; i < ZOMBIE_SPAWNER_MAX_COUNT; i++) {        
+        if(!((1<<i) & spawner->zombie_slot_active))
+            continue;
+
         Zombie* zombie = &spawner->zombies[i];
         zombie_draw(zombie);
     }

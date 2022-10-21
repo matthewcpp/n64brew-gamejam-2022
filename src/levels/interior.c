@@ -163,16 +163,11 @@ void interior_level_init(InteriorLevel* level, fw64Engine* engine, GameData* gam
 		level->zombie_spawner.active_nodes--;
 	}
 
-
-	// sprinkle in some zombies
-	zombie_spawner_spawn_now(&level->zombie_spawner,
-	                         fw64_random_int_in_range(ZOMBIE_SPAWNER_SMALL_GROUP,ZOMBIE_SPAWNER_BIG_GROUP));
-
 	game_data_load_player_data(level->base.game_data, &level->base.player);
-    WeaponAmmo* ammo = &level->base.player.weapon_controller.weapon_ammo[WEAPON_TYPE_HANDGUN];
-    int total_handgun_ammo = (ammo->current_mag_count + ammo->additional_rounds_count);
-    if(total_handgun_ammo < 45) {
-        player_add_ammo(&level->base.player, WEAPON_TYPE_HANDGUN, 45 - total_handgun_ammo);
+    WeaponAmmo* ammo = &level->base.player.weapon_controller.weapon_ammo[WEAPON_TYPE_UZI];
+    int total_uzi_ammo = (ammo->current_mag_count + ammo->additional_rounds_count);
+    if(total_uzi_ammo < 45) {
+        player_add_ammo(&level->base.player, WEAPON_TYPE_UZI, 45 - total_uzi_ammo);
     }
 
     Vec3 starting_pos = {0.0f, 5.0f, 15.0f};
@@ -182,6 +177,8 @@ void interior_level_init(InteriorLevel* level, fw64Engine* engine, GameData* gam
     fw64_renderer_set_clear_color(engine->renderer, 32, 32, 32);
 	fw64_renderer_set_fog_color(engine->renderer, 32, 32, 32);
     fw64_renderer_set_fog_positions(engine->renderer, 0.95f, 1.0f);
+
+	zombie_spawner_spawn_now(&level->zombie_spawner, 10);
 }
 
 void interior_load_room(InteriorLevel* level, int index, int room_scene, Vec3* pos) {
@@ -300,9 +297,9 @@ void interior_level_draw(InteriorLevel* level) {
     zombie_spawner_draw(&level->zombie_spawner);
 	fw64_renderer_set_fog_enabled(renderer, 0);
 	player_draw_weapon(&level->base.player);
-	player_draw_damage(&level->base.player);
-    ui_draw(&level->base.ui);
     fw64_renderer_set_anti_aliasing_enabled(renderer, 0);
+	player_draw_damage(&level->base.player);
+	ui_draw(&level->base.ui);
     fw64_renderer_end(renderer, FW64_RENDERER_FLAG_SWAP);
 }
 

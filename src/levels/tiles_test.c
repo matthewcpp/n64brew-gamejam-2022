@@ -79,10 +79,10 @@ void tiles_test_level_init(TilesTestLevel* level, fw64Engine* engine, GameData* 
 
     game_data_load_player_data(level->base.game_data, &level->base.player);
     //player_pickup_ammo(&level->base.player, WEAPON_TYPE_HANDGUN, 0);
-    WeaponAmmo* ammo = &level->base.player.weapon_controller.weapon_ammo[WEAPON_TYPE_HANDGUN];
-    int total_handgun_ammo = (ammo->current_mag_count + ammo->additional_rounds_count);
-    if(total_handgun_ammo < 45) {
-        player_add_ammo(&level->base.player, WEAPON_TYPE_HANDGUN, 45 - total_handgun_ammo);
+    WeaponAmmo* ammo = &level->base.player.weapon_controller.weapon_ammo[WEAPON_TYPE_UZI];
+    int total_uzi_ammo = (ammo->current_mag_count + ammo->additional_rounds_count);
+    if(total_uzi_ammo < 45) {
+        player_add_ammo(&level->base.player, WEAPON_TYPE_UZI, 45 - total_uzi_ammo);
     }
 
     int player_facing = NORTH;
@@ -236,8 +236,7 @@ static void rotate_one_handle(TilesTestLevel* level, int* handle, CompassDirecti
 }
 
 void tiles_test_level_uninit(TilesTestLevel* level) {
-    player_uninit(&level->base.player);
-    fw64_level_uninit(&level->base.level);
+    level_base_uninit(&level->base);
 
     for (int i = 0; i < ACTIVE_TILE_COUNT; i++) {
         fw64_bump_allocator_uninit(&level->allocators[i]);
