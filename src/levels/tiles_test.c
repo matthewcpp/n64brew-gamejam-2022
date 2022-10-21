@@ -73,7 +73,7 @@ void tiles_test_level_init(TilesTestLevel* level, fw64Engine* engine, GameData* 
     
 
     Vec3 starting_pos = {0.0f, 0.0f, 0.0f};
-    vec3_add(&starting_pos, &starting_pos, &level->base.game_data->player_data.transform);
+    vec3_add(&starting_pos, &starting_pos, &level->base.game_data->player_data.transform.position);
     player_set_position(&level->base.player, &starting_pos);
     vec3_copy(&level->player_prev_position, &level->base.player.node->transform.position);
 
