@@ -85,6 +85,26 @@ void tiles_test_level_init(TilesTestLevel* level, fw64Engine* engine, GameData* 
         player_add_ammo(&level->base.player, WEAPON_TYPE_HANDGUN, 45 - total_handgun_ammo);
     }
 
+    int player_facing = NORTH;
+    float player_x = level->base.player.node->transform.position.x;
+    float player_z = level->base.player.node->transform.position.z;
+    float dist = player_z - level->next_row_trigger[NORTH];
+
+    if((level->next_row_trigger[SOUTH] - player_z) < dist) {
+        player_facing = SOUTH;
+        dist = level->next_row_trigger[SOUTH] - player_z;
+    }
+    if((level->next_row_trigger[EAST] - player_x) < dist) {
+        player_facing = EAST;
+        dist = level->next_row_trigger[EAST] - player_x;
+    }
+    if((player_x - level->next_row_trigger[WEST]) < dist) {
+        player_facing = WEST;
+        dist = player_x - level->next_row_trigger[WEST];
+    }
+
+    level->base.player.movement.rotation.y = 360 - (90.f * player_facing);
+
     fw64_renderer_set_clear_color(engine->renderer, 20, 4, 40);
     fw64_renderer_set_fog_color(engine->renderer, 20, 4, 40);
     fw64_renderer_set_fog_positions(engine->renderer, 0.9, 1.0f);
