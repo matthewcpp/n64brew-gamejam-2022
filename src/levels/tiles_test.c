@@ -5,10 +5,12 @@
 
 #include "framework64/random.h"
 
-#define TILE_COUNT 1
+#define TILE_COUNT 3
 
 int tile_scenes[TILE_COUNT] = {
-    FW64_ASSET_scene_tile_block1
+    FW64_ASSET_scene_city_tile_block1,
+    FW64_ASSET_scene_city_tile_block2,
+    FW64_ASSET_scene_city_tile_highrises
 };
 
 #define BUMP_ALLOCATOR_SIZE (32 * 1024)
@@ -178,7 +180,7 @@ void tiles_test_load_tile(TilesTestLevel* level, int index, Vec3* pos) {
     int32_t grid_x = pos->x / TILE_SIZE;
     int32_t grid_y = pos->z / TILE_SIZE;
 
-    info.scene_id = (grid_x == 0 && grid_y == 0) ? FW64_ASSET_scene_tile_mall : tile_scenes[get_rand_tile(grid_x, grid_y)];
+    info.scene_id = (grid_x == 0 && grid_y == 0) ? FW64_ASSET_scene_city_tile_mall : tile_scenes[get_rand_tile(grid_x, grid_y)];
     info.allocator = &level->allocators[index].interface;
 
     level->chunk_handles[index] = fw64_level_load_chunk_at_pos(&level->base.level, &info, pos);

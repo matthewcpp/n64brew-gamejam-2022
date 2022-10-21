@@ -7,7 +7,7 @@
 typedef struct {
     fw64AssetDatabase* assets;
     fw64Scene* source_scene;
-    fw64Mesh* meshes[MESH_COLLECTION_CAPACITY];
+    fw64Node* mesh_nodes[MESH_COLLECTION_CAPACITY];
 } MeshCollection;
 
 void mesh_collection_init(MeshCollection* collection, fw64AssetDatabase* assets, int source_scene_index, fw64Allocator* allocator);

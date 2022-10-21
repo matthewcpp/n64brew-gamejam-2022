@@ -17,7 +17,7 @@ void mesh_collection_init(MeshCollection* collection, fw64AssetDatabase* assets,
         uint32_t source_index = (uint32_t)node->data;
 
         if (source_index > 0 && source_index < MESH_COLLECTION_CAPACITY) {
-            collection->meshes[source_index] = node->mesh;
+            collection->mesh_nodes[source_index] = node;
         }
     }
 }
@@ -37,15 +37,25 @@ void mesh_collection_set_scene_meshes(MeshCollection* collection, fw64Scene* sce
         if (data_index == 0 || data_index >= MESH_COLLECTION_CAPACITY)
             continue;
 
-        fw64Mesh* mesh = collection->meshes[data_index];
-        fw64_node_set_mesh(node, mesh);
+        fw64Node* mesh_node = collection->mesh_nodes[data_index];
+        fw64_node_set_mesh(node, mesh_node->mesh);
 
         if (!node->collider)
-            return;
+            continue;
 
-        Box mesh_bounding;
-        fw64_mesh_get_bounding_box(mesh, &mesh_bounding);
-        fw64_collider_set_type_box(node->collider, &mesh_bounding);
+        switch(mesh_node->collider->type) {
+            case FW64_COLLIDER_BOX:
+                fw64_collider_set_type_box(node->collider, &mesh_node->collider->source.box);
+                break;
+
+            case FW64_COLLIDER_MESH:
+                fw64_collider_set_type_mesh(node->collider, mesh_node->collider->source.mesh);
+                break;
+
+            default:
+                fw64_collider_set_type_none(node->collider);
+        }
+        
     }
 
     fw64_scene_update_bounding(scene);

@@ -26,9 +26,9 @@ int room_scenes[ROOM_SCENE_COUNT] = {
 #define ROOM_SIZE 40.0f
 
 // setup convenience constants
-const Vec3 vec_north_south = {0.0f, 0.0f, ROOM_SIZE};
-const Vec3 vec_east_west   = {ROOM_SIZE, 0.0f, 0.0f};
-const Vec3 start_room_pos  = {-(ROOM_SIZE * 0.5f), 0.0f, (ROOM_SIZE * 0.5f)};
+Vec3 vec_north_south = {0.0f, 0.0f, ROOM_SIZE};
+Vec3 vec_east_west   = {ROOM_SIZE, 0.0f, 0.0f};
+Vec3 start_room_pos  = {-(ROOM_SIZE * 0.5f), 0.0f, (ROOM_SIZE * 0.5f)};
 
 typedef enum {
 	ROOM_DIR_W = 8,
