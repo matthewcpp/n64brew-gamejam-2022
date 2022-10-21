@@ -47,7 +47,8 @@ typedef struct Room {
 static int room_taken(Room* rooms, int total, int cell_x, int cell_y);
 static void create_room(InteriorLevel* level, Room* room, int cell_x, int cell_y, int parent_dir);
 static void interior_load_room(InteriorLevel* level, int index, int room_scene, Vec3* pos);
-static int  get_rand_tile(InteriorLevel* level);
+static int  get_rand_tile();
+static uint32_t building_rand_seed = 1;
 
 void interior_level_init(InteriorLevel* level, fw64Engine* engine, GameData* game_data) {
     // reset all room scenes
@@ -56,6 +57,8 @@ void interior_level_init(InteriorLevel* level, fw64Engine* engine, GameData* gam
         level->room_handles[i] = FW64_LEVEL_INVALID_CHUNK_HANDLE;
         fw64_bump_allocator_init(&level->allocators[i], BUMP_ALLOCATOR_SIZE);
     }
+
+	seed_tile_gen(level);
 	
 	Room all_rooms[ROOM_COUNT];
 	Room* current_room = &all_rooms[0];
@@ -66,7 +69,7 @@ void interior_level_init(InteriorLevel* level, fw64Engine* engine, GameData* gam
 	current_room->parent_dir = ROOM_DIR_S;
 	do {
 		//current_room->doors = fw64_random_int_in_range(1, 15);
-		current_room->doors = get_rand_tile(level);
+		current_room->doors = get_rand_tile();
 	} while(current_room->doors == current_room->parent_dir);
 	current_room->doors &= ~current_room->parent_dir; // reserve 1 door of starter room for building exit
 	
@@ -133,7 +136,7 @@ void interior_level_init(InteriorLevel* level, fw64Engine* engine, GameData* gam
 	}
 
     level->current_floor = 0;
-    level->total_floors = 1 + get_rand_tile(level) % 4; // would be nicer to tie this to the building exterior mesh
+    level->total_floors = 1 + get_rand_tile() % 4; // would be nicer to tie this to the building exterior mesh
 	level->has_exit_type[BUILDING_EXIT] = 1;
 
     // player_add_ammo(&level->base.player, WEAPON_TYPE_HANDGUN, 45);
@@ -174,7 +177,7 @@ void create_room(InteriorLevel* level, Room* room, int cell_x, int cell_y, int p
 	vec3_add(&room->pos, &room->pos, &start_room_pos);
 
 	do {
-		room->doors = get_rand_tile(level);
+		room->doors = get_rand_tile();
 	} while(room->doors == room->parent_dir);
 	room->doors |= room->parent_dir;
 
@@ -221,25 +224,24 @@ void interior_level_draw(InteriorLevel* level) {
     fw64_renderer_end(renderer, FW64_RENDERER_FLAG_SWAP);
 }
 
-// local function separate from the global rand function since it is meant to be reseeded each use
-// reseeding the global rand every time we load a new grid tile is highly undesirable
-int get_rand_tile(InteriorLevel* level) {
-    /* 
+
+static int seed_tile_gen(InteriorLevel* level) {
+	/* 
     * Adapted from:
     * https://www.math.uni-bielefeld.de/~sillke/ALGORITHMS/random/marsaglia-c
     * by George Marsaglia
     */
     static uint32_t z_base, w_base;
     static char initialized = 0;
+
 	int x	= level->base.game_data->door_data.city_cell.x;
 	int y	= level->base.game_data->door_data.city_cell.y;
-	int id	= level->base.game_data->door_data.node_id;
+	int id  = level->base.game_data->door_data.node_id;
 
     if(!initialized) {
         initialized = 1;
-
-        z_base = 362436069;
-        w_base = 521288629;
+        z_base = 362436069 ^ fw64_random_int();
+        w_base = 521288629 ^ fw64_random_int();
     }
 
     uint32_t z, w;
@@ -247,5 +249,13 @@ int get_rand_tile(InteriorLevel* level) {
     w = w_base ^ y;
     z = ((36969*(z&65535)+(z>>16))<<16);
     w = ((18000*(w&65535)+(w>>16))&65535);
-    return 1+((z+w+id) % (ROOM_SCENE_COUNT - 1));
+
+	building_rand_seed = z+w+((id<<2)^(level->current_floor));
+}
+
+// local function separate from the global rand function since it is meant to be reseeded each use
+// reseeding the global rand every time we load a new grid tile is highly undesirable
+int get_rand_tile() {
+    building_rand_seed = building_rand_seed * 1103515245 + 12345;
+    return 1 + (((unsigned int)(building_rand_seed/65536) % 32768) % (ROOM_SCENE_COUNT - 1));
 }
