@@ -47,6 +47,7 @@ typedef struct Room {
 static int room_taken(Room* rooms, int total, int cell_x, int cell_y);
 static void create_room(InteriorLevel* level, Room* room, int cell_x, int cell_y, int parent_dir);
 static void interior_load_room(InteriorLevel* level, int index, int room_scene, Vec3* pos);
+static void seed_tile_gen(InteriorLevel* level);
 static int  get_rand_tile();
 static uint32_t building_rand_seed = 1;
 
@@ -225,7 +226,7 @@ void interior_level_draw(InteriorLevel* level) {
 }
 
 
-static void seed_tile_gen(InteriorLevel* level) {
+void seed_tile_gen(InteriorLevel* level) {
 	/* 
     * Adapted from:
     * https://www.math.uni-bielefeld.de/~sillke/ALGORITHMS/random/marsaglia-c
