@@ -225,7 +225,7 @@ void interior_level_draw(InteriorLevel* level) {
 }
 
 
-static int seed_tile_gen(InteriorLevel* level) {
+static void seed_tile_gen(InteriorLevel* level) {
 	/* 
     * Adapted from:
     * https://www.math.uni-bielefeld.de/~sillke/ALGORITHMS/random/marsaglia-c
