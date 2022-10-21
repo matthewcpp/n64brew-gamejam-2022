@@ -5,7 +5,7 @@
 #include "framework64/n64/controller_button.h"
 #include "framework64/math.h"
 
-#define DEFAULT_MOVEMENT_SPEED 8.0f
+#define DEFAULT_MOVEMENT_SPEED 20.0f
 #define DEFAULT_X_TURN_SPEED 90.0f  // look up-down
 #define DEFAULT_Y_TURN_SPEED 180.0f // look left-right
 #define STICK_THRESHOLD 0.15
@@ -19,6 +19,10 @@ void movement_controller_init(MovementController* controller, InputMapping* inpu
     controller->collider = collider;
 
     controller->movement_speed = DEFAULT_MOVEMENT_SPEED;
+
+    controller->injury_speed_mod = 1.0f;
+    controller->staggered_timer = 0.0f;
+
     controller->turn_speed.x = DEFAULT_X_TURN_SPEED;
     controller->turn_speed.y = DEFAULT_Y_TURN_SPEED;
     controller->player_index = 0;
@@ -65,6 +69,7 @@ static void move_camera(MovementController* controller, float time_delta, Vec2* 
     if(move_test == INPUT_MAP_BUTTON_DOWN || move_test == INPUT_MAP_ANALOG) {           
         analog_mod = mapped_input_get_axis(controller->input_map, INPUT_MAP_MOVE_RIGHT, stick);
         fps_cam_right(controller, &temp);
+        vec3_normalize(&temp);
         vec3_add_and_scale(&move, &move, &temp, controller->movement_speed * analog_mod * time_delta);
         did_move = 1;
     }
@@ -73,6 +78,7 @@ static void move_camera(MovementController* controller, float time_delta, Vec2* 
     if(move_test == INPUT_MAP_BUTTON_DOWN || move_test == INPUT_MAP_ANALOG) {           
         analog_mod = mapped_input_get_axis(controller->input_map, INPUT_MAP_MOVE_LEFT, stick);
         fps_cam_left(controller, &temp);
+        vec3_normalize(&temp);
         vec3_add_and_scale(&move, &move, &temp, controller->movement_speed * analog_mod * time_delta);
         did_move = 1;
     }
@@ -81,6 +87,7 @@ static void move_camera(MovementController* controller, float time_delta, Vec2* 
     if(move_test == INPUT_MAP_BUTTON_DOWN || move_test == INPUT_MAP_ANALOG) {           
         analog_mod = mapped_input_get_axis(controller->input_map, INPUT_MAP_MOVE_FORWARD, stick);
         fps_cam_forward(controller, &temp);
+        vec3_normalize(&temp);
         vec3_add_and_scale(&move, &move, &temp, controller->movement_speed * analog_mod * time_delta);
         did_move = 1;
     }
@@ -89,6 +96,7 @@ static void move_camera(MovementController* controller, float time_delta, Vec2* 
     if(move_test == INPUT_MAP_BUTTON_DOWN || move_test == INPUT_MAP_ANALOG) {           
         analog_mod = mapped_input_get_axis(controller->input_map, INPUT_MAP_MOVE_BACKWARD, stick);
         fps_cam_back(controller, &temp);
+        vec3_normalize(&temp);
         vec3_add_and_scale(&move, &move, &temp, controller->movement_speed * analog_mod * time_delta);
         did_move = 1;
     }
@@ -101,13 +109,20 @@ static void move_camera(MovementController* controller, float time_delta, Vec2* 
     controller->weapon_bob->is_active = 1;
     // prevent running faster by moving diagonally
     Vec3 ref_zero = {0.0f, 0.0f, 0.0f};
-    if(vec3_distance(&move, &ref_zero) > (controller->movement_speed * time_delta))
+    if(vec3_distance(&move, &ref_zero) > (controller->movement_speed * controller->injury_speed_mod * time_delta))
     {
         vec3_normalize(&move);
-        vec3_scale(&move, &move, controller->movement_speed * time_delta);
+        vec3_scale(&move, &move, controller->movement_speed * controller->injury_speed_mod * time_delta);
     }
+
+    if(controller->staggered_timer > EPSILON) {
+        vec3_scale(&move, &move, 0.5f);
+        controller->staggered_timer = controller->staggered_timer - time_delta < EPSILON ? 0.0f : controller->staggered_timer - time_delta;
+    }
+
     controller->weapon_bob->step_speed = vec3_distance(&ref_zero, &move) / (time_delta); 
     fw64IntersectMovingSphereQuery query;
+    // test against static objects like walls
     int remaining_checks = 10;
     while (remaining_checks > 0 && fw64_level_moving_sphere_intersection(controller->level, &controller->camera.transform.position, 1.0f, &move, controller->collision_mask, &query)) {
         remaining_checks--; //prevent weird infinite loop of collisions condition
@@ -116,8 +131,14 @@ static void move_camera(MovementController* controller, float time_delta, Vec2* 
                                     &query.results[0].node->collider->bounding,
                                     &collision_normal);
         float strength = fw64_fabsf(vec3_dot(&move, &collision_normal));
-        vec3_add_and_scale(&move, &move, &collision_normal, strength); 
-        //vec3_scale(&move, &move, query.results[0].tfirst - 0.1);
+        vec3_add_and_scale(&move, &move, &collision_normal, strength);
+    }
+
+    // prevent shooting off into space due to weird collision bugs
+    if(vec3_distance(&move, &ref_zero) > (controller->movement_speed * controller->injury_speed_mod * time_delta))
+    {
+        vec3_normalize(&move);
+        vec3_scale(&move, &move, controller->movement_speed * controller->injury_speed_mod * time_delta);
     }
 
     vec3_add(&controller->camera.transform.position, &controller->camera.transform.position, &move);

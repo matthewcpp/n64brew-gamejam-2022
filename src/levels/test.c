@@ -15,8 +15,8 @@ void test_level_init(TestLevel* level, fw64Engine* engine, GameData* game_data) 
     fw64Scene* scene = setup_level(level);
     init_weapon_pickups(level, scene);
 
-    zombie_spawner_init(&level->zombie_spawner, engine, &level->base.level, FW64_scene_spooky_level_node_Zombie_Spawn, &level->base.player.movement.camera.transform, level->base.allocator);
-
+    zombie_spawner_init(&level->zombie_spawner, engine, &level->base.level, &level->base.player.movement.camera.transform, level->base.allocator);
+    zombie_spawner_add_node(&level->zombie_spawner, fw64_scene_get_node(scene, FW64_scene_spooky_level_node_Zombie_Spawn));
     fw64Node* player_spawn_node = fw64_scene_get_node(scene, FW64_scene_spooky_level_node_Player_Spawn);
     player_set_position(&level->base.player, &player_spawn_node->transform.position);
 

@@ -160,6 +160,37 @@ int player_pickup_ammo(Player* player, WeaponType weapon_type, uint32_t amount) 
 
 void player_take_damage(Player* player, int amount) {
     player->current_health -= amount;
+
+    int speed_mod = player->current_health / 10;
+    switch (speed_mod) {
+        case 0:
+        player->movement.injury_speed_mod = 0.25f;
+            break;
+        case 1: /* fall through */
+        case 2:
+            player->movement.injury_speed_mod = 0.5f;
+            break;
+        case 3: /* fall through */
+        case 4:
+            player->movement.injury_speed_mod = 0.7f;
+            break;        
+        case 5: /* fall through */
+        case 6:
+            player->movement.injury_speed_mod = 0.9f;
+            break;        
+        case 7: /* fall through */
+        case 8: /* fall through */
+        case 9: /* fall through */
+        default:
+            player->movement.injury_speed_mod = 1.0f;
+            break;
+    }
+    
+
+    if((float)amount * DAMAGE_OVERLAY_DURATION > player->movement.staggered_timer) {
+        player->movement.staggered_timer = (float)amount * DAMAGE_OVERLAY_DURATION;
+    }
+
     if((float)amount * DAMAGE_OVERLAY_DURATION > player->damage_overlay_time) {
         player->damage_overlay_time = (float)amount * DAMAGE_OVERLAY_DURATION;
         player->damage_overlay_initial_time = player->damage_overlay_time;

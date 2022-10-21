@@ -24,8 +24,9 @@ void hill_level_init(HillLevel* level, fw64Engine* engine, GameData* game_data) 
     player_add_ammo(&level->base.player, WEAPON_TYPE_AR15, 320);
     player_set_weapon(&level->base.player, WEAPON_TYPE_AR15);
 
-    zombie_spawner_init(&level->zombie_spawner[0], engine, &level->base.level, FW64_scene_church_hill_node_Zombie_Spawn_1, &level->base.player.movement.camera.transform, level->base.allocator);
-    zombie_spawner_init(&level->zombie_spawner[1], engine, &level->base.level, FW64_scene_church_hill_node_Zombie_Spawn_2, &level->base.player.movement.camera.transform, level->base.allocator);
+    zombie_spawner_init(&level->zombie_spawner, engine, &level->base.level, &level->base.player.movement.camera.transform, level->base.allocator);
+    zombie_spawner_add_node(&level->zombie_spawner,fw64_scene_get_node(scene, FW64_scene_church_hill_node_Zombie_Spawn_1));
+    zombie_spawner_add_node(&level->zombie_spawner,fw64_scene_get_node(scene, FW64_scene_church_hill_node_Zombie_Spawn_2));
 }
 
 fw64Scene* setup_level(HillLevel* level) {
@@ -41,8 +42,7 @@ fw64Scene* setup_level(HillLevel* level) {
 void hill_level_uninit(HillLevel* level) {
     level_base_uninit(&level->base);
     
-    zombie_spawner_uninit(&level->zombie_spawner[0]);
-    zombie_spawner_uninit(&level->zombie_spawner[1]);
+    zombie_spawner_uninit(&level->zombie_spawner);
 }
 
 static void play_triggered_audio_sound(TriggerBox* trigger_box, void* arg) {
@@ -65,8 +65,7 @@ void setup_sound_trigger(HillLevel* level, fw64Scene* scene, int trigger_box_ind
 
 void hill_level_update(HillLevel* level) {
     level_base_update(&level->base);
-    zombie_spawner_update(&level->zombie_spawner[0]);
-    zombie_spawner_update(&level->zombie_spawner[1]);
+    zombie_spawner_update(&level->zombie_spawner);
 
     for (int i = 0; i < HILL_LEVEL_TRIGGER_COUNT; i++) {
         trigger_box_update(&level->triggers[i]);
@@ -79,8 +78,7 @@ void hill_level_draw(HillLevel* level) {
     fw64_renderer_set_fog_enabled(renderer, 1);
     fw64_renderer_begin(renderer, FW64_RENDERER_MODE_TRIANGLES,  FW64_RENDERER_FLAG_CLEAR);
     player_draw(&level->base.player);
-    zombie_spawner_draw(&level->zombie_spawner[0]);
-    zombie_spawner_draw(&level->zombie_spawner[1]);
+    zombie_spawner_draw(&level->zombie_spawner);
 
     fw64_renderer_set_fog_enabled(renderer, 0);
     player_draw_weapon(&level->base.player);

@@ -17,7 +17,7 @@
 
 typedef struct {
     LevelBase base;
-    ZombieSpawner zombie_spawner[2];
+    ZombieSpawner zombie_spawner;
     TriggerBox triggers[HILL_LEVEL_TRIGGER_COUNT];
 
 } HillLevel;

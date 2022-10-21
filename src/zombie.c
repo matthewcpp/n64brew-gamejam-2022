@@ -128,8 +128,8 @@ static void damage_player(Zombie* zombie) {
 }
 
 static void zombie_update_attack(Zombie* zombie) {
-    static const float attack_radius = 7.0f;
-    if(zombie->animation_controller.current_time > (zombie->animation_controller.current_animation->total_time*0.55f)){
+    static const float attack_radius = ZOMBIE_ATTACK_RANGE* 1.5f;
+    if(zombie->animation_controller.current_time > (zombie->animation_controller.current_animation->total_time*0.50f)){
         if(!zombie->this_attack_hit) {
             Vec3 pos, target_pos;
             vec3_copy(&pos, &zombie->node.transform.position);
@@ -279,6 +279,7 @@ void zombie_set_new_state(Zombie* zombie, ZombieState new_state) {
         case ZOMBIE_STATE_ATTACK:
             animation = zombie_animation_Attack;
             loop = 0;
+            speed = 1.85f;
         break;
 
         case ZOMBIE_STATE_INACTIVE:
