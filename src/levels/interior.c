@@ -1,5 +1,21 @@
 #include "interior.h"
 #include "assets/assets.h"
+#include "assets/scene_00_l0_r0_t0_b0.h"
+#include "assets/scene_01_l0_r0_t0_b1.h"
+#include "assets/scene_02_l0_r0_t1_b0.h"
+#include "assets/scene_03_l0_r0_t1_b1.h"
+#include "assets/scene_04_l0_r1_t0_b0.h"
+#include "assets/scene_05_l0_r1_t0_b1.h"
+#include "assets/scene_06_l0_r1_t1_b0.h"
+#include "assets/scene_07_l0_r1_t1_b1.h"
+#include "assets/scene_08_l1_r0_t0_b0.h"
+#include "assets/scene_09_l1_r0_t0_b1.h"
+#include "assets/scene_10_l1_r0_t1_b0.h"
+#include "assets/scene_11_l1_r0_t1_b1.h"
+#include "assets/scene_12_l1_r1_t0_b0.h"
+#include "assets/scene_13_l1_r1_t0_b1.h"
+#include "assets/scene_14_l1_r1_t1_b0.h"
+#include "assets/scene_15_l1_r1_t1_b1.h"
 #include "framework64/random.h"
 
 #define ROOM_SCENE_COUNT 16
@@ -58,7 +74,8 @@ void interior_level_init(InteriorLevel* level, fw64Engine* engine, GameData* gam
         level->room_handles[i] = FW64_LEVEL_INVALID_CHUNK_HANDLE;
         fw64_bump_allocator_init(&level->allocators[i], BUMP_ALLOCATOR_SIZE);
     }
-
+	zombie_spawner_init(&level->zombie_spawner, engine, &level->base.level, &level->base.player.movement.camera.transform, level->base.allocator);
+    
 	seed_tile_gen(level);
 	
 	Room all_rooms[ROOM_COUNT];
@@ -140,11 +157,11 @@ void interior_level_init(InteriorLevel* level, fw64Engine* engine, GameData* gam
     level->total_floors = 1 + get_rand_tile() % 4; // would be nicer to tie this to the building exterior mesh
 	level->has_exit_type[BUILDING_EXIT] = 1;
 
-    // player_add_ammo(&level->base.player, WEAPON_TYPE_HANDGUN, 45);
-    // player_set_weapon(&level->base.player, WEAPON_TYPE_HANDGUN);
-	//game_data_load_player_data(&level->base.game_data, &level->base.player);
+	// sprinkle in some zombies
+	zombie_spawner_spawn_now(&level->zombie_spawner,
+	                         fw64_random_int_in_range(ZOMBIE_SPAWNER_SMALL_GROUP,ZOMBIE_SPAWNER_BIG_GROUP));
+
 	game_data_load_player_data(level->base.game_data, &level->base.player);
-    //player_pickup_ammo(&level->base.player, WEAPON_TYPE_HANDGUN, 0);
     WeaponAmmo* ammo = &level->base.player.weapon_controller.weapon_ammo[WEAPON_TYPE_HANDGUN];
     int total_handgun_ammo = (ammo->current_mag_count + ammo->additional_rounds_count);
     if(total_handgun_ammo < 45) {
@@ -166,6 +183,62 @@ void interior_load_room(InteriorLevel* level, int index, int room_scene, Vec3* p
     info.scene_id = room_scenes[room_scene];
     info.allocator = &level->allocators[index].interface;
     level->room_handles[index] = fw64_level_load_chunk_at_pos(&level->base.level, &info, pos);
+
+	fw64Scene* scene = fw64_level_get_chunk_by_handle(&level->base.level, level->room_handles[index]);
+	uint32_t node_id;
+	switch(room_scene) {
+		case 0:
+			node_id = FW64_scene_00_l0_r0_t0_b0_node_Plane_017;
+			break;
+		case 1:
+			node_id = FW64_scene_01_l0_r0_t0_b1_node_Plane_005;
+			break;
+		case 2:
+			node_id = FW64_scene_02_l0_r0_t1_b0_node_Plane_004;
+			break;
+		case 3:
+			node_id = FW64_scene_03_l0_r0_t1_b1_node_Plane_010;
+			break;
+		case 4:
+			node_id = FW64_scene_04_l0_r1_t0_b0_node_Plane_003;
+			break;
+		case 5:
+			node_id = FW64_scene_05_l0_r1_t0_b1_node_Plane_011;
+			break;
+		case 6:
+			node_id = FW64_scene_06_l0_r1_t1_b0_node_Plane_009;
+			break;
+		case 7:
+			node_id = FW64_scene_07_l0_r1_t1_b1_node_Plane_012;
+			break;
+		case 8:
+			node_id = FW64_scene_08_l1_r0_t0_b0_node_Plane_002;
+			break;
+		case 9:
+			node_id = FW64_scene_09_l1_r0_t0_b1_node_Plane_013;
+			break;
+		case 10:
+			node_id = FW64_scene_10_l1_r0_t1_b0_node_Plane_014;
+			break;
+		case 11:
+			node_id = FW64_scene_11_l1_r0_t1_b1_node_Plane_015;
+			break;
+		case 12:
+			node_id = FW64_scene_12_l1_r1_t0_b0_node_Plane_006;
+			break;
+		case 13:
+			node_id = FW64_scene_13_l1_r1_t0_b1_node_Plane_016;
+			break;
+		case 14:
+			node_id = FW64_scene_14_l1_r1_t1_b0_node_Plane_007;
+			break;
+		case 15:
+			node_id = FW64_scene_15_l1_r1_t1_b1_node_Plane_008;
+			break;
+		default:
+			break;
+	}
+	zombie_spawner_add_node(&level->zombie_spawner, fw64_scene_get_node(scene, node_id));
 }
 
 void create_room(InteriorLevel* level, Room* room, int cell_x, int cell_y, int parent_dir) {
@@ -181,7 +254,6 @@ void create_room(InteriorLevel* level, Room* room, int cell_x, int cell_y, int p
 		room->doors = get_rand_tile();
 	} while(room->doors == room->parent_dir);
 	room->doors |= room->parent_dir;
-
 }
 
 int room_taken(Room* rooms, int total, int cell_x, int cell_y) {
@@ -194,9 +266,8 @@ int room_taken(Room* rooms, int total, int cell_x, int cell_y) {
 }
 
 void interior_level_uninit(InteriorLevel* level) {
-    player_uninit(&level->base.player);
-    fw64_level_uninit(&level->base.level);
-
+    level_base_uninit(&level->base);
+	zombie_spawner_uninit(&level->zombie_spawner);
     for (int i = 0; i < ROOM_COUNT; i++) {
         fw64_bump_allocator_uninit(&level->allocators[i]);
     }
@@ -204,7 +275,7 @@ void interior_level_uninit(InteriorLevel* level) {
 
 void interior_level_update(InteriorLevel* level) {
     level_base_update(&level->base);
-
+	zombie_spawner_update(&level->zombie_spawner);
 	float dist_sq = vec3_distance_squared(&level->base.player.node->transform.position, &level->exits[BUILDING_EXIT]);
 	if ((dist_sq < INTERACTION_DISTANCE_SQ) && player_is_interacting(&level->base.player)) {
 
@@ -219,8 +290,11 @@ void interior_level_draw(InteriorLevel* level) {
     fw64_renderer_set_fog_enabled(renderer, 1);
 	fw64_renderer_begin(renderer, FW64_RENDERER_MODE_TRIANGLES,  FW64_RENDERER_FLAG_CLEAR);
     player_draw(&level->base.player);
-    fw64_renderer_set_fog_enabled(renderer, 0);
+    zombie_spawner_draw(&level->zombie_spawner);
+	fw64_renderer_set_fog_enabled(renderer, 0);
 	player_draw_weapon(&level->base.player);
+	player_draw_damage(&level->base.player);
+    ui_draw(&level->base.ui);
     fw64_renderer_set_anti_aliasing_enabled(renderer, 0);
     fw64_renderer_end(renderer, FW64_RENDERER_FLAG_SWAP);
 }

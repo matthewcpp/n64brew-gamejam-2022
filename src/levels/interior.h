@@ -11,6 +11,7 @@
 #include "audio_controller.h"
 #include "projectile_controller.h"
 #include "level_base.h"
+#include "zombie_spawner.h"
 
 #include "framework64/level.h"
 
@@ -30,6 +31,7 @@ typedef struct {
     int total_floors;
     int has_exit_type[3];
     Vec3 exits[3];
+    ZombieSpawner zombie_spawner;
 } InteriorLevel;
 
 void interior_level_init(InteriorLevel* level, fw64Engine* engine, GameData* game_data);

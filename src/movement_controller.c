@@ -102,7 +102,6 @@ static void move_camera(MovementController* controller, float time_delta, Vec2* 
     }
 
 
-    // note this is just prelimary...will probably need to get more fancy in the future.
     if (!did_move)
         return;
 

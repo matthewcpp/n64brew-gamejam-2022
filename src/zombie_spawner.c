@@ -50,6 +50,12 @@ void zombie_spawner_remove_node(ZombieSpawner* spawner, fw64Node* node) {
     }
 }
 
+void zombie_spawner_spawn_now(ZombieSpawner* spawner, uint8_t number_to_spawn) {
+    for(int i = 0; i < number_to_spawn; i++) {
+        spawn_next_zombie(spawner);
+    }
+}
+
 void spawn_next_zombie(ZombieSpawner* spawner) {
     if(spawner->active_nodes < 1)
         return;
