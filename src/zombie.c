@@ -67,7 +67,7 @@ static void zombie_move(Zombie* zombie) {
     fw64IntersectMovingSphereQuery statics_query, dynamics_query;
     int hit_statics = fw64_level_moving_sphere_intersection( zombie->level,
                                                             &zombie->node.transform.position,
-                                                            0.5f, &delta_vel, mask, &statics_query);
+                                                            2.5f, &delta_vel, mask, &statics_query);
     mask = (uint32_t)ZOMBIE_LAYER;
     int hit_dynamics = fw64_level_moving_spheres_dynamic_intersection( zombie->level,
                                                                       &zombie->node.transform.position,
@@ -112,7 +112,10 @@ static void zombie_update_dying(Zombie* zombie) {
 }
 
 static void damage_player(Zombie* zombie) {
-	uint32_t dyanmic_node_count = fw64_level_get_dynamic_node_count(zombie->level);
+	// just for test
+    return;
+    
+    uint32_t dyanmic_node_count = fw64_level_get_dynamic_node_count(zombie->level);
 	Player* player = NULL;
 
 	for (uint32_t i = 0; i < dyanmic_node_count; i++) {

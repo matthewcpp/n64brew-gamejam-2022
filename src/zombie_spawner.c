@@ -74,7 +74,7 @@ void spawn_next_zombie(ZombieSpawner* spawner) {
     zed->health = 3;
     int node_index = fw64_random_int_in_range(0, spawner->active_nodes - 1);
     zed->node.transform.position = spawner->spawner_nodes[node_index]->transform.position;
-    float radius = 10.0f + (2.0f * spawner->active_zombies);
+    float radius = 15.0f; //10.0f + (2.0f * spawner->active_zombies);
     Vec3 random_offset = {fw64_random_float_in_range(-radius,radius), spawner->spawner_nodes[node_index]->transform.position.y, fw64_random_float_in_range(-radius,radius)};
     vec3_add(&zed->node.transform.position, &zed->node.transform.position, &random_offset);
     zed->rotation = fw64_random_float_in_range(0.0f, 359.9f);

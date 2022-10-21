@@ -157,6 +157,13 @@ void interior_level_init(InteriorLevel* level, fw64Engine* engine, GameData* gam
     level->total_floors = 1 + get_rand_tile() % 4; // would be nicer to tie this to the building exterior mesh
 	level->has_exit_type[BUILDING_EXIT] = 1;
 
+	// first spawn node should be the first room, remove that one to be fair to the player
+	if(level->zombie_spawner.active_nodes > 0) {
+		level->zombie_spawner.spawner_nodes[0] = level->zombie_spawner.spawner_nodes[level->zombie_spawner.active_nodes - 1];
+		level->zombie_spawner.active_nodes--;
+	}
+
+
 	// sprinkle in some zombies
 	zombie_spawner_spawn_now(&level->zombie_spawner,
 	                         fw64_random_int_in_range(ZOMBIE_SPAWNER_SMALL_GROUP,ZOMBIE_SPAWNER_BIG_GROUP));
