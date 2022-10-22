@@ -9,7 +9,7 @@
 #include "ui.h"
 #include "zombie_spawner.h"
 #include "projectile_controller.h"
-#include "weapon_pickup.h"
+#include "pickups.h"
 
 #include "levels/level_base.h"
 

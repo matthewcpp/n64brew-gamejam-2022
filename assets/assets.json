@@ -106,7 +106,8 @@
             "player": 9,
             "buildings": 10,
             "entrance": 11,
-            "interactable": 12
+            "interactable": 12,
+            "pickups": 13
     },
     "skinnedMeshes": [
         {

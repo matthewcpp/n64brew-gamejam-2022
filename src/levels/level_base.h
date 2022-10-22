@@ -3,7 +3,7 @@
 #include "game_data.h"
 #include "player.h"
 #include "ui.h"
-#include "weapon_pickup.h"
+#include "pickups.h"
 #include "interact.h"
 
 /**
@@ -17,9 +17,9 @@ typedef struct LevelBase{
     ProjectileController projectile_controller;
     UI ui;
     AudioController audio_controller;
-    WeaponPickups weapon_pickups;
     fw64Level level;
     Interaction interaction;
+    Pickups pickups;
     fw64MusicBank* music;
     fw64SoundBank* sound;
     fw64Allocator* allocator;

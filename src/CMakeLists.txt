@@ -3,15 +3,15 @@ set(core_files
 	behaviors.h behaviors.c
     interact.h interact.c
 	mapped_input.h mapped_input.c
-    player.h player.c
     mesh_collection.h mesh_collection.c
     movement_controller.h movement_controller.c
-    weapon.h weapon.c
+    pickups.h pickups.c
+    player.h player.c
     projectile_controller.h projectile_controller.c
+    trigger.h trigger.c
+    weapon.h weapon.c
     weapon_bob.h weapon_bob.c
     weapon_controller.h weapon_controller.c
-    weapon_pickup.h weapon_pickup.c
-    trigger.h trigger.c
     zombie.h zombie.c
     zombie_logic.h zombie_logic.c
     zombie_spawner.h zombie_spawner.c
