@@ -7,7 +7,7 @@
 #include "zombie.h"
 #include "zombie_logic.h"
 
-#define ZOMBIE_SPAWNER_MAX_COUNT 32 // might be very optimistic
+#define ZOMBIE_SPAWNER_MAX_COUNT 20 // might be very optimistic
 #define ZOMBIE_SPAWNER_SMALL_GROUP 5
 #define ZOMBIE_SPAWNER_BIG_GROUP 20
 

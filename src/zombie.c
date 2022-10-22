@@ -9,18 +9,23 @@
 
 static void zombie_move(Zombie* zombie);
 
-void zombie_init(Zombie* zombie, fw64Engine* engine, fw64Level* level, fw64Mesh* mesh, fw64AnimationData* animation_data) {
+void zombie_init(Zombie* zombie, fw64Engine* engine, fw64Level* level, fw64Mesh* mesh, fw64AnimationData* animation_data, fw64Allocator* allocator) {
     zombie->engine = engine;
     zombie->level = level;
     zombie->mesh = mesh;
+
+    zombie_reset(zombie);
+
+    fw64_animation_controller_init(&zombie->animation_controller, animation_data, zombie_animation_Idle, allocator);
+}
+
+void zombie_reset(Zombie* zombie) {
     zombie->target = NULL;
     fw64_node_init(&zombie->node);
     zombie->node.layer_mask = ZOMBIE_LAYER;
     zombie->node.data = zombie;
     fw64_node_set_mesh(&zombie->node, zombie->mesh);
     fw64_node_set_box_collider(&zombie->node, &zombie->collider);
-    fw64_level_add_dyanmic_node(level, &zombie->node);
-    fw64_animation_controller_init(&zombie->animation_controller, animation_data, zombie_animation_Idle, NULL);
 
     vec3_zero(&zombie->targetVelocity);
     zombie->previous_state = ZOMBIE_STATE_INACTIVE;
@@ -31,9 +36,8 @@ void zombie_init(Zombie* zombie, fw64Engine* engine, fw64Level* level, fw64Mesh*
     fw64_node_update(&zombie->node);
 }
 
-void zombie_uninit(Zombie* zombie) {
-    fw64_animation_controller_uninit(&zombie->animation_controller, fw64_default_allocator());
-    fw64_level_remove_dynamic_node(zombie->level, &zombie->node);
+void zombie_uninit(Zombie* zombie, fw64Allocator* allocator) {
+    fw64_animation_controller_uninit(&zombie->animation_controller, allocator);
 }
 
 static void zombie_update_idle(Zombie* zombie) {

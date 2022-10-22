@@ -17,19 +17,24 @@ void zombie_spawner_init(ZombieSpawner* spawner, fw64Engine* engine, fw64Level* 
     spawner->allocator = allocator;
     spawner->active_zombies = 0;
     spawner->zombie_slot_active = 0;
+    spawner->active_nodes = 0;
+
     spawner->animation_data = fw64_animation_data_load(engine->assets, FW64_ASSET_animation_data_zombie, allocator);
     spawner->zombie_mesh = fw64_mesh_load(engine->assets, FW64_ASSET_mesh_zombie, allocator);
-    spawner->active_nodes = 0;
+
     for(int i = 0; i < 16; i++)
         spawner->spawner_nodes[i] = NULL;
+
+    for (int i = 0; i < ZOMBIE_SPAWNER_MAX_COUNT; i++) {
+        zombie_init(&spawner->zombies[i], spawner->engine, spawner->level, spawner->zombie_mesh, spawner->animation_data, spawner->allocator);
+    }
 }
 
 void zombie_spawner_uninit(ZombieSpawner* spawner) {
-    
-    for(int i = 0; i < spawner->active_zombies; i++) {
-        Zombie* zombie = &spawner->zombies[i];
-        zombie_uninit(zombie);
+    for(int i = 0; i < ZOMBIE_SPAWNER_MAX_COUNT; i++) {
+        zombie_uninit(&spawner->zombies[i], spawner->allocator);
     }
+
     fw64_mesh_delete(spawner->engine->assets, spawner->zombie_mesh, spawner->allocator);
     fw64_animation_data_delete(spawner->animation_data, spawner->allocator);
 }
@@ -73,7 +78,9 @@ void spawn_next_zombie(ZombieSpawner* spawner) {
         return;
     Zombie* zed = &spawner->zombies[next_slot];
     spawner->active_zombies++;
-    zombie_init(zed, spawner->engine, spawner->level, spawner->zombie_mesh, spawner->animation_data);
+
+    zombie_reset(zed);
+    fw64_level_add_dyanmic_node(zed->level, &zed->node);
     zombie_ai_init(&zed->ai, zed->level, &zed->collider, &zed->node.transform, spawner->target);
 
     zed->health = 3;
@@ -111,7 +118,7 @@ void zombie_spawner_update(ZombieSpawner* spawner) {
             zombiesUpdated++;
         } else {
             set_free_slot(spawner, i);
-            zombie_uninit(&spawner->zombies[i]);
+            fw64_level_remove_dynamic_node(zombie->level, &zombie->node);
             spawner->active_zombies--;
         }
     }

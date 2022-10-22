@@ -34,7 +34,7 @@ typedef struct {
     Vec3 player_prev_position;
 } TilesTestLevel;
 
-void tiles_test_level_init(TilesTestLevel* level, fw64Engine* engine, GameData* game_data, fw64Allocator* level_allocator);
+void tiles_test_level_init(TilesTestLevel* level, fw64Engine* engine, GameData* game_data, fw64Allocator* state_allocator);
 void tiles_test_level_uninit(TilesTestLevel* level);
 void tiles_test_level_update(TilesTestLevel* level);
 void tiles_test_level_draw(TilesTestLevel* level);

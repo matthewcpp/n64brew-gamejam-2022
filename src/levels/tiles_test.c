@@ -12,7 +12,7 @@ int tile_scenes[TILE_COUNT] = {
     FW64_ASSET_scene_tile_block1
 };
 
-#define BUMP_ALLOCATOR_SIZE (32 * 1024)
+#define BUMP_ALLOCATOR_SIZE (16 * 1024)
 #define TILE_SIZE 200.0f
 
 
@@ -22,8 +22,8 @@ static void rotate_all_handles(TilesTestLevel* level, CompassDirections dir);
 static void rotate_one_handle(TilesTestLevel* level, int* handle, CompassDirections dir);
 static int  get_rand_tile(int32_t x, int32_t y);
 
-void tiles_test_level_init(TilesTestLevel* level, fw64Engine* engine, GameData* game_data, fw64Allocator* level_allocator) {
-    level_base_init(&level->base, engine, game_data, level_allocator, FW64_INVALID_ASSET_ID, FW64_ASSET_soundbank_sounds);
+void tiles_test_level_init(TilesTestLevel* level, fw64Engine* engine, GameData* game_data, fw64Allocator* state_allocator) {
+    level_base_init(&level->base, engine, game_data, state_allocator, FW64_INVALID_ASSET_ID, FW64_ASSET_soundbank_sounds);
     
     level->handle_nw = 0;
     level->handle_ne =  TILE_ROW_CELLS  - 1;
@@ -61,7 +61,7 @@ void tiles_test_level_init(TilesTestLevel* level, fw64Engine* engine, GameData* 
     
     for (int i = 0; i < ACTIVE_TILE_COUNT; i++) {
         level->chunk_handles[i] = FW64_LEVEL_INVALID_CHUNK_HANDLE;
-        fw64_bump_allocator_init(&level->allocators[i], BUMP_ALLOCATOR_SIZE);
+        fw64_bump_allocator_init_from_buffer(&level->allocators[i], state_allocator->memalign(state_allocator, 8, BUMP_ALLOCATOR_SIZE), BUMP_ALLOCATOR_SIZE);
         tiles_test_load_tile(level, i, &pos);
         pos.x += TILE_SIZE;
         if( pos.x >= x_offset + (TILE_SIZE * ((TILE_ROW_CELLS / 2) + 1))) {

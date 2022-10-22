@@ -41,7 +41,6 @@ fw64Scene* setup_level(HillLevel* level) {
 
 void hill_level_uninit(HillLevel* level) {
     level_base_uninit(&level->base);
-    
     zombie_spawner_uninit(&level->zombie_spawner);
 }
 
