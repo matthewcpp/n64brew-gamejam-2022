@@ -17,12 +17,12 @@
 
 typedef struct {
     LevelBase base;
-    ZombieSpawner zombie_spawner[2];
+    ZombieSpawner zombie_spawner;
     TriggerBox triggers[HILL_LEVEL_TRIGGER_COUNT];
 
 } HillLevel;
 
-void hill_level_init(HillLevel* hill_level, fw64Engine* engine);
+void hill_level_init(HillLevel* hill_level, fw64Engine* engine, GameData* game_data, fw64Allocator* level_allocator);
 void hill_level_uninit(HillLevel* hill_level);
 void hill_level_update(HillLevel* hill_level);
 void hill_level_draw(HillLevel* hill_level);

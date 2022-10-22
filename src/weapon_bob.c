@@ -8,7 +8,7 @@
 #define WEAPON_BOB_SCALE_X 0.20f
 #define WEAPON_BOB_SCALE_Y 0.15f
 #define WEAPON_BOB_CYCLE_TIME 0.75f
-#define MAX_MOVE_SPEED 40.0f // hack. should equal default move speed of movement controller ( x 5 for some reason)
+#define MAX_MOVE_SPEED 20.0f // hack. should equal default move speed of movement controller
 
 void weapon_bob_init(WeaponBob* weapon_bob) {
     memset(weapon_bob, 0, sizeof(WeaponBob));

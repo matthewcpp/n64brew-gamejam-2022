@@ -49,7 +49,6 @@ typedef struct {
 */
 void weapon_init(Weapon* weapon);
 void weapon_init_none(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator);
-void weapon_uninit(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator);
 void weapon_init_handgun(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator);
 void weapon_init_ar15(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator);
 void weapon_init_shotgun(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator);

@@ -24,7 +24,7 @@ typedef struct {
 extern "C" {
 #endif
 
-void test_level_init(TestLevel* level, fw64Engine* engine);
+void test_level_init(TestLevel* level, fw64Engine* engine, GameData* game_data, fw64Allocator* state_allocator);
 void test_level_uninit(TestLevel* level);
 void test_level_update(TestLevel* level);
 void test_level_draw(TestLevel* level);

@@ -9,18 +9,23 @@
 
 static void zombie_move(Zombie* zombie);
 
-void zombie_init(Zombie* zombie, fw64Engine* engine, fw64Level* level, fw64Mesh* mesh, fw64AnimationData* animation_data) {
+void zombie_init(Zombie* zombie, fw64Engine* engine, fw64Level* level, fw64Mesh* mesh, fw64AnimationData* animation_data, fw64Allocator* allocator) {
     zombie->engine = engine;
     zombie->level = level;
     zombie->mesh = mesh;
+
+    zombie_reset(zombie);
+
+    fw64_animation_controller_init(&zombie->animation_controller, animation_data, zombie_animation_Idle, allocator);
+}
+
+void zombie_reset(Zombie* zombie) {
     zombie->target = NULL;
     fw64_node_init(&zombie->node);
     zombie->node.layer_mask = ZOMBIE_LAYER;
     zombie->node.data = zombie;
     fw64_node_set_mesh(&zombie->node, zombie->mesh);
     fw64_node_set_box_collider(&zombie->node, &zombie->collider);
-    fw64_level_add_dyanmic_node(level, &zombie->node);
-    fw64_animation_controller_init(&zombie->animation_controller, animation_data, zombie_animation_Idle, NULL);
 
     vec3_zero(&zombie->targetVelocity);
     zombie->previous_state = ZOMBIE_STATE_INACTIVE;
@@ -31,8 +36,8 @@ void zombie_init(Zombie* zombie, fw64Engine* engine, fw64Level* level, fw64Mesh*
     fw64_node_update(&zombie->node);
 }
 
-void zombie_uninit(Zombie* zombie) {
-    fw64_level_remove_dynamic_node(zombie->level, &zombie->node);
+void zombie_uninit(Zombie* zombie, fw64Allocator* allocator) {
+    fw64_animation_controller_uninit(&zombie->animation_controller, allocator);
 }
 
 static void zombie_update_idle(Zombie* zombie) {
@@ -67,7 +72,7 @@ static void zombie_move(Zombie* zombie) {
     fw64IntersectMovingSphereQuery statics_query, dynamics_query;
     int hit_statics = fw64_level_moving_sphere_intersection( zombie->level,
                                                             &zombie->node.transform.position,
-                                                            0.5f, &delta_vel, mask, &statics_query);
+                                                            2.5f, &delta_vel, mask, &statics_query);
     mask = (uint32_t)ZOMBIE_LAYER;
     int hit_dynamics = fw64_level_moving_spheres_dynamic_intersection( zombie->level,
                                                                       &zombie->node.transform.position,
@@ -112,7 +117,10 @@ static void zombie_update_dying(Zombie* zombie) {
 }
 
 static void damage_player(Zombie* zombie) {
-	uint32_t dyanmic_node_count = fw64_level_get_dynamic_node_count(zombie->level);
+	// just for test
+    return;
+    
+    uint32_t dyanmic_node_count = fw64_level_get_dynamic_node_count(zombie->level);
 	Player* player = NULL;
 
 	for (uint32_t i = 0; i < dyanmic_node_count; i++) {
@@ -128,8 +136,8 @@ static void damage_player(Zombie* zombie) {
 }
 
 static void zombie_update_attack(Zombie* zombie) {
-    static const float attack_radius = 7.0f;
-    if(zombie->animation_controller.current_time > (zombie->animation_controller.current_animation->total_time*0.55f)){
+    static const float attack_radius = ZOMBIE_ATTACK_RANGE* 1.5f;
+    if(zombie->animation_controller.current_time > (zombie->animation_controller.current_animation->total_time*0.50f)){
         if(!zombie->this_attack_hit) {
             Vec3 pos, target_pos;
             vec3_copy(&pos, &zombie->node.transform.position);
@@ -279,6 +287,7 @@ void zombie_set_new_state(Zombie* zombie, ZombieState new_state) {
         case ZOMBIE_STATE_ATTACK:
             animation = zombie_animation_Attack;
             loop = 0;
+            speed = 1.85f;
         break;
 
         case ZOMBIE_STATE_INACTIVE:

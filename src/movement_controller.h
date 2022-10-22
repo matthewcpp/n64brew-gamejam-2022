@@ -17,6 +17,8 @@ typedef struct {
     WeaponBob* weapon_bob;
     fw64Camera camera;
     float movement_speed;
+    float injury_speed_mod;
+    float staggered_timer;
     Vec2 turn_speed;
     int player_index;
     fw64Input* _input;

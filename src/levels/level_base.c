@@ -3,11 +3,12 @@
 
 static void level_base_init_audio(LevelBase* level, int music_bank, int sound_bank);
 
-void level_base_init(LevelBase* level, fw64Engine* engine, fw64Allocator* allocator, int music_bank, int sound_bank) {
+void level_base_init(LevelBase* level, fw64Engine* engine, GameData* game_data, fw64Allocator* allocator, int music_bank, int sound_bank) {
     level->engine = engine;
+    level->game_data = game_data;
     level->allocator = allocator;
-    fw64_level_init(&level->level, engine);
 
+    fw64_level_init(&level->level, engine);
     level_base_init_audio(level, music_bank, sound_bank);
 
     projectile_controller_init(&level->projectile_controller, &level->level);

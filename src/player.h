@@ -30,6 +30,10 @@ typedef struct {
     float damage_overlay_time, damage_overlay_initial_time;
 } Player;
 
+/**
+ * Player will make some small allocations from the level allocator to dynamically create it's node and collider.
+ * The allocator will be passed to the weapon controller so that it can manage memory for the FPS assets.
+ */
 void player_init(Player* player, fw64Engine* engine, fw64Level* level, ProjectileController* projectile_controller, AudioController* audio_controller, fw64Allocator* allocator);
 void player_uninit(Player* player);
 void player_update(Player* player);

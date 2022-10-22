@@ -1,6 +1,7 @@
 #pragma once
 
 #include "framework64/engine.h"
+#include "framework64/util/bump_allocator.h"
 
 #include "weapon.h"
 #include "framework64/level.h"
@@ -35,7 +36,7 @@ typedef struct {
     WeaponBob* weapon_bob;
     ProjectileController* projectile_controller;
     AudioController* audio_controller;
-    fw64Allocator* weapon_allocator;
+    fw64BumpAllocator weapon_allocator;
     fw64Camera weapon_camera;
     Ray* aim;
     
@@ -61,7 +62,12 @@ typedef struct {
     void* transition_arg;
 } WeaponController;
 
-void weapon_controller_init(WeaponController* controller, fw64Engine* engine, WeaponBob* weapon_bob, ProjectileController* projectile_controller, AudioController* audio_controller, fw64Allocator* weapon_allocator, InputMapping* input_map, int controller_index);
+/**
+ * Note: the weapon controller will allocate a chunk of memory from the passed in player allocator
+ * this memory is used to manage the weapon assets: Gun + shell casing + muzzle flash
+ * Every time the player switches a weapon the bump allocator will be reset and new gun's assets DMA'd from ROM
+ */
+void weapon_controller_init(WeaponController* controller, fw64Engine* engine, WeaponBob* weapon_bob, ProjectileController* projectile_controller, AudioController* audio_controller, fw64Allocator* player_allocator, InputMapping* input_map, int controller_index);
 void weapon_controller_uninit(WeaponController* controller);
 void weapon_controller_update(WeaponController* controller);
 void weapon_controller_draw(WeaponController* controller);

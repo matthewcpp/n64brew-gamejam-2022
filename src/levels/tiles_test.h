@@ -11,6 +11,7 @@
 #include "audio_controller.h"
 #include "projectile_controller.h"
 #include "level_base.h"
+#include "mesh_collection.h"
 
 #include "framework64/vec3.h"
 #include "framework64/level.h"
@@ -32,9 +33,10 @@ typedef struct {
     float next_row_trigger[4];
     int handle_nw, handle_ne, handle_sw, handle_se;
     Vec3 player_prev_position;
+    MeshCollection mesh_collection;
 } TilesTestLevel;
 
-void tiles_test_level_init(TilesTestLevel* level, fw64Engine* engine);
+void tiles_test_level_init(TilesTestLevel* level, fw64Engine* engine, GameData* game_data, fw64Allocator* state_allocator);
 void tiles_test_level_uninit(TilesTestLevel* level);
 void tiles_test_level_update(TilesTestLevel* level);
 void tiles_test_level_draw(TilesTestLevel* level);

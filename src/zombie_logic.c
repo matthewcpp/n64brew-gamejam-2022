@@ -1,6 +1,7 @@
 #include "zombie_logic.h"
 #include "framework64/random.h"
 #include "assets/layers.h"
+#include "framework64/level.h"
 #include "zombie.h"
 
 void zombie_ai_init(ZombieAI* zombie_ai, fw64Level* level, fw64Collider* collider, fw64Transform* transform, fw64Transform* target) {	
@@ -142,9 +143,15 @@ static int zombie_ai_target_in_view(ZombieAI* zombie_ai, fw64Transform* target) 
 	if(target == NULL) {
 		return 0;
 	}
-	float dist_sq = vec3_distance_squared(&zombie_ai->transform->position, &target->position);
+	Vec3 zed_pos, target_pos;
+	vec3_copy(&zed_pos, &zombie_ai->transform->position);
+	zed_pos.y = 1;
+	vec3_copy(&target_pos, &target->position);
+	target_pos.y = 1;
+	float dist_sq = vec3_distance_squared(&zed_pos, &target_pos);
+	
 	if(dist_sq < (ZOMBIE_VISION_DISTANCE*ZOMBIE_VISION_DISTANCE)) {
-		return 1; //TODO: check zombie facing direction
+		return 1;
 	}
 
 	return 0;

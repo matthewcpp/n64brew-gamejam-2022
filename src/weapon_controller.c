@@ -10,15 +10,17 @@
 #define WEAPON_CONTROLLER_TRANSITION_SPEED 0.50f
 #define WEAPON_CONTROLLER_MUZZLE_FLASH_TIME 0.1f
 
+#define WEAPON_CONTROLLER_MEMORY_POOL_SIZE (50 * 1024)
+
 static void weapon_controller_fire(WeaponController* controller);
 static int weapon_controller_is_idle(WeaponController* controller);
+static void free_existing_weapon_data(WeaponController* controller);
 
-void weapon_controller_init(WeaponController* controller, fw64Engine* engine, WeaponBob* weapon_bob, ProjectileController* projectile_controller, AudioController* audio_controller, fw64Allocator* weapon_allocator, InputMapping* input_map, int controller_index) {
+void weapon_controller_init(WeaponController* controller, fw64Engine* engine, WeaponBob* weapon_bob, ProjectileController* projectile_controller, AudioController* audio_controller, fw64Allocator* player_allocator, InputMapping* input_map, int controller_index) {
     controller->engine = engine;
     controller->weapon_bob = weapon_bob;
     controller->projectile_controller = projectile_controller;
     controller->audio_controller = audio_controller;
-    controller->weapon_allocator = weapon_allocator;
     controller->controller_index = controller_index;
     controller->input_map = input_map;
     controller->state = WEAPON_CONTROLLER_HOLDING;
@@ -27,6 +29,8 @@ void weapon_controller_init(WeaponController* controller, fw64Engine* engine, We
     controller->recoil_time = 0.0f;
     controller->recoil_state = WEAPON_RECOIL_INACTIVE;
     controller->is_dry_firing = 0;
+
+    fw64_bump_allocator_init_from_buffer(&controller->weapon_allocator, player_allocator->memalign(player_allocator, 8, WEAPON_CONTROLLER_MEMORY_POOL_SIZE), WEAPON_CONTROLLER_MEMORY_POOL_SIZE);
 
     fw64_camera_init(&controller->weapon_camera);
     vec3_zero(&controller->weapon_camera.transform.position);
@@ -44,11 +48,27 @@ void weapon_controller_init(WeaponController* controller, fw64Engine* engine, We
     memset(&controller->weapon_ammo[0], 0, sizeof(WeaponAmmo) * WEAPON_COUNT);
 
     weapon_init(&controller->weapon);
-    weapon_init_none(&controller->weapon, controller->engine->assets, controller->weapon_allocator);
+    weapon_init_none(&controller->weapon, controller->engine->assets, &controller->weapon_allocator.interface);
 }
 
 void weapon_controller_uninit(WeaponController* controller) {
-    weapon_uninit(&controller->weapon, controller->engine->assets, controller->weapon_allocator);
+    free_existing_weapon_data(controller);
+    fw64_bump_allocator_uninit(&controller->weapon_allocator);
+}
+
+void free_existing_weapon_data(WeaponController* controller) {
+    if (controller->weapon.mesh)
+        fw64_mesh_delete(controller->engine->assets, controller->weapon.mesh, &controller->weapon_allocator.interface);
+    if (controller->weapon.casing)
+        fw64_mesh_delete(controller->engine->assets, controller->weapon.casing, &controller->weapon_allocator.interface);
+    if (controller->weapon.muzzle_flash)
+        fw64_mesh_delete(controller->engine->assets, controller->weapon.muzzle_flash, &controller->weapon_allocator.interface);
+    if (controller->weapon.crosshair) {
+        fw64_image_delete(controller->engine->assets, fw64_texture_get_image(controller->weapon.crosshair), &controller->weapon_allocator.interface);
+        fw64_texture_delete(controller->weapon.crosshair, &controller->weapon_allocator.interface);
+    }
+
+    fw64_bump_allocator_reset(&controller->weapon_allocator);
 }
 
 /** shell casing ejection is modeled via a simple quadratic equation*/
@@ -218,27 +238,32 @@ void weapon_controller_draw(WeaponController* controller) {
 void weapon_controller_set_weapon(WeaponController* controller, WeaponType weapon_type) {
     WeaponType previous_weapon_type = controller->weapon.info->type;
 
+    if (weapon_type == previous_weapon_type)
+        return;
+
+    free_existing_weapon_data(controller);
+
     Weapon* weapon = &controller->weapon;
     switch(weapon_type) {
         case WEAPON_TYPE_HANDGUN:
-            weapon_init_handgun(weapon, controller->engine->assets, controller->weapon_allocator);
+            weapon_init_handgun(weapon, controller->engine->assets, &controller->weapon_allocator.interface);
         break;
 
         case WEAPON_TYPE_AR15:
-            weapon_init_ar15(weapon, controller->engine->assets, controller->weapon_allocator);
+            weapon_init_ar15(weapon, controller->engine->assets, &controller->weapon_allocator.interface);
         break;
 
         case WEAPON_TYPE_SHOTGUN:
-            weapon_init_shotgun(weapon, controller->engine->assets, controller->weapon_allocator);
+            weapon_init_shotgun(weapon, controller->engine->assets, &controller->weapon_allocator.interface);
         break;
 
         case WEAPON_TYPE_UZI:
-            weapon_init_uzi(weapon, controller->engine->assets, controller->weapon_allocator);
+            weapon_init_uzi(weapon, controller->engine->assets, &controller->weapon_allocator.interface);
         break;
 
         case WEAPON_TYPE_NONE:
         case WEAPON_COUNT:
-            weapon_init_none(weapon, controller->engine->assets, controller->weapon_allocator);
+            weapon_init_none(weapon, controller->engine->assets, &controller->weapon_allocator.interface);
             break;
     }
 
@@ -325,8 +350,10 @@ static WeaponType get_next_weapon_with_ammo(WeaponController* controller) {
     WeaponType next_weapon_type = current_weapon_type + 1;
 
     while (next_weapon_type != current_weapon_type) {
-        if (next_weapon_type == WEAPON_COUNT)
+        if (next_weapon_type == WEAPON_COUNT) {
             next_weapon_type = WEAPON_TYPE_NONE;
+            continue;
+        }
 
         WeaponAmmo* weapon_ammo = &controller->weapon_ammo[next_weapon_type];
         if (weapon_ammo->additional_rounds_count > 0 || weapon_ammo->current_mag_count > 0) {

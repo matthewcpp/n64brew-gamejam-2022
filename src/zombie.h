@@ -43,9 +43,10 @@ typedef struct {
     int this_attack_hit;
 } Zombie;
 
-void zombie_init(Zombie* zombie, fw64Engine* engine, fw64Level* level, fw64Mesh* mesh, fw64AnimationData* animation_data);
+void zombie_init(Zombie* zombie, fw64Engine* engine, fw64Level* level, fw64Mesh* mesh, fw64AnimationData* animation_data, fw64Allocator* allocator);
+void zombie_uninit(Zombie* zombie, fw64Allocator* allocator);
 
-void zombie_uninit(Zombie* zombie);
+void zombie_reset(Zombie* zombie);
 
 // returns 0 if dead or inactive
 // returns 1 otherwise

@@ -10,10 +10,10 @@ static Vec3 default_player_dimensions = {0.75, 5.6f, 1.1f};
 
 static void setup_player_node(Player* player);
 
-void player_init(Player* player, fw64Engine* engine, fw64Level* level, ProjectileController* projectile_controller, AudioController* audio_controller, fw64Allocator* allocator) {
+void player_init(Player* player, fw64Engine* engine, fw64Level* level, ProjectileController* projectile_controller, AudioController* audio_controller, fw64Allocator* level_allocator) {
     player->engine = engine;
     player->level = level;
-    player->allocator = allocator;
+    player->allocator = level_allocator;
 
     setup_player_node(player);
     mapped_input_init(&player->input_map, engine->input);
@@ -22,7 +22,6 @@ void player_init(Player* player, fw64Engine* engine, fw64Level* level, Projectil
     movement_controller_init(&player->movement, &player->input_map, &player->weapon_bob, level, player->node->collider);
     player->movement.height = 5.0f;
     player->movement.collision_mask = FW64_layer_obstacles | FW64_layer_wall | FW64_layer_buildings;
-    player->movement.movement_speed = 40.0f;
     player->movement.camera.near = 1.0f;
     player->movement.camera.far = 225.0f;
     fw64_camera_update_projection_matrix(&player->movement.camera);
@@ -34,7 +33,7 @@ void player_init(Player* player, fw64Engine* engine, fw64Level* level, Projectil
     player->aim.infinite = 1; //boolean true
 
     // todo: investigate weapon allocator usage
-    weapon_controller_init(&player->weapon_controller, engine, &player->weapon_bob, projectile_controller, audio_controller, allocator, &player->input_map, 0);
+    weapon_controller_init(&player->weapon_controller, engine, &player->weapon_bob, projectile_controller, audio_controller, level_allocator, &player->input_map, 0);
     player->weapon_controller.aim = &player->aim;
     weapon_controller_set_weapon(&player->weapon_controller, WEAPON_TYPE_NONE);
     player->current_health = 100;
@@ -46,6 +45,7 @@ void player_init(Player* player, fw64Engine* engine, fw64Level* level, Projectil
 void player_uninit(Player* player) {
     fw64Allocator* allocator = player->allocator;
 
+    weapon_controller_uninit(&player->weapon_controller);
     allocator->free(allocator, player->node->collider);
     allocator->free(allocator, player->node);
 }
@@ -160,6 +160,37 @@ int player_pickup_ammo(Player* player, WeaponType weapon_type, uint32_t amount) 
 
 void player_take_damage(Player* player, int amount) {
     player->current_health -= amount;
+
+    int speed_mod = player->current_health / 10;
+    switch (speed_mod) {
+        case 0:
+        player->movement.injury_speed_mod = 0.25f;
+            break;
+        case 1: /* fall through */
+        case 2:
+            player->movement.injury_speed_mod = 0.5f;
+            break;
+        case 3: /* fall through */
+        case 4:
+            player->movement.injury_speed_mod = 0.7f;
+            break;        
+        case 5: /* fall through */
+        case 6:
+            player->movement.injury_speed_mod = 0.9f;
+            break;        
+        case 7: /* fall through */
+        case 8: /* fall through */
+        case 9: /* fall through */
+        default:
+            player->movement.injury_speed_mod = 1.0f;
+            break;
+    }
+    
+
+    if((float)amount * DAMAGE_OVERLAY_DURATION > player->movement.staggered_timer) {
+        player->movement.staggered_timer = (float)amount * DAMAGE_OVERLAY_DURATION;
+    }
+
     if((float)amount * DAMAGE_OVERLAY_DURATION > player->damage_overlay_time) {
         player->damage_overlay_time = (float)amount * DAMAGE_OVERLAY_DURATION;
         player->damage_overlay_initial_time = player->damage_overlay_time;
@@ -176,6 +207,14 @@ void player_draw_damage(Player* player) {
 }
 
 int player_is_interacting(Player* player) {
-    Vec2 stick;
-    return mapped_input_controller_read(&player->input_map, player->movement.player_index, INPUT_MAP_INTERACT, &stick);
+    static int button_released = 0;
+    if(mapped_input_controller_read(&player->input_map, player->movement.player_index, INPUT_MAP_INTERACT, NULL)) {
+        if(button_released) {
+            button_released = 0;
+            return 1;
+        }
+    } else {
+        button_released = 1;
+    }
+    return 0;
 }

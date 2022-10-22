@@ -20,6 +20,7 @@
         "xiosbase": "c",
         "layers.h": "c",
         "level_base.h": "c",
-        "tiles_test.h": "c"
+        "tiles_test.h": "c",
+        "xstring": "cpp"
     }
 }

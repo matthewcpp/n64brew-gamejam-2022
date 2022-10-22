@@ -8,6 +8,7 @@ void interaction_init(Interaction* interaction, fw64Level* level, fw64Transform*
     interaction->layer_mask = layer_mask;
     
     interaction->interesting_node = NULL;
+    interaction->node_uid = 0;
     interaction->active_scene = NULL;
     memset(&interaction->interactables[0], 0, sizeof(fw64Node*) * MAX_INTERACTABLE_SIZE);
     interaction->interactables_count = 0;
@@ -53,6 +54,7 @@ void interaction_update(Interaction* interaction) {
 
         if (dist_sq < INTERACTION_DISTANCE_SQ && dist_sq < closest_dist) {
             interaction->interesting_node = node;
+            interaction->node_uid = i;
             closest_dist = dist_sq;
         }
     }

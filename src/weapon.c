@@ -117,25 +117,7 @@ void weapon_init(Weapon* weapon) {
     memset(weapon, 0, sizeof(Weapon));
 }
 
-static void weapon_reomve_existing(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator) {
-    if (weapon->mesh)
-        fw64_mesh_delete(assets, weapon->mesh, allocator);
-    if (weapon->casing)
-        fw64_mesh_delete(assets, weapon->casing, allocator);
-    if (weapon->muzzle_flash)
-        fw64_mesh_delete(assets, weapon->muzzle_flash, allocator);
-    if (weapon->crosshair) {
-        fw64_image_delete(assets, fw64_texture_get_image(weapon->crosshair), allocator);
-        fw64_texture_delete(weapon->crosshair, allocator);
-    }
-}
-
-void weapon_uninit(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator) {
-    weapon_reomve_existing(weapon, assets, allocator);
-}
-
 void weapon_init_none(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator) {
-    weapon_reomve_existing(weapon, assets, allocator);
     memset(weapon, 0, sizeof(Weapon));
 
     weapon->info = &weapon_infos[WEAPON_TYPE_NONE];
@@ -152,8 +134,6 @@ static void clamp_textures(fw64Mesh* mesh) {
 }
 
 void weapon_init_handgun(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator) {
-    weapon_reomve_existing(weapon, assets, allocator);
-
     weapon->mesh = fw64_mesh_load(assets, FW64_ASSET_mesh_handgun, allocator);
     weapon->casing = fw64_mesh_load(assets, FW64_ASSET_mesh_9mm_round, allocator);
     weapon->muzzle_flash = fw64_mesh_load(assets, FW64_ASSET_mesh_handgun_muzzle_flash, allocator);
@@ -164,8 +144,6 @@ void weapon_init_handgun(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocato
 }
 
 void weapon_init_ar15(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator) {
-    weapon_reomve_existing(weapon, assets, allocator);
-
     weapon->mesh = fw64_mesh_load(assets, FW64_ASSET_mesh_us_ar33, allocator);
     weapon->casing = fw64_mesh_load(assets, FW64_ASSET_mesh_9mm_round, allocator);
     weapon->muzzle_flash = fw64_mesh_load(assets, FW64_ASSET_mesh_ar15_muzzle_flash, allocator);
@@ -176,8 +154,6 @@ void weapon_init_ar15(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* 
 }
 
 void weapon_init_shotgun(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator) {
-    weapon_reomve_existing(weapon, assets, allocator);
-
     weapon->mesh = fw64_mesh_load(assets, FW64_ASSET_mesh_shotgun, allocator);
     weapon->casing = fw64_mesh_load(assets, FW64_ASSET_mesh_shotgun_shell, allocator);
     weapon->muzzle_flash = fw64_mesh_load(assets, FW64_ASSET_mesh_shotgun_muzzle_flash, allocator);
@@ -188,8 +164,6 @@ void weapon_init_shotgun(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocato
 }
 
 void weapon_init_uzi(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator) {
-    weapon_reomve_existing(weapon, assets, allocator);
-
     weapon->mesh = fw64_mesh_load(assets, FW64_ASSET_mesh_uzi, allocator);
     weapon->casing = fw64_mesh_load(assets, FW64_ASSET_mesh_9mm_round, allocator);
     weapon->muzzle_flash = fw64_mesh_load(assets, FW64_ASSET_mesh_uzi_muzzle_flash, allocator);

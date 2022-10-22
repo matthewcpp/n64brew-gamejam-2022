@@ -1,44 +1,65 @@
 #include "mapped_input.h"
 
+#define DEFAULT_STICK_THRESHOLD 0.15f
+
 void mapped_input_init(InputMapping* mapping, fw64Input* fw64_input) {
 	mapping->fw64_input = fw64_input;
-	mapping->threshold.x = 0.15f;
-	mapping->threshold.y = 0.15f;
-	
-	// //goldeneye mapping
-	// mapping->buttons[INPUT_MAP_MOVE_FORWARD 		- INPUT_MAP_START] = INPUT_MAP_VSTICK_ANALOG_Y_POS;
-	// mapping->buttons[INPUT_MAP_MOVE_BACKWARD 	- INPUT_MAP_START] = INPUT_MAP_VSTICK_ANALOG_Y_NEG;
-	// mapping->buttons[INPUT_MAP_MOVE_LEFT 		- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_C_LEFT;
-	// mapping->buttons[INPUT_MAP_MOVE_RIGHT 		- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_C_RIGHT;
-	// mapping->buttons[INPUT_MAP_LOOK_UP 			- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_C_UP;
-	// mapping->buttons[INPUT_MAP_LOOK_DOWN 		- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_C_DOWN;
-	// mapping->buttons[INPUT_MAP_LOOK_LEFT 		- INPUT_MAP_START] = INPUT_MAP_VSTICK_ANALOG_X_NEG;
-	// mapping->buttons[INPUT_MAP_LOOK_RIGHT 		- INPUT_MAP_START] = INPUT_MAP_VSTICK_ANALOG_X_POS;
-	
-	// // modern twin stick mapping
-	mapping->buttons[INPUT_MAP_MOVE_FORWARD 	- INPUT_MAP_START] = INPUT_MAP_VSTICK_ANALOG_Y_POS;
-	mapping->buttons[INPUT_MAP_MOVE_BACKWARD 	- INPUT_MAP_START] = INPUT_MAP_VSTICK_ANALOG_Y_NEG;
-	mapping->buttons[INPUT_MAP_MOVE_LEFT 		- INPUT_MAP_START] = INPUT_MAP_VSTICK_ANALOG_X_NEG;
-	mapping->buttons[INPUT_MAP_MOVE_RIGHT 		- INPUT_MAP_START] = INPUT_MAP_VSTICK_ANALOG_X_POS;
-	mapping->buttons[INPUT_MAP_LOOK_UP 			- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_C_UP;
-	mapping->buttons[INPUT_MAP_LOOK_DOWN 		- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_C_DOWN;
-	mapping->buttons[INPUT_MAP_LOOK_LEFT 		- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_C_LEFT;
-	mapping->buttons[INPUT_MAP_LOOK_RIGHT 		- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_C_RIGHT;
+	mapping->threshold.x = DEFAULT_STICK_THRESHOLD;
+	mapping->threshold.y = DEFAULT_STICK_THRESHOLD;
+	mapped_input_set_map_layout(mapping, INPUT_MAP_LAYOUT_MODERN_TWINSTICK);
+}
 
-	// // twin stick, move and aim sticks swapped
-	// mapping->buttons[INPUT_MAP_LOOK_UP		 	- INPUT_MAP_START] = INPUT_MAP_VSTICK_ANALOG_Y_POS;
-	// mapping->buttons[INPUT_MAP_LOOK_DOWN	 	- INPUT_MAP_START] = INPUT_MAP_VSTICK_ANALOG_Y_NEG;
-	// mapping->buttons[INPUT_MAP_LOOK_LEFT 		- INPUT_MAP_START] = INPUT_MAP_VSTICK_ANALOG_X_NEG;
-	// mapping->buttons[INPUT_MAP_LOOK_RIGHT 		- INPUT_MAP_START] = INPUT_MAP_VSTICK_ANALOG_X_POS;
-	// mapping->buttons[INPUT_MAP_MOVE_FORWARD 	- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_C_UP;
-	// mapping->buttons[INPUT_MAP_MOVE_BACKWARD	- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_C_DOWN;
-	// mapping->buttons[INPUT_MAP_MOVE_LEFT 		- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_C_LEFT;
-	// mapping->buttons[INPUT_MAP_MOVE_RIGHT 		- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_C_RIGHT;
-	
+void mapped_input_set_map_layout(InputMapping* mapping, InputMapLayout layout) {
+
 	mapping->buttons[INPUT_MAP_WEAPON_FIRE 		- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_Z;
 	mapping->buttons[INPUT_MAP_WEAPON_SWAP 		- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_B;
-	mapping->buttons[INPUT_MAP_WEAPON_RELOAD 	- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_DPAD_DOWN;
+	mapping->buttons[INPUT_MAP_WEAPON_RELOAD 	- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_R;
 	mapping->buttons[INPUT_MAP_INTERACT 		- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_A;
+
+	switch(layout) {
+		case INPUT_MAP_LAYOUT_PERFECTEYE:
+			// Inspired by 2 particular games
+			// the analog stick moves fwd/back and turns left/right
+			// the c-buttons look up/down and strafe
+			mapping->buttons[INPUT_MAP_MOVE_FORWARD 	- INPUT_MAP_START] = INPUT_MAP_VSTICK_ANALOG_Y_POS;
+			mapping->buttons[INPUT_MAP_MOVE_BACKWARD 	- INPUT_MAP_START] = INPUT_MAP_VSTICK_ANALOG_Y_NEG;
+			mapping->buttons[INPUT_MAP_MOVE_LEFT 		- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_C_LEFT;
+			mapping->buttons[INPUT_MAP_MOVE_RIGHT 		- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_C_RIGHT;
+			mapping->buttons[INPUT_MAP_LOOK_UP 			- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_C_UP;
+			mapping->buttons[INPUT_MAP_LOOK_DOWN 		- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_C_DOWN;
+			mapping->buttons[INPUT_MAP_LOOK_LEFT 		- INPUT_MAP_START] = INPUT_MAP_VSTICK_ANALOG_X_NEG;
+			mapping->buttons[INPUT_MAP_LOOK_RIGHT 		- INPUT_MAP_START] = INPUT_MAP_VSTICK_ANALOG_X_POS;
+			break;
+		case INPUT_MAP_LAYOUT_MODERN_TWINSTICK:
+			// Similar to a typical FPS control scheme for more modern controllers
+			// analog stick moves fwd/back and strafes
+			// c-buttons look up/down and turn left/right
+			mapping->buttons[INPUT_MAP_MOVE_FORWARD 	- INPUT_MAP_START] = INPUT_MAP_VSTICK_ANALOG_Y_POS;
+			mapping->buttons[INPUT_MAP_MOVE_BACKWARD 	- INPUT_MAP_START] = INPUT_MAP_VSTICK_ANALOG_Y_NEG;
+			mapping->buttons[INPUT_MAP_MOVE_LEFT 		- INPUT_MAP_START] = INPUT_MAP_VSTICK_ANALOG_X_NEG;
+			mapping->buttons[INPUT_MAP_MOVE_RIGHT 		- INPUT_MAP_START] = INPUT_MAP_VSTICK_ANALOG_X_POS;
+			mapping->buttons[INPUT_MAP_LOOK_UP 			- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_C_UP;
+			mapping->buttons[INPUT_MAP_LOOK_DOWN 		- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_C_DOWN;
+			mapping->buttons[INPUT_MAP_LOOK_LEFT 		- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_C_LEFT;
+			mapping->buttons[INPUT_MAP_LOOK_RIGHT 		- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_C_RIGHT;
+			break;
+		case INPUT_MAP_LAYOUT_MODERN_TWINSTICK_SWAPPED:
+			// For those that have 1 stick and prefer precise aim at all times
+			// c-buttons move fwd/back and strafe
+			// analog stick looks up/down and turn left/right
+			mapping->buttons[INPUT_MAP_LOOK_UP		 	- INPUT_MAP_START] = INPUT_MAP_VSTICK_ANALOG_Y_POS;
+			mapping->buttons[INPUT_MAP_LOOK_DOWN	 	- INPUT_MAP_START] = INPUT_MAP_VSTICK_ANALOG_Y_NEG;
+			mapping->buttons[INPUT_MAP_LOOK_LEFT 		- INPUT_MAP_START] = INPUT_MAP_VSTICK_ANALOG_X_NEG;
+			mapping->buttons[INPUT_MAP_LOOK_RIGHT 		- INPUT_MAP_START] = INPUT_MAP_VSTICK_ANALOG_X_POS;
+			mapping->buttons[INPUT_MAP_MOVE_FORWARD 	- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_C_UP;
+			mapping->buttons[INPUT_MAP_MOVE_BACKWARD	- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_C_DOWN;
+			mapping->buttons[INPUT_MAP_MOVE_LEFT 		- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_C_LEFT;
+			mapping->buttons[INPUT_MAP_MOVE_RIGHT 		- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_C_RIGHT;
+			break;
+		default: 
+			mapped_input_set_map_layout(mapping, INPUT_MAP_LAYOUT_MODERN_TWINSTICK);
+			break;
+	}
 }
 
 void mapped_input_set_map_button(InputMapping* mapping, MappedButton mapped_input_name, int new_button_name) {
@@ -47,8 +68,6 @@ void mapped_input_set_map_button(InputMapping* mapping, MappedButton mapped_inpu
 void mapped_input_set_stick_threshold(InputMapping* mapping, Vec2 new_threshold) {
 	mapping->threshold = new_threshold;
 }
-// int mapped_input_controller_button_pressed(MappedInput* mapped_input, int controller, MappedButton button);
-// int mapped_input_controller_button_released(MappedInput* mapped_input, int controller, MappedButton button);
 
 static int safety_check_button_value(int button) {
 	switch(button) {

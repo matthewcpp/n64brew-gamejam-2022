@@ -83,7 +83,6 @@ void steering_wander(float strength, SteeringBehaviorData* data) {
 } 
 void steering_follow_path(Vec3* position, float strength, Vec3* out){} // stubbed
 void steering_avoid_collision(float strength, SteeringBehaviorData* data) {
-	float avoidDist = 5.0f;
 	float targetDist = vec3_distance(&data->position, &data->targetPosition);
 	float lookAhead = 30.0f;
 	Vec3 pos;

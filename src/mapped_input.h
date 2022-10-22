@@ -39,6 +39,12 @@ typedef enum {
 	INPUT_MAP_VSTICK_ANALOG_Y_NEG
 } MappedButton;
 
+typedef enum {
+	INPUT_MAP_LAYOUT_PERFECTEYE,
+	INPUT_MAP_LAYOUT_MODERN_TWINSTICK,
+	INPUT_MAP_LAYOUT_MODERN_TWINSTICK_SWAPPED
+} InputMapLayout;
+
 typedef struct {
 	fw64Input* fw64_input;
 
@@ -49,7 +55,7 @@ typedef struct {
 } InputMapping;
 
 void mapped_input_init(InputMapping* mapping, fw64Input* fw64_input);
-
+void mapped_input_set_map_layout(InputMapping* mapping, InputMapLayout layout);
 void mapped_input_set_map_button(InputMapping* mapping, MappedButton mapped_input_name, int new_button_name);
 void mapped_input_set_stick_threshold(InputMapping* mapping, Vec2 new_threshold);
 int mapped_input_controller_read(InputMapping* mapping, int controller, MappedButton button, Vec2* stick);

@@ -1,17 +1,20 @@
 #include "tiles_test.h"
-
+#include "levels.h"
 #include "assets/assets.h"
 #include "assets/sound_bank_sounds.h"
 
 #include "framework64/random.h"
+#include "framework64/math.h"
 
-#define TILE_COUNT 1
+#define TILE_COUNT 3
 
 int tile_scenes[TILE_COUNT] = {
-    FW64_ASSET_scene_tile_block1
+    FW64_ASSET_scene_city_tile_block1,
+    FW64_ASSET_scene_city_tile_block2,
+    FW64_ASSET_scene_city_tile_highrises
 };
 
-#define BUMP_ALLOCATOR_SIZE (32 * 1024)
+#define BUMP_ALLOCATOR_SIZE (16 * 1024)
 #define TILE_SIZE 200.0f
 
 
@@ -21,8 +24,9 @@ static void rotate_all_handles(TilesTestLevel* level, CompassDirections dir);
 static void rotate_one_handle(TilesTestLevel* level, int* handle, CompassDirections dir);
 static int  get_rand_tile(int32_t x, int32_t y);
 
-void tiles_test_level_init(TilesTestLevel* level, fw64Engine* engine) {
-    level_base_init(&level->base, engine, fw64_default_allocator(), FW64_INVALID_ASSET_ID, FW64_ASSET_soundbank_sounds);
+void tiles_test_level_init(TilesTestLevel* level, fw64Engine* engine, GameData* game_data, fw64Allocator* state_allocator) {
+    level_base_init(&level->base, engine, game_data, state_allocator, FW64_INVALID_ASSET_ID, FW64_ASSET_soundbank_sounds);
+    mesh_collection_init(&level->mesh_collection, engine->assets, FW64_ASSET_scene_city_mesh_collection, state_allocator);
     
     level->handle_nw = 0;
     level->handle_ne =  TILE_ROW_CELLS  - 1;
@@ -42,6 +46,10 @@ void tiles_test_level_init(TilesTestLevel* level, fw64Engine* engine) {
      *  for larger (5x5 etc) grids the center chunk stays at the world origin
      */
     Vec3 pos = { -(TILE_SIZE * (TILE_ROW_CELLS / 2)), 0.0f, -(TILE_SIZE * (TILE_ROW_CELLS / 2))};
+    float x_offset = TILE_SIZE * level->base.game_data->door_data.city_cell.x;
+    float z_offset = TILE_SIZE * level->base.game_data->door_data.city_cell.y;
+    pos.x += x_offset;
+    pos.z += z_offset;
     
     level->next_row_pos[NORTH] = pos.z -  TILE_SIZE;
     level->next_row_pos[SOUTH] = pos.z + (TILE_SIZE * TILE_COL_CELLS);
@@ -56,30 +64,53 @@ void tiles_test_level_init(TilesTestLevel* level, fw64Engine* engine) {
     
     for (int i = 0; i < ACTIVE_TILE_COUNT; i++) {
         level->chunk_handles[i] = FW64_LEVEL_INVALID_CHUNK_HANDLE;
-        fw64_bump_allocator_init(&level->allocators[i], BUMP_ALLOCATOR_SIZE);
+        fw64_bump_allocator_init_from_buffer(&level->allocators[i], state_allocator->memalign(state_allocator, 8, BUMP_ALLOCATOR_SIZE), BUMP_ALLOCATOR_SIZE);
         tiles_test_load_tile(level, i, &pos);
         pos.x += TILE_SIZE;
-        if( pos.x >= (TILE_SIZE * ((TILE_ROW_CELLS / 2) + 1))) {
+        if( pos.x >= x_offset + (TILE_SIZE * ((TILE_ROW_CELLS / 2) + 1))) {
             pos.x -= TILE_SIZE * TILE_ROW_CELLS;
             pos.z += TILE_SIZE;
         }
     }
 
-    player_add_ammo(&level->base.player, WEAPON_TYPE_UZI, 320);
-    player_set_weapon(&level->base.player, WEAPON_TYPE_UZI);
+    
 
     Vec3 starting_pos = {0.0f, 0.0f, 0.0f};
+    vec3_add(&starting_pos, &starting_pos, &level->base.game_data->player_data.transform.position);
     player_set_position(&level->base.player, &starting_pos);
-    vec3_copy(&level->player_prev_position, &level->base.player.node->transform.position); 
+    vec3_copy(&level->player_prev_position, &level->base.player.node->transform.position);
 
-    //fw64_renderer_set_clear_color(engine->renderer, 147, 204, 234); // happy sky blue
-    //fw64_renderer_set_fog_color(engine->renderer, 147, 204, 234);
-    fw64_renderer_set_clear_color(engine->renderer, 20, 4, 40); // spoopy blurple
+    game_data_load_player_data(level->base.game_data, &level->base.player);
+    //player_pickup_ammo(&level->base.player, WEAPON_TYPE_HANDGUN, 0);
+    WeaponAmmo* ammo = &level->base.player.weapon_controller.weapon_ammo[WEAPON_TYPE_UZI];
+    int total_uzi_ammo = (ammo->current_mag_count + ammo->additional_rounds_count);
+    if(total_uzi_ammo < 45) {
+        player_add_ammo(&level->base.player, WEAPON_TYPE_UZI, 45 - total_uzi_ammo);
+    }
+
+    int player_facing = NORTH;
+    float player_x = level->base.player.node->transform.position.x;
+    float player_z = level->base.player.node->transform.position.z;
+    float dist = player_z - level->next_row_trigger[NORTH];
+
+    if((level->next_row_trigger[SOUTH] - player_z) < dist) {
+        player_facing = SOUTH;
+        dist = level->next_row_trigger[SOUTH] - player_z;
+    }
+    if((level->next_row_trigger[EAST] - player_x) < dist) {
+        player_facing = EAST;
+        dist = level->next_row_trigger[EAST] - player_x;
+    }
+    if((player_x - level->next_row_trigger[WEST]) < dist) {
+        player_facing = WEST;
+        dist = player_x - level->next_row_trigger[WEST];
+    }
+
+    level->base.player.movement.rotation.y = 360 - (90.f * player_facing);
+
+    fw64_renderer_set_clear_color(engine->renderer, 20, 4, 40);
     fw64_renderer_set_fog_color(engine->renderer, 20, 4, 40);
     fw64_renderer_set_fog_positions(engine->renderer, 0.9, 1.0f);
-    //fw64_renderer_set_fog_positions(engine->renderer, 0.95f, 1.0f);
-    // fw64_renderer_set_ambient_light_color(engine->renderer, 20, 4, 40);
-    //fw64_renderer_set_light_color(engine->renderer, 0, 40, 16, 80);
 }
 
 void tiles_test_load_next_row(TilesTestLevel* level, CompassDirections dir) {
@@ -156,7 +187,13 @@ void tiles_test_load_next_row(TilesTestLevel* level, CompassDirections dir) {
             break;
     }
 
+    // update the cell numbers that correspond to the nw, ne, sw, and se corners of the grid
     rotate_all_handles(level, dir);
+}
+
+void setup_city_level(uint32_t chunk_id, int scene_id, fw64Scene* scene, void* arg) {
+    TilesTestLevel* level = (TilesTestLevel*)arg;
+    mesh_collection_set_scene_meshes(&level->mesh_collection, scene);
 }
 
 void tiles_test_load_tile(TilesTestLevel* level, int index, Vec3* pos) {
@@ -166,11 +203,13 @@ void tiles_test_load_tile(TilesTestLevel* level, int index, Vec3* pos) {
 
     fw64LevelChunkInfo info;
     fw64_level_chunk_info_init(&info);
+    info.init_func = setup_city_level;
+    info.callback_arg = level;
     
     int32_t grid_x = pos->x / TILE_SIZE;
     int32_t grid_y = pos->z / TILE_SIZE;
 
-    info.scene_id = (grid_x == 0 && grid_y == 0) ? FW64_ASSET_scene_tile_mall : tile_scenes[get_rand_tile(grid_x, grid_y)];
+    info.scene_id = (grid_x == 0 && grid_y == 0) ? FW64_ASSET_scene_city_tile_mall : tile_scenes[get_rand_tile(grid_x, grid_y)];
     info.allocator = &level->allocators[index].interface;
 
     level->chunk_handles[index] = fw64_level_load_chunk_at_pos(&level->base.level, &info, pos);
@@ -207,12 +246,13 @@ static void rotate_one_handle(TilesTestLevel* level, int* handle, CompassDirecti
 }
 
 void tiles_test_level_uninit(TilesTestLevel* level) {
-    player_uninit(&level->base.player);
-    fw64_level_uninit(&level->base.level);
-
+    mesh_collection_uninit(&level->mesh_collection);
+    
     for (int i = 0; i < ACTIVE_TILE_COUNT; i++) {
         fw64_bump_allocator_uninit(&level->allocators[i]);
     }
+
+    level_base_uninit(&level->base);
 }
 
 void tiles_test_level_update(TilesTestLevel* level) {
@@ -235,9 +275,23 @@ void tiles_test_level_update(TilesTestLevel* level) {
     
     vec3_copy(&level->player_prev_position, &player_position);
 
-    // TODO: add logic to enter interior building here (maybe if door isnt locked...hehehehe)
-    if (level->base.interaction.interesting_node && player_is_interacting(&level->base.player) && !audio_controller_channel_is_playing(&level->base.audio_controller, AUDIO_CONTROLLER_CHANNEL_PLAYER_ACTION)) {
-        audio_controller_play(&level->base.audio_controller, AUDIO_CONTROLLER_CHANNEL_PLAYER_ACTION, sound_bank_sounds_door_locked);
+    if (level->base.interaction.interesting_node && player_is_interacting(&level->base.player)) {
+        if(1) {  // can open door. temp set to always true
+            // save location to reload later
+            level->base.game_data->door_data.node_id = level->base.interaction.node_uid;                        
+            level->base.game_data->door_data.city_cell.x = (int)((level->next_row_pos[WEST] / TILE_SIZE)+2);
+            level->base.game_data->door_data.city_cell.y = (int)((level->next_row_pos[NORTH] / TILE_SIZE)+2);
+            // preserve player's data between level loads
+            level->base.game_data->player_data.transform = level->base.player.node->transform;
+
+            game_data_save_player_data(level->base.game_data, &level->base.player);
+
+            level->base.game_data->transition_to_level = LEVEL_INTERIOR;
+            level->base.game_data->transition_to_state = GAME_STATE_PLAYING;
+        }
+        else if(!audio_controller_channel_is_playing(&level->base.audio_controller, AUDIO_CONTROLLER_CHANNEL_PLAYER_ACTION)) {
+            audio_controller_play(&level->base.audio_controller, AUDIO_CONTROLLER_CHANNEL_PLAYER_ACTION, sound_bank_sounds_door_locked);
+        }
     }
 }
 
