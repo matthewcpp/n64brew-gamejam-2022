@@ -53,6 +53,7 @@ void weapon_controller_init(WeaponController* controller, fw64Engine* engine, We
 
 void weapon_controller_uninit(WeaponController* controller) {
     free_existing_weapon_data(controller);
+    fw64_bump_allocator_uninit(&controller->weapon_allocator);
 }
 
 void free_existing_weapon_data(WeaponController* controller) {
