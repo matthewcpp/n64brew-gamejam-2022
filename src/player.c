@@ -66,7 +66,7 @@ void setup_player_node(Player* player) {
     vec3_set(&player_box.max, default_player_dimensions.x / 2.0f, default_player_dimensions.y, default_player_dimensions.z / 2.0f);
 
     fw64_collider_set_type_box(collider, &player_box);
-    fw64_level_add_dyanmic_node(player->level, player->node);
+    fw64_level_add_dynamic_node(player->level, player->node);
 }
 
 void player_aim_update(Player* player) {

@@ -80,7 +80,7 @@ void spawn_next_zombie(ZombieSpawner* spawner) {
     spawner->active_zombies++;
 
     zombie_reset(zed);
-    fw64_level_add_dyanmic_node(zed->level, &zed->node);
+    fw64_level_add_dynamic_node(zed->level, &zed->node);
     zombie_ai_init(&zed->ai, zed->level, &zed->collider, &zed->node.transform, spawner->target);
 
     zed->health = 3;
