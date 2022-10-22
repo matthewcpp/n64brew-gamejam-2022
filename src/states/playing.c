@@ -2,10 +2,16 @@
 #include "framework64/random.h"
 #include "weapon.h"
 
+#define LEVEL_MEMORY_POOL_SIZE (256 * 1024)
+
+static void transition_to_level(Playing* state);
+
 void game_state_playing_init(Playing* state, fw64Engine* engine, GameData* game_data) {
-    fw64Allocator* allocator = fw64_default_allocator();
+    fw64_bump_allocator_init(&state->bump_allocator, LEVEL_MEMORY_POOL_SIZE);
+
     state->engine = engine;
     state->game_data = game_data;
+
     fw64_random_set_seed(*(uint32_t*)&engine->time->total_time); //intentional type punning
     init_weapon_info();
     state->return_to_level_select_time = 0.0f;
@@ -15,19 +21,19 @@ void game_state_playing_init(Playing* state, fw64Engine* engine, GameData* game_
 
     switch(state->current_level) {
         case LEVEL_TEST:
-            test_level_init(&state->levels.test_level, engine, game_data);
+            test_level_init(&state->levels.test_level, engine, game_data, &state->bump_allocator.interface);
             break;
 
         case LEVEL_CHURCH_HILL:
-            hill_level_init(&state->levels.church_hill, engine, game_data);
+            hill_level_init(&state->levels.church_hill, engine, game_data, &state->bump_allocator.interface);
             break;
 
         case LEVEL_TILES:
-            tiles_test_level_init(&state->levels.tiles_test, engine, game_data);
+            tiles_test_level_init(&state->levels.tiles_test, engine, game_data, &state->bump_allocator.interface);
             break;
 
         case LEVEL_INTERIOR:
-            interior_level_init(&state->levels.interior, engine, game_data);
+            interior_level_init(&state->levels.interior, engine, game_data, &state->bump_allocator.interface);
             break;
 
         case LEVEL_NONE:
@@ -59,6 +65,8 @@ void game_state_playing_uninit(Playing* state) {
         case LEVEL_COUNT:
             break;
     }
+
+    fw64_bump_allocator_uninit(&state->bump_allocator);
 }
 
 void game_state_playing_update(Playing* state) {

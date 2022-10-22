@@ -22,8 +22,8 @@ static void rotate_all_handles(TilesTestLevel* level, CompassDirections dir);
 static void rotate_one_handle(TilesTestLevel* level, int* handle, CompassDirections dir);
 static int  get_rand_tile(int32_t x, int32_t y);
 
-void tiles_test_level_init(TilesTestLevel* level, fw64Engine* engine, GameData* game_data) {
-    level_base_init(&level->base, engine, game_data, fw64_default_allocator(), FW64_INVALID_ASSET_ID, FW64_ASSET_soundbank_sounds);
+void tiles_test_level_init(TilesTestLevel* level, fw64Engine* engine, GameData* game_data, fw64Allocator* level_allocator) {
+    level_base_init(&level->base, engine, game_data, level_allocator, FW64_INVALID_ASSET_ID, FW64_ASSET_soundbank_sounds);
     
     level->handle_nw = 0;
     level->handle_ne =  TILE_ROW_CELLS  - 1;

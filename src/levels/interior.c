@@ -67,9 +67,9 @@ static void seed_tile_gen(InteriorLevel* level);
 static int  get_rand_tile();
 static uint32_t building_rand_seed = 1;
 
-void interior_level_init(InteriorLevel* level, fw64Engine* engine, GameData* game_data) {
+void interior_level_init(InteriorLevel* level, fw64Engine* engine, GameData* game_data, fw64Allocator* level_allocator) {
     // reset all room scenes
-	level_base_init(&level->base, engine, game_data, fw64_default_allocator(), FW64_INVALID_ASSET_ID, FW64_ASSET_soundbank_sounds);
+	level_base_init(&level->base, engine, game_data, level_allocator, FW64_INVALID_ASSET_ID, FW64_ASSET_soundbank_sounds);
 	for (int i = 0; i < ROOM_COUNT; i++) {
         level->room_handles[i] = FW64_LEVEL_INVALID_CHUNK_HANDLE;
         fw64_bump_allocator_init(&level->allocators[i], BUMP_ALLOCATOR_SIZE);

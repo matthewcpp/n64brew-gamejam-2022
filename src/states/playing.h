@@ -3,6 +3,7 @@
 #include "game_data.h"
 
 #include "framework64/engine.h"
+#include "framework64/util/bump_allocator.h"
 
 #include "levels/level_base.h"
 #include "levels/levels.h"
@@ -25,6 +26,7 @@ typedef struct {
     Level current_level;
     Levels levels;
     float return_to_level_select_time;
+    fw64BumpAllocator bump_allocator;
 } Playing;
 
 void game_state_playing_init(Playing* state, fw64Engine* engine, GameData* game_data);
