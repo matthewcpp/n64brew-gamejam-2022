@@ -6,10 +6,12 @@
 #include "framework64/random.h"
 #include "framework64/math.h"
 
-#define TILE_COUNT 1
+#define TILE_COUNT 3
 
 int tile_scenes[TILE_COUNT] = {
-    FW64_ASSET_scene_tile_block1
+    FW64_ASSET_scene_city_tile_block1,
+    FW64_ASSET_scene_city_tile_block2,
+    FW64_ASSET_scene_city_tile_highrises
 };
 
 #define BUMP_ALLOCATOR_SIZE (16 * 1024)
@@ -24,6 +26,7 @@ static int  get_rand_tile(int32_t x, int32_t y);
 
 void tiles_test_level_init(TilesTestLevel* level, fw64Engine* engine, GameData* game_data, fw64Allocator* state_allocator) {
     level_base_init(&level->base, engine, game_data, state_allocator, FW64_INVALID_ASSET_ID, FW64_ASSET_soundbank_sounds);
+    mesh_collection_init(&level->mesh_collection, engine->assets, FW64_ASSET_scene_city_mesh_collection, fw64_default_allocator());
     
     level->handle_nw = 0;
     level->handle_ne =  TILE_ROW_CELLS  - 1;
@@ -188,6 +191,11 @@ void tiles_test_load_next_row(TilesTestLevel* level, CompassDirections dir) {
     rotate_all_handles(level, dir);
 }
 
+void setup_city_level(uint32_t chunk_id, int scene_id, fw64Scene* scene, void* arg) {
+    TilesTestLevel* level = (TilesTestLevel*)arg;
+    mesh_collection_set_scene_meshes(&level->mesh_collection, scene);
+}
+
 void tiles_test_load_tile(TilesTestLevel* level, int index, Vec3* pos) {
     // eject previous chunk in this index
     fw64_level_unload_chunk(&level->base.level, level->chunk_handles[index]);
@@ -195,11 +203,13 @@ void tiles_test_load_tile(TilesTestLevel* level, int index, Vec3* pos) {
 
     fw64LevelChunkInfo info;
     fw64_level_chunk_info_init(&info);
+    info.init_func = setup_city_level;
+    info.callback_arg = level;
     
     int32_t grid_x = pos->x / TILE_SIZE;
     int32_t grid_y = pos->z / TILE_SIZE;
 
-    info.scene_id = (grid_x == 0 && grid_y == 0) ? FW64_ASSET_scene_tile_mall : tile_scenes[get_rand_tile(grid_x, grid_y)];
+    info.scene_id = (grid_x == 0 && grid_y == 0) ? FW64_ASSET_scene_city_tile_mall : tile_scenes[get_rand_tile(grid_x, grid_y)];
     info.allocator = &level->allocators[index].interface;
 
     level->chunk_handles[index] = fw64_level_load_chunk_at_pos(&level->base.level, &info, pos);

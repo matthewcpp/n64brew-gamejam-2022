@@ -4,6 +4,7 @@ set(core_files
     interact.h interact.c
 	mapped_input.h mapped_input.c
     player.h player.c
+    mesh_collection.h mesh_collection.c
     movement_controller.h movement_controller.c
     weapon.h weapon.c
     projectile_controller.h projectile_controller.c
