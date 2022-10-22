@@ -26,7 +26,7 @@ static int  get_rand_tile(int32_t x, int32_t y);
 
 void tiles_test_level_init(TilesTestLevel* level, fw64Engine* engine, GameData* game_data, fw64Allocator* state_allocator) {
     level_base_init(&level->base, engine, game_data, state_allocator, FW64_INVALID_ASSET_ID, FW64_ASSET_soundbank_sounds);
-    mesh_collection_init(&level->mesh_collection, engine->assets, FW64_ASSET_scene_city_mesh_collection, fw64_default_allocator());
+    mesh_collection_init(&level->mesh_collection, engine->assets, FW64_ASSET_scene_city_mesh_collection, state_allocator);
     
     level->handle_nw = 0;
     level->handle_ne =  TILE_ROW_CELLS  - 1;
@@ -246,11 +246,13 @@ static void rotate_one_handle(TilesTestLevel* level, int* handle, CompassDirecti
 }
 
 void tiles_test_level_uninit(TilesTestLevel* level) {
-    level_base_uninit(&level->base);
-
+    mesh_collection_uninit(&level->mesh_collection);
+    
     for (int i = 0; i < ACTIVE_TILE_COUNT; i++) {
         fw64_bump_allocator_uninit(&level->allocators[i]);
     }
+
+    level_base_uninit(&level->base);
 }
 
 void tiles_test_level_update(TilesTestLevel* level) {
