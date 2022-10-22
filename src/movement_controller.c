@@ -5,7 +5,7 @@
 #include "framework64/n64/controller_button.h"
 #include "framework64/math.h"
 
-#define DOOMGUY_SPEED
+//#define DOOMGUY_SPEED
 
 #ifdef DOOMGUY_SPEED
 #define DEFAULT_MOVEMENT_SPEED 40.0f

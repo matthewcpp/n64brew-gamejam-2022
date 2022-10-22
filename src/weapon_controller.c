@@ -350,8 +350,10 @@ static WeaponType get_next_weapon_with_ammo(WeaponController* controller) {
     WeaponType next_weapon_type = current_weapon_type + 1;
 
     while (next_weapon_type != current_weapon_type) {
-        if (next_weapon_type == WEAPON_COUNT)
+        if (next_weapon_type == WEAPON_COUNT) {
             next_weapon_type = WEAPON_TYPE_NONE;
+            continue;
+        }
 
         WeaponAmmo* weapon_ammo = &controller->weapon_ammo[next_weapon_type];
         if (weapon_ammo->additional_rounds_count > 0 || weapon_ammo->current_mag_count > 0) {
