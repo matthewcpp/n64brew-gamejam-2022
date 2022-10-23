@@ -10,7 +10,8 @@ const char* level_names[] = {
     "test",
     "church hill",
     "tiles test",
-    "interior"
+    "interior",
+    "test"
 };
 
 void game_state_level_select_init(LevelSelect* level_select, fw64Engine* engine, GameData* game_data) {

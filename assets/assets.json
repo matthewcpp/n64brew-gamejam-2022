@@ -49,6 +49,49 @@
             "hslices": 1,
             "vslices": 1,
             "resize": "16x16"
+        },
+        {
+            "src": "dialogue_next.png",
+            "hslices": 1,
+            "vslices": 1,
+            "format": "rgba32"
+        },
+        {
+            "src": "dialogue_overlay.png",
+            "hslices": 1,
+            "vslices": 1,
+            "format": "rgba32",
+            "resize": "8x8"
+        },
+        {
+            "name": "n64_buttons",
+            "comment": "12x12 image atlas",
+            "frames": [
+                "n64_buttons/button_a.png",
+                "n64_buttons/button_b.png",
+                "n64_buttons/button_c_down.png",
+                "n64_buttons/button_c_up.png",
+                "n64_buttons/button_c_left.png",
+                "n64_buttons/button_c_right.png",
+
+                "n64_buttons/button_l.png",
+                "n64_buttons/button_r.png",
+                "n64_buttons/d_pad_down.png",
+                "n64_buttons/d_pad_up.png",
+                "n64_buttons/d_pad_left.png",
+                "n64_buttons/d_pad_right.png",
+
+                "n64_buttons/button_start.png",
+                "n64_buttons/button_z.png",
+                "n64_buttons/stick_down.png",
+                "n64_buttons/stick_up.png",
+                "n64_buttons/stick_left.png",
+                "n64_buttons/stick_right.png"
+            ],
+            "hslices": 6,
+            "vslices": 3,
+            "frameSize": "128x128",
+            "resize": "72x36"
         }
     ],
     "levels": [
@@ -63,6 +106,9 @@
         },
         {
             "src": "city_grid/city_grid.gltf"
+        },
+        {
+            "src": "city_level/city_level.gltf"
         }
     ],
     "musicBanks": [
@@ -89,8 +135,19 @@
             "src": "texgyreadventor-bold.ttf",
             "size": 12,
             "name": "ui_hud",
-            "imageFormat": "rgba32",
             "sourceString": "0123456789/ "
+        },
+        {
+            "src": "texgyreadventor-bold.ttf",
+            "size": 12,
+            "name": "ui_interact",
+            "sourceString": "EnterReload"
+        },
+        {
+            "src": "texgyreadventor-bold.ttf",
+            "size": 12,
+            "name": "Dialogue",
+            "sourceFile": "dialogue.txt"
         }
     ],
     "layers": {
@@ -121,6 +178,15 @@
                 "Idle",
                 "FlyBack"
             ]
+        },
+        {
+            "src": "catherine/catherine.gltf",
+            "animations": [
+                "Idle"
+            ]
         }
+    ],
+    "raw": [
+        "dialogue.txt"
     ]
 }

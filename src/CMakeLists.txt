@@ -18,8 +18,9 @@ set(core_files
 )
 
 set(ui_files
-    ui.h ui.c
-    healthbar.h healthbar.c
+    ui/ui.h ui/ui.c
+    ui/healthbar.h ui/healthbar.c
+    ui/dialogue_window.h ui/dialogue_window.c
 )
 
 set(level_files
@@ -37,6 +38,10 @@ set(game_state_files
     states/playing.h states/playing.c
 )
 
+set(actor_files
+    actors/catherine.h actors/catherine.c
+)
+
 set(main_game_files
     game.h game.c
     game_data.h game_data.c
@@ -44,4 +49,4 @@ set(main_game_files
 
 create_game(
     TARGET spooky
-    SOURCES ${main_game_files} ${core_files} ${level_files} ${game_state_files} ${ui_files} ${main_game_files})
+    SOURCES ${main_game_files} ${core_files} ${level_files} ${game_state_files} ${ui_files} ${actor_files} ${main_game_files})
