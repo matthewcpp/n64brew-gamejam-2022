@@ -106,9 +106,6 @@
         },
         {
             "src": "city_grid/city_grid.gltf"
-        },
-        {
-            "src": "city_level/city_level.gltf"
         }
     ],
     "musicBanks": [
