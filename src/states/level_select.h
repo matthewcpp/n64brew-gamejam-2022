@@ -1,14 +1,15 @@
 #pragma once
 
 #include "framework64/engine.h"
+#include "framework64/util/bump_allocator.h"
 
 #include "game_data.h"
 
 typedef struct {
+    fw64BumpAllocator bump_allocator;
     fw64Engine* engine;
     GameData* game_data;
     fw64Font* font;
-    fw64Allocator* allocator;
     fw64Camera camera;
     Level selected_level;
     int title_pos_x;

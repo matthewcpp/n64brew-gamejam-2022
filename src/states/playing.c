@@ -2,9 +2,7 @@
 #include "framework64/random.h"
 #include "weapon.h"
 
-#define LEVEL_MEMORY_POOL_SIZE (256 * 1024)
-
-static void transition_to_level(Playing* state);
+#define LEVEL_MEMORY_POOL_SIZE (400 * 1024)
 
 void game_state_playing_init(Playing* state, fw64Engine* engine, GameData* game_data) {
     fw64_bump_allocator_init(&state->bump_allocator, LEVEL_MEMORY_POOL_SIZE);

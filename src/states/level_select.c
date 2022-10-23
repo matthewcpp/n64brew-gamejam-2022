@@ -4,6 +4,8 @@
 
 #include "framework64/n64/controller_button.h"
 
+#define LEVEL_SELECT_MEMORY_POOL_SIZE (400 * 1024)
+
 // note font only setup with lowercase letters!
 const char* level_names[] = {
     "",
@@ -18,9 +20,8 @@ void game_state_level_select_init(LevelSelect* level_select, fw64Engine* engine,
     level_select->engine = engine;
     level_select->game_data = game_data;
 
-    // todo figure this out
-    level_select->allocator = fw64_default_allocator();
-    level_select->font = fw64_font_load(engine->assets, FW64_ASSET_font_level_select, level_select->allocator);
+    fw64_bump_allocator_init(&level_select->bump_allocator, LEVEL_SELECT_MEMORY_POOL_SIZE);
+    level_select->font = fw64_font_load(engine->assets, FW64_ASSET_font_level_select, &level_select->bump_allocator.interface);
 
     fw64_camera_init(&level_select->camera);
     fw64_renderer_set_anti_aliasing_enabled(engine->renderer, 0);
@@ -33,6 +34,11 @@ void game_state_level_select_init(LevelSelect* level_select, fw64Engine* engine,
     fw64_renderer_set_clear_color(engine->renderer, 0, 0, 0);
 
     level_select->selected_level = 1;
+}
+
+void game_state_level_select_uninit(LevelSelect* level_select) {
+    fw64_font_delete(level_select->engine->assets, level_select->font, &level_select->bump_allocator.interface);
+    fw64_bump_allocator_uninit(&level_select->bump_allocator);
 }
 
 static void level_select_navigate(LevelSelect* level_select, int direction) {
@@ -82,8 +88,4 @@ void game_state_level_select_draw(LevelSelect* level_select) {
     }
 
     fw64_renderer_end(renderer, FW64_RENDERER_FLAG_SWAP);
-}
-
-void game_state_level_select_uninit(LevelSelect* level_select) {
-    fw64_font_delete(level_select->engine->assets, level_select->font, level_select->allocator);
 }
