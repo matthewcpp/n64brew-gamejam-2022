@@ -1,5 +1,6 @@
 #include "levels/level_base.h"
 #include "assets/layers.h"
+#include "assets/image_atlas_n64_buttons.h"
 
 static void level_base_init_audio(LevelBase* level, int music_bank, int sound_bank);
 
@@ -16,7 +17,7 @@ void level_base_init(LevelBase* level, fw64Engine* engine, GameData* game_data, 
 
     pickups_init(&level->pickups, engine, &level->player, allocator);
 
-    ui_init(&level->ui, engine, level->allocator, &level->player);
+    ui_init(&level->ui, engine, level->allocator, level);
     interaction_init(&level->interaction, &level->level, &level->player.node->transform, FW64_layer_interactable);
 }
 
@@ -53,6 +54,24 @@ void level_base_uninit(LevelBase* level) {
     ui_uninit(&level->ui);
 }
 
+static void update_ui_interaction_text(LevelBase* level) {
+    fw64Node* interaction_node = level->interaction.interesting_node;
+    if (interaction_node) {
+        if (interaction_node->layer_mask & FW64_layer_entrance) {
+            ui_set_interaction_text(&level->ui, "Enter", image_atlas_n64_buttons_frame_button_a);
+            return;
+        }
+    }
+
+    WeaponAmmo* weapon_ammo = weapon_controller_get_current_weapon_ammo( &level->player.weapon_controller);
+    if (weapon_ammo->current_mag_count == 0 && weapon_ammo->additional_rounds_count > 0) {
+        ui_set_interaction_text(&level->ui, "Reload", image_atlas_n64_buttons_frame_button_r);
+        return;
+    }
+    
+    ui_clear_interaction_text(&level->ui);
+}
+
 void level_base_update(LevelBase* level) {
     //if (fw64_audio_get_music_status(level->engine->audio) == FW64_AUDIO_STOPPED)
     //    fw64_audio_play_music(level->engine->audio, 0);
@@ -61,4 +80,5 @@ void level_base_update(LevelBase* level) {
     player_update(&level->player);
     pickups_update(&level->pickups);
     interaction_update(&level->interaction);
+    update_ui_interaction_text(level);
 }
