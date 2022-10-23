@@ -34,7 +34,7 @@ typedef struct {
     ZombieSpawner zombie_spawner;
 } InteriorLevel;
 
-void interior_level_init(InteriorLevel* level, fw64Engine* engine, GameData* game_data, fw64Allocator* level_allocator);
+void interior_level_init(InteriorLevel* level, fw64Engine* engine, GameData* game_data, fw64Allocator* state_allocator);
 void interior_level_uninit(InteriorLevel* level);
 void interior_level_update(InteriorLevel* level);
 void interior_level_draw(InteriorLevel* level);
