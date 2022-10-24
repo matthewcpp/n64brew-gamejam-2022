@@ -51,6 +51,26 @@
             "resize": "16x16"
         },
         {
+            "src": "compass_bg.png",
+            "hslices": 1,
+            "vslices": 1,
+            "format": "rgba32"
+        },
+        {
+            "src": "home.png",
+            "hslices": 1,
+            "vslices": 1,
+            "resize": "16x16",
+            "format": "rgba32"
+        },
+        {
+            "src": "north.png",
+            "hslices": 1,
+            "vslices": 1,
+            "resize": "16x16",
+            "format": "rgba32"
+        },
+        {
             "src": "dialogue_next.png",
             "hslices": 1,
             "vslices": 1,

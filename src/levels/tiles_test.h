@@ -8,6 +8,7 @@
 
 #include "player.h"
 #include "ui/ui.h"
+#include "ui/compass.h"
 #include "audio_controller.h"
 #include "projectile_controller.h"
 #include "level_base.h"
@@ -34,6 +35,7 @@ typedef struct {
     int handle_nw, handle_ne, handle_sw, handle_se;
     Vec3 player_prev_position;
     MeshCollection mesh_collection;
+    Compass compass;
 } TilesTestLevel;
 
 void tiles_test_level_init(TilesTestLevel* level, fw64Engine* engine, GameData* game_data, fw64Allocator* state_allocator);

@@ -106,6 +106,8 @@ void tiles_test_level_init(TilesTestLevel* level, fw64Engine* engine, GameData* 
         dist = player_x - level->next_row_trigger[WEST];
     }
 
+    compass_init(&level->compass, engine, state_allocator, &level->base.player.movement.camera.transform);
+
     level->base.player.movement.rotation.y = 360 - (90.f * player_facing);
 
     fw64_renderer_set_clear_color(engine->renderer, 20, 4, 40);
@@ -305,7 +307,8 @@ void tiles_test_level_draw(TilesTestLevel* level) {
     fw64_renderer_set_fog_enabled(renderer, 0);
     player_draw_weapon(&level->base.player);
     fw64_renderer_set_anti_aliasing_enabled(renderer, 0);
-    ui_draw(&level->base.ui);    
+    ui_draw(&level->base.ui);
+    compass_draw(&level->compass);    
     fw64_renderer_end(renderer, FW64_RENDERER_FLAG_SWAP);
 }
 

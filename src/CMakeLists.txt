@@ -21,6 +21,7 @@ set(ui_files
     ui/ui.h ui/ui.c
     ui/healthbar.h ui/healthbar.c
     ui/dialogue_window.h ui/dialogue_window.c
+    ui/compass.h ui/compass.c
 )
 
 set(level_files
