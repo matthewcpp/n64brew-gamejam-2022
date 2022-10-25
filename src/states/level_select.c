@@ -71,7 +71,7 @@ void game_state_level_select_update(LevelSelect* level_select) {
 void game_state_level_select_draw(LevelSelect* level_select) {
     fw64Renderer* renderer = level_select->engine->renderer;
 
-    fw64_renderer_begin(renderer, FW64_RENDERER_MODE_TRIANGLES, FW64_RENDERER_FLAG_CLEAR);
+    fw64_renderer_begin(renderer, FW64_PRIMITIVE_MODE_TRIANGLES, FW64_RENDERER_FLAG_CLEAR);
     fw64_renderer_set_camera(renderer, &level_select->camera);
 
     int font_size = fw64_font_size(level_select->font);

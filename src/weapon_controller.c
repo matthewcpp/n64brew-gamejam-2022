@@ -225,7 +225,7 @@ void weapon_controller_draw(WeaponController* controller) {
     Weapon* weapon = &controller->weapon;
 
     fw64_renderer_draw_static_mesh(renderer, &controller->weapon_transform, weapon->mesh);
-    
+
     if (controller->muzzle_flash_time_remaining > 0.0f) {
         fw64_renderer_draw_static_mesh(renderer, &controller->muzzle_flash_transform, weapon->muzzle_flash);
     }

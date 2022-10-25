@@ -107,8 +107,8 @@ void player_draw_weapon(Player* player) {
     if (player->weapon_controller.weapon.info->type == WEAPON_TYPE_NONE)
         return;
     
-    fw64_renderer_set_camera(renderer, &player->weapon_controller.weapon_camera);
     fw64_renderer_util_clear_viewport(renderer, &player->weapon_controller.weapon_camera, FW64_RENDERER_FLAG_CLEAR_DEPTH);
+    fw64_renderer_set_camera(renderer, &player->weapon_controller.weapon_camera);
     weapon_controller_draw(&player->weapon_controller);
 }
 

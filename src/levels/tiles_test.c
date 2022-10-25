@@ -300,7 +300,7 @@ void tiles_test_level_draw(TilesTestLevel* level) {
 
     fw64_renderer_set_anti_aliasing_enabled(renderer, 1);
     fw64_renderer_set_fog_enabled(renderer, 1);
-    fw64_renderer_begin(renderer, FW64_RENDERER_MODE_TRIANGLES,  FW64_RENDERER_FLAG_CLEAR);
+    fw64_renderer_begin(renderer, FW64_PRIMITIVE_MODE_TRIANGLES,  FW64_RENDERER_FLAG_CLEAR);
     player_draw(&level->base.player);
     fw64_renderer_set_fog_enabled(renderer, 0);
     player_draw_weapon(&level->base.player);

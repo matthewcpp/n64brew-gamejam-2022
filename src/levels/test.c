@@ -27,6 +27,10 @@ void test_level_init(TestLevel* level, fw64Engine* engine, GameData* game_data, 
     fw64_renderer_set_clear_color(renderer, 20, 4, 40);
     fw64_renderer_set_fog_color(renderer, 20, 4, 40);
     fw64_renderer_set_fog_positions(renderer, 0.8, 1.0f);
+
+        if (level->zombie_spawner.active_zombies < 1) {
+        zombie_spawner_spawn_now(&level->zombie_spawner, 1);
+    }
 }
 
 static fw64Scene* load_scene(TestLevel* level) {
@@ -53,7 +57,7 @@ void test_level_draw(TestLevel* level) {
     fw64Renderer* renderer = level->base.engine->renderer;
 
     fw64_renderer_set_fog_enabled(renderer, 1);
-    fw64_renderer_begin(renderer, FW64_RENDERER_MODE_TRIANGLES,  FW64_RENDERER_FLAG_CLEAR);
+    fw64_renderer_begin(renderer, FW64_PRIMITIVE_MODE_TRIANGLES,  FW64_RENDERER_FLAG_CLEAR);
     player_draw(&level->base.player);
     pickups_draw(&level->base.pickups);
     zombie_spawner_draw(&level->zombie_spawner);    
