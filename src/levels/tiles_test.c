@@ -81,12 +81,11 @@ void tiles_test_level_init(TilesTestLevel* level, fw64Engine* engine, GameData* 
     vec3_copy(&level->player_prev_position, &level->base.player.node->transform.position);
 
     game_data_load_player_data(level->base.game_data, &level->base.player);
-    //player_pickup_ammo(&level->base.player, WEAPON_TYPE_HANDGUN, 0);
-    WeaponAmmo* ammo = &level->base.player.weapon_controller.weapon_ammo[WEAPON_TYPE_UZI];
-    int total_uzi_ammo = (ammo->current_mag_count + ammo->additional_rounds_count);
-    if(total_uzi_ammo < 45) {
-        player_add_ammo(&level->base.player, WEAPON_TYPE_UZI, 45 - total_uzi_ammo);
-    }
+    player_add_ammo(&level->base.player, WEAPON_TYPE_UZI, 100);
+    player_add_ammo(&level->base.player, WEAPON_TYPE_HANDGUN, 100);
+    player_add_ammo(&level->base.player, WEAPON_TYPE_AR15, 100);
+    player_add_ammo(&level->base.player, WEAPON_TYPE_SHOTGUN, 100);
+    player_set_weapon(&level->base.player, WEAPON_TYPE_HANDGUN);
 
     int player_facing = NORTH;
     float player_x = level->base.player.node->transform.position.x;
