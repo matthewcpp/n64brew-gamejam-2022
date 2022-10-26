@@ -22,7 +22,7 @@ void game_state_level_select_init(LevelSelect* level_select, fw64Engine* engine,
 
     fw64_bump_allocator_init(&level_select->bump_allocator, LEVEL_SELECT_MEMORY_POOL_SIZE);
 
-    menu_init(&level_select->menu, engine, &level_select->bump_allocator.interface);
+    menu_init(&level_select->menu, engine, &level_select->bump_allocator.interface, game_data);
     
     //level_select->font = fw64_font_load(engine->assets, FW64_ASSET_font_level_select, &level_select->bump_allocator.interface);
 

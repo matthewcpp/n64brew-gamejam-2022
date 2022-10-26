@@ -2,6 +2,8 @@
 
 #include "framework64/engine.h"
 #include "audio_controller.h"
+#include "levels.h"
+#include "game_data.h"
 
 typedef enum {
     MENU_SCREEN_INTRO_JAMLOGO,
@@ -21,6 +23,7 @@ typedef enum {
 typedef struct {
 	fw64Engine* engine;
 	fw64Allocator* allocator;
+	GameData* game_data;
 	fw64Texture* bg;
 	AudioController audio_controller;
 	fw64SoundBank* sound;
@@ -28,9 +31,10 @@ typedef struct {
 	MenuScreen current_menu;
 	float timer;
 	int menu_choice;
+	int control_scheme;
 } Menu;
 
-void menu_init(Menu* menu, fw64Engine* engine, fw64Allocator* allocator);
+void menu_init(Menu* menu, fw64Engine* engine, fw64Allocator* allocator, GameData* game_data);
 void menu_update(Menu* menu);
 void menu_draw(Menu* menu);
 void menu_uninit(Menu* menu);

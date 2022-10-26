@@ -4,6 +4,7 @@
 #include "audio_controller.h"
 #include "framework64/n64/controller_button.h"
 #include "framework64/util/renderer_util.h"
+#include "mapped_input.h"
 
 #include <stdio.h>
 
@@ -31,9 +32,13 @@ static void process_audio(Menu* menu);
 static void process_timer(Menu* menu);
 static void process_input(Menu* menu);
 
-void menu_init(Menu* menu, fw64Engine* engine, fw64Allocator* allocator) {
+void menu_init(Menu* menu, fw64Engine* engine, fw64Allocator* allocator, GameData* game_data) {
 	menu->engine = engine;
 	menu->allocator = allocator;
+	menu->game_data = game_data;
+	
+	menu->control_scheme = INPUT_MAP_LAYOUT_MODERN_TWINSTICK;
+	mapped_input_set_map_layout(&menu->game_data->player_data.input_map, menu->control_scheme);
 	menu->bg = NULL;
 	menu->font = fw64_font_load(engine->assets, FW64_ASSET_font_menu, allocator);
 	menu_init_audio(menu);
@@ -139,8 +144,6 @@ void main_menu_init(Menu* menu) {
 	fw64Image* bg_image = fw64_image_load_with_options(menu->engine->assets, FW64_ASSET_image_menu_main, FW64_IMAGE_FLAG_NONE, menu->allocator);
 	menu->bg = fw64_texture_create_from_image(bg_image, menu->allocator);
 	menu->menu_choice = 0;
-	if(menu->sound)
-		audio_controller_play(&menu->audio_controller, AUDIO_CONTROLLER_ENVIRONMENT, sound_bank_sounds_Menu_Song2);
 }
 void main_menu_uninit(Menu* menu) {
 	if(menu->bg == NULL)
@@ -189,21 +192,43 @@ void process_input(Menu* menu) {
 				}
 			}
 			break;
-		case MENU_SCREEN_MAIN:
+		case MENU_SCREEN_MAIN: {
 				int go  = fw64_input_controller_button_pressed(menu->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_A);
 					go |= fw64_input_controller_button_pressed(menu->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_START);
 
 				if(go) {
+					switch(menu->menu_choice) {
+						case MAIN_MENU_START:
+							menu->game_data->transition_to_level = LEVEL_TILES;
+							menu->game_data->transition_to_state = GAME_STATE_PLAYING;
+							break;
+						case MAIN_MENU_PRACTICE:
+							menu->game_data->transition_to_level = LEVEL_TEST;
+							menu->game_data->transition_to_state = GAME_STATE_PLAYING;
+							break;
+						case MAIN_MENU_CONTROLS:
+							main_menu_uninit(menu);
+							controls_menu_init(menu);
+							break;
+						default:
+							break;
+					}
 					break;
 				}
+				static Vec2 prev_stick = {0.0f, 0.0f};
 				Vec2 stick = {0.0f, 0.0f};
 				fw64_input_controller_stick(menu->engine->input, 0, &stick);
 				int move_cursor_up  = fw64_input_controller_button_pressed(menu->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_DPAD_UP);
 					move_cursor_up |= fw64_input_controller_button_pressed(menu->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_C_UP);
-					move_cursor_up |= !!(stick.y > 0.5f);
+					if(prev_stick.y <= 0.5f)
+						move_cursor_up |= !!(stick.y > 0.5f);
 				int move_cursor_down  = fw64_input_controller_button_pressed(menu->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_DPAD_DOWN);
 					move_cursor_down |= fw64_input_controller_button_pressed(menu->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_C_DOWN);
-					move_cursor_down |= !!(stick.y < -0.5f);
+					if(prev_stick.y >= -0.5f)
+						move_cursor_down |= !!(stick.y < -0.5f);
+
+				prev_stick.x = stick.x;
+				prev_stick.y = stick.y;
 
 				if(move_cursor_up) {
 					menu->menu_choice -= 1;
@@ -215,6 +240,41 @@ void process_input(Menu* menu) {
 						menu->menu_choice = 0;
 				}
 			break;
+		}
+		case MENU_SCREEN_CONTROLS: {
+			 	int go  = fw64_input_controller_button_pressed(menu->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_B);
+					go |= fw64_input_controller_button_pressed(menu->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_START);
+				if(go) {
+					mapped_input_set_map_layout(&menu->game_data->player_data.input_map, menu->control_scheme);
+					controls_menu_uninit(menu);
+					main_menu_init(menu);
+				}
+				static Vec2 prev_stick = {0.0f, 0.0f};
+				Vec2 stick = {0.0f, 0.0f};
+				fw64_input_controller_stick(menu->engine->input, 0, &stick);
+				int move_cursor_left  = fw64_input_controller_button_pressed(menu->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_DPAD_LEFT);
+					move_cursor_left |= fw64_input_controller_button_pressed(menu->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_C_LEFT);
+					if(prev_stick.x >= -0.5f)
+						move_cursor_left |= !!(stick.x < -0.5f);
+				int move_cursor_right  = fw64_input_controller_button_pressed(menu->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_DPAD_RIGHT);
+					move_cursor_right |= fw64_input_controller_button_pressed(menu->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_C_RIGHT);
+					if(prev_stick.x <= 0.5f)
+						move_cursor_right |= !!(stick.x > 0.5f);
+
+				prev_stick.x = stick.x;
+				prev_stick.y = stick.y;
+
+				if(move_cursor_left) {
+					menu->control_scheme -= 1;
+					if(menu->control_scheme < 0)
+						menu->control_scheme = INPUT_MAP_LAYOUT_MODERN_TWINSTICK_SWAPPED;
+				} else if (move_cursor_right) {
+					menu->control_scheme += 1;
+					if(menu->control_scheme > INPUT_MAP_LAYOUT_MODERN_TWINSTICK_SWAPPED)
+						menu->control_scheme = INPUT_MAP_LAYOUT_PERFECTEYE;
+				}
+			break;
+		}
 		default:
 			break;
 	}
@@ -282,11 +342,30 @@ void main_menu_draw(Menu* menu) {
 	int y = 130;
 	int y_advance = 24;
 	char text[20] = {0};
+
+	if(menu->menu_choice == MAIN_MENU_START) {
+		fw64_renderer_set_fill_color(menu->engine->renderer, 192, 192, 0, 255);
+	} else {
+		fw64_renderer_set_fill_color(menu->engine->renderer, 224, 224, 224, 255);
+	}
+		
 	sprintf(text, "Start Game");
 	fw64_renderer_draw_text(menu->engine->renderer, menu->font, x, y, text);
 
+	if(menu->menu_choice == MAIN_MENU_CONTROLS) {
+		fw64_renderer_set_fill_color(menu->engine->renderer, 192, 192, 0, 255);
+	} else {
+		fw64_renderer_set_fill_color(menu->engine->renderer, 224, 224, 224, 255);
+	}
+
 	sprintf(text, "Controls");
 	fw64_renderer_draw_text(menu->engine->renderer, menu->font, x, y + y_advance, text);
+
+	if(menu->menu_choice == MAIN_MENU_PRACTICE) {
+		fw64_renderer_set_fill_color(menu->engine->renderer, 192, 192, 0, 255);
+	} else {
+		fw64_renderer_set_fill_color(menu->engine->renderer, 224, 224, 224, 255);
+	}
 
 	sprintf(text, "Practice Range");
 	fw64_renderer_draw_text(menu->engine->renderer, menu->font, x, y + (y_advance * 2), text);
@@ -294,5 +373,33 @@ void main_menu_draw(Menu* menu) {
 }
 
 void controls_menu_draw(Menu* menu) {
+	IVec2 screen_size;
+	fw64_renderer_get_screen_size(menu->engine->renderer, &screen_size);
+	int x;
+	int y = 20;
+	int y_advance = 24;
+	char text[20] = {0};
 
+	sprintf(text, "Control Scheme:");
+	IVec2 dimensions = fw64_font_measure_text(menu->font, text);
+	x = (screen_size.x / 2) - (dimensions.x / 2);
+	fw64_renderer_draw_text(menu->engine->renderer, menu->font, x, y, text);
+
+	switch(menu->control_scheme) {
+		case INPUT_MAP_LAYOUT_PERFECTEYE:
+			sprintf(text, "Perfect Eye");
+			break;
+		case INPUT_MAP_LAYOUT_MODERN_TWINSTICK:
+			sprintf(text, "Modern");
+			break;
+		case INPUT_MAP_LAYOUT_MODERN_TWINSTICK_SWAPPED:
+			sprintf(text, "Modern Southpaw");
+			break;
+		default:
+			break;
+	}
+
+	dimensions = fw64_font_measure_text(menu->font, text);
+	x = (screen_size.x / 2) - (dimensions.x / 2);
+	fw64_renderer_draw_text(menu->engine->renderer, menu->font, x, y + y_advance, text);
 }
