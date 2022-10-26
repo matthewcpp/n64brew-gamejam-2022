@@ -1,5 +1,5 @@
 #include "zombie.h"
-#include "assets/zombie_animation.h"
+#include "assets/zombie01_animation.h"
 #include "assets/layers.h"
 #include "framework64/random.h"
 #include "framework64/collision.h"
@@ -16,7 +16,7 @@ void zombie_init(Zombie* zombie, fw64Engine* engine, fw64Level* level, fw64Mesh*
 
     zombie_reset(zombie);
 
-    fw64_animation_controller_init(&zombie->animation_controller, animation_data, zombie_animation_Idle, allocator);
+    fw64_animation_controller_init(&zombie->animation_controller, animation_data, zombie01_animation_Idle, allocator);
 }
 
 void zombie_reset(Zombie* zombie) {
@@ -254,38 +254,38 @@ void zombie_set_new_state(Zombie* zombie, ZombieState new_state) {
 
     switch (zombie->state) {
         case ZOMBIE_STATE_IDLE:
-            animation = zombie_animation_Idle;
+            animation = zombie01_animation_Idle;
             loop = 1;
         break;
 
         case ZOMBIE_STATE_RUNNING:
-            animation = zombie_animation_Run;
+            animation = zombie01_animation_Run;
             loop = 1;
         break;
 
         case ZOMBIE_STATE_WALKING:
-            animation = zombie_animation_Walk;
+            animation = zombie01_animation_Walk;
             loop = 1;
         break;
 
         case ZOMBIE_STATE_HIT_REACTION:
-            animation = zombie_animation_Hit;
+            animation = zombie01_animation_Hit;
             loop = 0;
             speed = 2.35f;
         break;
 
         case ZOMBIE_STATE_FALLING_DOWN:
-            animation = zombie_animation_Death;
+            animation = zombie01_animation_Death;
             loop = 0;
         break;
 
         case ZOMBIE_FLYING_BACK:
-            animation = zombie_animation_FlyBack;
+            animation = zombie01_animation_FlyBack;
             loop = 0;
         break;
 
         case ZOMBIE_STATE_ATTACK:
-            animation = zombie_animation_Attack;
+            animation = zombie01_animation_Attack;
             loop = 0;
             speed = 1.85f;
         break;

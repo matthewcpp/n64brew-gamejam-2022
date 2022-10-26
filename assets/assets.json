@@ -165,7 +165,7 @@
     },
     "skinnedMeshes": [
         {
-            "src": "zombie/zombie.gltf",
+            "src": "zombie/zombie01.gltf",
             "animations": [
                 "Walk",
                 "Run",

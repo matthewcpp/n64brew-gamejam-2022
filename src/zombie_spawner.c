@@ -19,8 +19,8 @@ void zombie_spawner_init(ZombieSpawner* spawner, fw64Engine* engine, fw64Level* 
     spawner->zombie_slot_active = 0;
     spawner->active_nodes = 0;
 
-    spawner->animation_data = fw64_animation_data_load(engine->assets, FW64_ASSET_animation_data_zombie, allocator);
-    spawner->zombie_mesh = fw64_mesh_load(engine->assets, FW64_ASSET_mesh_zombie, allocator);
+    spawner->animation_data = fw64_animation_data_load(engine->assets, FW64_ASSET_animation_data_zombie01, allocator);
+    spawner->zombie_mesh = fw64_mesh_load(engine->assets, FW64_ASSET_mesh_zombie01, allocator);
 
     for(int i = 0; i < 16; i++)
         spawner->spawner_nodes[i] = NULL;
