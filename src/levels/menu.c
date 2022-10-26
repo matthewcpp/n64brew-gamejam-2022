@@ -1,6 +1,6 @@
 #include "menu.h"
 #include "assets/assets.h"
-#include "assets/sound_bank_sounds.h"
+#include "assets/sound_bank_wav_music.h"
 #include "audio_controller.h"
 #include "framework64/n64/controller_button.h"
 #include "framework64/util/renderer_util.h"
@@ -131,7 +131,7 @@ void scarylogo_init(Menu* menu) {
 	menu->bg = fw64_texture_create_from_image(bg_image, menu->allocator);
 
 	if(menu->sound)
-		audio_controller_play(&menu->audio_controller, AUDIO_CONTROLLER_ENVIRONMENT, sound_bank_sounds_scary_logo);
+		audio_controller_play(&menu->audio_controller, AUDIO_CONTROLLER_ENVIRONMENT, sound_bank_wav_music_scary_logo);
 }
 void scarylogo_uninit(Menu* menu) {
 	if(menu->bg == NULL)
@@ -319,7 +319,7 @@ void skip_all_intros(Menu* menu) {
 }
 
 void menu_init_audio(Menu* menu) {
-    menu->sound = fw64_sound_bank_load(menu->engine->assets, FW64_ASSET_soundbank_sounds, menu->allocator);
+    menu->sound = fw64_sound_bank_load(menu->engine->assets, FW64_ASSET_soundbank_wav_music, menu->allocator);
     fw64_audio_set_sound_bank(menu->engine->audio, menu->sound);
     audio_controller_init(&menu->audio_controller, menu->engine->audio);
 
@@ -332,7 +332,7 @@ void process_audio(Menu* menu) {
 
 	if(menu->sound) {
 		if(!audio_controller_channel_is_playing(&menu->audio_controller, AUDIO_CONTROLLER_ENVIRONMENT))
-			audio_controller_play(&menu->audio_controller, AUDIO_CONTROLLER_ENVIRONMENT, sound_bank_sounds_Menu_Song2);
+			audio_controller_play(&menu->audio_controller, AUDIO_CONTROLLER_ENVIRONMENT, sound_bank_wav_music_Menu_Song2);
 	}
 		
 }

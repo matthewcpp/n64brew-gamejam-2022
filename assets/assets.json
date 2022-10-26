@@ -85,36 +85,36 @@
         },
         {
             "src": "intro_bg/jam_logo.png",
-            "hslices": 8,
-            "vslices": 10,
+            "hslices": 10,
+            "vslices": 15,
             "format": "rgba32",
             "resize": "320x240"
         },
         {
             "src": "intro_bg/team_logo.png",
-            "hslices": 8,
-            "vslices": 10,
+            "hslices": 10,
+            "vslices": 15,
             "format": "rgba32",
             "resize": "320x240"
         },
         {
             "src": "intro_bg/scary_logo.png",
-            "hslices": 8,
-            "vslices": 10,
+            "hslices": 10,
+            "vslices": 15,
             "format": "rgba32",
             "resize": "320x240"
         },
         {
             "src": "intro_bg/menu_main.png",
-            "hslices": 8,
-            "vslices": 10,
+            "hslices": 10,
+            "vslices": 15,
             "format": "rgba32",
             "resize": "320x240"
         },
         {
             "src": "intro_bg/menu_controls.png",
-            "hslices": 8,
-            "vslices": 10,
+            "hslices": 10,
+            "vslices": 15,
             "format": "rgba32",
             "resize": "320x240"
         },
@@ -173,6 +173,10 @@
         {
             "name": "sounds",
             "dir": "sounds"
+        },
+        {
+            "name": "wav_music",
+            "dir": "wav_music"
         }
     ],
     "fonts": [
