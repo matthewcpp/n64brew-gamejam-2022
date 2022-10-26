@@ -84,6 +84,41 @@
             "resize": "8x8"
         },
         {
+            "src": "intro_bg/jam_logo.png",
+            "hslices": 8,
+            "vslices": 10,
+            "format": "rgba32",
+            "resize": "320x240"
+        },
+        {
+            "src": "intro_bg/team_logo.png",
+            "hslices": 8,
+            "vslices": 10,
+            "format": "rgba32",
+            "resize": "320x240"
+        },
+        {
+            "src": "intro_bg/scary_logo.png",
+            "hslices": 8,
+            "vslices": 10,
+            "format": "rgba32",
+            "resize": "320x240"
+        },
+        {
+            "src": "intro_bg/menu_main.png",
+            "hslices": 8,
+            "vslices": 10,
+            "format": "rgba32",
+            "resize": "320x240"
+        },
+        {
+            "src": "intro_bg/menu_controls.png",
+            "hslices": 8,
+            "vslices": 10,
+            "format": "rgba32",
+            "resize": "320x240"
+        },
+        {
             "name": "n64_buttons",
             "comment": "12x12 image atlas",
             "frames": [
@@ -147,6 +182,13 @@
             "name": "level_select",
             "imageFormat": "rgba32",
             "sourceString": "abcdefghijklmnopqrstuvwxyz 0123456789_-.>"
+        },
+        {
+            "src": "atwriter.ttf",
+            "size": 16,
+            "name": "menu",
+            "imageFormat": "rgba32",
+            "sourceString": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz 0123456789.>"
         },
         {
             "src": "texgyreadventor-bold.ttf",

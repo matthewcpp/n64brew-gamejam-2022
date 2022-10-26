@@ -30,6 +30,7 @@ set(level_files
     levels/test.h levels/test.c
     levels/tiles_test.h levels/tiles_test.c
     levels/interior.h levels/interior.c
+    levels/menu.h levels/menu.c
 )
 
 set(game_state_files

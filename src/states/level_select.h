@@ -3,6 +3,8 @@
 #include "framework64/engine.h"
 #include "framework64/util/bump_allocator.h"
 
+#include "levels/menu.h"
+
 #include "game_data.h"
 
 typedef struct {
@@ -11,6 +13,9 @@ typedef struct {
     GameData* game_data;
     fw64Font* font;
     fw64Camera camera;
+
+    Menu menu;
+
     Level selected_level;
     int title_pos_x;
 } LevelSelect;
