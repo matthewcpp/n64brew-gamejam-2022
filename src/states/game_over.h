@@ -10,6 +10,9 @@ typedef struct GameOver {
     GameData* game_data;
     fw64Camera* camera;
     fw64BumpAllocator bump_allocator;
+    fw64Texture* you_died_texture;
+    float text_effect_time;
+    int sound_handle;
 } GameOver;
 
 void game_state_game_over_init(GameOver* state, fw64Engine* engine, GameData* game_data);

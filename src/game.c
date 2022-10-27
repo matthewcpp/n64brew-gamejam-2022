@@ -9,8 +9,8 @@ void game_init(Game* game, fw64Engine* engine) {
 
     game->current_state = GAME_STATE_NONE;
 
-    // Set this to the state you want to being at
-    game->game_data.transition_to_state = GAME_STATE_LEVEL_SELECT;
+    // Set this to the state you want to begin at
+    game->game_data.transition_to_state = GAME_STATE_GAME_OVER;
 
     // you can optionally set this to the level you want to begin at
     game->game_data.transition_to_level = LEVEL_NONE;

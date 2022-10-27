@@ -64,6 +64,12 @@
             "resize": "8x8"
         },
         {
+            "src": "you_died.png",
+            "format": "rgba32",
+            "hslices": 3,
+            "vslices": 1
+        },
+        {
             "name": "n64_buttons",
             "comment": "12x12 image atlas",
             "frames": [
