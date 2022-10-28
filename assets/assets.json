@@ -87,21 +87,18 @@
             "src": "intro_bg/jam_logo.png",
             "hslices": 10,
             "vslices": 15,
-            "format": "rgba32",
             "resize": "320x240"
         },
         {
             "src": "intro_bg/team_logo.png",
             "hslices": 10,
             "vslices": 15,
-            "format": "rgba32",
             "resize": "320x240"
         },
         {
             "src": "intro_bg/scary_logo.png",
             "hslices": 10,
             "vslices": 15,
-            "format": "rgba32",
             "resize": "320x240"
         },
         {
