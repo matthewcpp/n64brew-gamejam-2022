@@ -3,11 +3,11 @@
 #include "framework64/math.h"
 
 #include "assets/assets.h"
-#include "assets/sound_bank_sounds.h"
+#include "assets/sound_bank_game_over.h"
 
 #define LEVEL_MEMORY_POOL_SIZE (400 * 1024)
 
-#define TEXT_EFFECT_DURATION 1.0f
+#define TEXT_EFFECT_DURATION 3.0f
 
 void game_state_game_over_init(GameOver* state, fw64Engine* engine, GameData* game_data) {
     state->engine = engine;
@@ -19,14 +19,21 @@ void game_state_game_over_init(GameOver* state, fw64Engine* engine, GameData* ga
     fw64Image* you_died_img = fw64_image_load(engine->assets, FW64_ASSET_image_you_died, &state->bump_allocator.interface);
     state->you_died_texture = fw64_texture_create_from_image(you_died_img, &state->bump_allocator.interface);
 
-    state->sound_handle = fw64_audio_play_sound(engine->audio, sound_bank_sounds_you_died);
+    state->sound_bank = fw64_sound_bank_load(engine->assets, FW64_ASSET_soundbank_game_over, &state->bump_allocator.interface);
+    fw64_audio_set_sound_bank(engine->audio, state->sound_bank);
+    state->sound_handle = fw64_audio_play_sound(engine->audio, sound_bank_game_over_you_died);
 }
 
 void game_state_game_over_uninit(GameOver* state) {
-    fw64_bump_allocator_uninit(&state->bump_allocator);
-
+    if (fw64_audio_get_sound_status(state->engine->audio, state->sound_handle) == FW64_AUDIO_PLAYING) {
+        fw64_audio_stop_sound(state->engine->audio, state->sound_handle);
+    }
+    
     fw64_image_delete(state->engine->assets, fw64_texture_get_image(state->you_died_texture), &state->bump_allocator.interface);
     fw64_texture_delete(state->you_died_texture, &state->bump_allocator.interface);
+    fw64_sound_bank_delete(state->engine->assets, state->sound_bank, &state->bump_allocator.interface);
+
+    fw64_bump_allocator_uninit(&state->bump_allocator);
 }
 
 void game_state_game_over_update(GameOver* state){
@@ -36,7 +43,7 @@ void game_state_game_over_update(GameOver* state){
     }
 
     if (state->text_effect_time < TEXT_EFFECT_DURATION) {
-        state->text_effect_time = fw64_minf(state->text_effect_time + state->engine->time->time_delta, 1.0f);
+        state->text_effect_time = fw64_minf(state->text_effect_time + state->engine->time->time_delta, TEXT_EFFECT_DURATION);
     }
 }
 
@@ -47,7 +54,7 @@ static void draw_you_died_text(GameOver* state) {
     IVec2 screen_size;
     fw64_renderer_get_screen_size(renderer, &screen_size);
 
-    if (state->text_effect_time == 1.0f) {
+    if (state->text_effect_time == TEXT_EFFECT_DURATION) {
         int draw_x = (screen_size.x / 2) - (fw64_texture_width(state->you_died_texture) / 2);
         fw64_renderer_draw_sprite(state->engine->renderer, state->you_died_texture, draw_x, YOU_DIED_BORDER_OFFSET);
         return;
@@ -61,11 +68,13 @@ static void draw_you_died_text(GameOver* state) {
     float right_ref = (float)screen_size.x - (float)YOU_DIED_BORDER_OFFSET - tex_width;
     float right_pos = right_ref - ((right_ref - target_x) * smoothed_t);
 
+    fw64_renderer_set_fill_color(renderer, 255, 255, 255, 255);
+    fw64_renderer_draw_sprite(state->engine->renderer, state->you_died_texture, (int)right_pos, YOU_DIED_BORDER_OFFSET);
+
     fw64_renderer_set_fill_color(renderer, 255, 255, 255, 100);
     fw64_renderer_draw_sprite(state->engine->renderer, state->you_died_texture, (int)left_pos, YOU_DIED_BORDER_OFFSET);
 
     fw64_renderer_set_fill_color(renderer, 255, 255, 255, 255);
-    fw64_renderer_draw_sprite(state->engine->renderer, state->you_died_texture, (int)right_pos, YOU_DIED_BORDER_OFFSET);
 }
 
 void game_state_game_over_draw(GameOver* state) {

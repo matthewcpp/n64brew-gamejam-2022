@@ -66,7 +66,7 @@
         {
             "src": "you_died.png",
             "format": "rgba32",
-            "hslices": 3,
+            "hslices": 6,
             "vslices": 1
         },
         {
@@ -124,6 +124,10 @@
         {
             "name": "sounds",
             "dir": "sounds"
+        },
+        {
+            "name": "game_over",
+            "dir": "sounds_game_over"
         }
     ],
     "fonts": [
