@@ -284,7 +284,6 @@ void interior_level_update(InteriorLevel* level) {
 	if ((dist_sq < INTERACTION_DISTANCE_SQ) && player_is_interacting(&level->base.player)) {
 
 		level->base.game_data->transition_to_level = LEVEL_TILES;
-        level->base.game_data->transition_to_state = GAME_STATE_PLAYING;
 	}
 }
 

@@ -116,10 +116,7 @@ static void zombie_update_dying(Zombie* zombie) {
     }
 }
 
-static void damage_player(Zombie* zombie) {
-	// just for test
-    return;
-    
+static void damage_player(Zombie* zombie) {    
     uint32_t dyanmic_node_count = fw64_level_get_dynamic_node_count(zombie->level);
 	Player* player = NULL;
 

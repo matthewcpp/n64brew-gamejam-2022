@@ -286,7 +286,6 @@ void tiles_test_level_update(TilesTestLevel* level) {
             game_data_save_player_data(level->base.game_data, &level->base.player);
 
             level->base.game_data->transition_to_level = LEVEL_INTERIOR;
-            level->base.game_data->transition_to_state = GAME_STATE_PLAYING;
         }
         else if(!audio_controller_channel_is_playing(&level->base.audio_controller, AUDIO_CONTROLLER_CHANNEL_PLAYER_ACTION)) {
             audio_controller_play(&level->base.audio_controller, AUDIO_CONTROLLER_CHANNEL_PLAYER_ACTION, sound_bank_sounds_door_locked);

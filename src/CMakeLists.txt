@@ -33,7 +33,7 @@ set(level_files
 
 set(game_state_files
     states/game_states.h
-
+    states/game_over.h states/game_over.c
     states/level_select.h states/level_select.c
     states/playing.h states/playing.c
 )

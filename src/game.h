@@ -6,11 +6,13 @@
 
 #include "states/playing.h"
 #include "states/level_select.h"
+#include "states/game_over.h"
 
 typedef union
 {
     LevelSelect level_select;
     Playing playing;
+    GameOver game_over;
 } GameStates;
 
 
