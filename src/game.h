@@ -7,12 +7,14 @@
 #include "states/menu.h"
 #include "states/playing.h"
 #include "states/splash.h"
+#include "states/game_over.h"
 
 typedef union
 {
     Splash splash;
     Menu menu;
     Playing playing;
+    GameOver game_over;
 } GameStates;
 
 

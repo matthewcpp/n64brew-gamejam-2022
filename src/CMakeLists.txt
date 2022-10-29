@@ -37,6 +37,7 @@ set(game_state_files
 
     states/splash.h states/splash.c
     states/menu.h states/menu.c
+    states/game_over.h states/game_over.c
     states/playing.h states/playing.c
 )
 

@@ -43,7 +43,12 @@ void game_update(Game* game) {
             game_state_splash_update(&game->states.splash);
             break;
 
+        case GAME_STATE_GAME_OVER:
+            game_state_game_over_update(&game->states.game_over);
+            break;
+
         case GAME_STATE_NONE:
+        case GAME_STATE_COUNT:
             break;
     }
 }
@@ -62,7 +67,12 @@ void game_draw(Game* game) {
             game_state_splash_draw(&game->states.splash);
             break;
 
+        case GAME_STATE_GAME_OVER:
+            game_state_game_over_draw(&game->states.game_over);
+            break;
+
         case GAME_STATE_NONE:
+        case GAME_STATE_COUNT:
             break;
     }
 }
@@ -81,7 +91,12 @@ void game_transition_state(Game* game) {
             game_state_splash_uninit(&game->states.splash);
             break;
 
+        case GAME_STATE_GAME_OVER:
+            game_state_game_over_uninit(&game->states.game_over);
+            break;
+
         case GAME_STATE_NONE:
+        case GAME_STATE_COUNT:
             break;
     }
 
@@ -101,7 +116,12 @@ void game_transition_state(Game* game) {
             game_state_splash_init(&game->states.splash, game->engine, &game->game_data);
             break;
 
+        case GAME_STATE_GAME_OVER:
+            game_state_game_over_init(&game->states.game_over, game->engine, &game->game_data);
+            break;
+
         case GAME_STATE_NONE:
+        case GAME_STATE_COUNT:
             break;
     }
 }
