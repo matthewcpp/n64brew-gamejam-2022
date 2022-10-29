@@ -174,10 +174,6 @@
         {
             "name": "sounds",
             "dir": "sounds"
-        },
-        {
-            "name": "game_over",
-            "dir": "sounds_game_over"
         }
     ],
     "fonts": [

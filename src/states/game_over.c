@@ -19,6 +19,8 @@ void game_state_game_over_init(GameOver* state, fw64Engine* engine, GameData* ga
     fw64Image* you_died_img = fw64_image_load(engine->assets, FW64_ASSET_image_you_died, &state->bump_allocator.interface);
     state->you_died_texture = fw64_texture_create_from_image(you_died_img, &state->bump_allocator.interface);
     state->sound_handle = fw64_audio_play_sound(engine->audio, sound_bank_sounds_you_died);
+
+    fw64_renderer_set_clear_color(engine->renderer, 0, 0, 0);
 }
 
 void game_state_game_over_uninit(GameOver* state) {

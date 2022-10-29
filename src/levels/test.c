@@ -46,6 +46,11 @@ void test_level_uninit(TestLevel* level) {
 
 void test_level_update(TestLevel* level){
     level_base_update(&level->base);
+
+    if (level->zombie_spawner.active_zombies < 5) {
+        zombie_spawner_spawn_now(&level->zombie_spawner, 5 - level->zombie_spawner.active_zombies);
+    }
+
     zombie_spawner_update(&level->zombie_spawner);
 }
 
