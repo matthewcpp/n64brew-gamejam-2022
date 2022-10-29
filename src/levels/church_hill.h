@@ -4,7 +4,7 @@
 #include "framework64/level.h"
 
 #include "player.h"
-#include "ui.h"
+#include "ui/ui.h"
 #include "zombie_spawner.h"
 #include "trigger.h"
 #include "projectile_controller.h"

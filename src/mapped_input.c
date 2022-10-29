@@ -7,6 +7,7 @@ void mapped_input_init(InputMapping* mapping, fw64Input* fw64_input) {
 	mapping->threshold.x = DEFAULT_STICK_THRESHOLD;
 	mapping->threshold.y = DEFAULT_STICK_THRESHOLD;
 	mapped_input_set_map_layout(mapping, INPUT_MAP_LAYOUT_MODERN_TWINSTICK);
+    mapping->enabled = 1;
 }
 
 void mapped_input_set_map_layout(InputMapping* mapping, InputMapLayout layout) {
@@ -101,6 +102,9 @@ int mapped_input_controller_read(InputMapping* mapping, int controller, MappedBu
 		return -1;
 	}
 
+	if (!mapping->enabled)
+		return 0;
+
 	Vec2 temp_stick;
 	fw64_input_controller_stick(mapping->fw64_input, controller, &temp_stick);
 	int val;
@@ -169,6 +173,10 @@ float mapped_input_get_axis(InputMapping* mapping, MappedButton mapped_input_nam
 	if(mapped_input_name < INPUT_MAP_START || mapped_input_name > (INPUT_MAP_START + INPUT_MAP_TOTAL_ACTIONS - 1)) {
 		return 0.0f;
 	}
+
+	if (!mapping->enabled)
+		return 0;
+
 	float modifier = 1.0f;
 	switch(mapping->buttons[mapped_input_name - INPUT_MAP_START]) {
 		case INPUT_MAP_VSTICK_ANALOG_X_NEG: /* fall through */

@@ -144,7 +144,7 @@ int player_add_ammo(Player* player, WeaponType weapon_type, uint32_t amount) {
 }
 
 int player_pickup_ammo(Player* player, WeaponType weapon_type, uint32_t amount) {
-    if (player_add_ammo(player, weapon_type, amount))
+    if (!player_add_ammo(player, weapon_type, amount))
         return 0;
 
     if (player->weapon_controller.weapon.info->type == WEAPON_TYPE_NONE) {

@@ -47,11 +47,9 @@ typedef enum {
 
 typedef struct {
 	fw64Input* fw64_input;
-
 	Vec2 threshold;
-
 	int buttons[INPUT_MAP_TOTAL_ACTIONS];
-
+	int enabled;
 } InputMapping;
 
 void mapped_input_init(InputMapping* mapping, fw64Input* fw64_input);

@@ -6,7 +6,7 @@
 
 #include "audio_controller.h"
 #include "player.h"
-#include "ui.h"
+#include "ui/ui.h"
 #include "zombie_spawner.h"
 #include "projectile_controller.h"
 #include "pickups.h"

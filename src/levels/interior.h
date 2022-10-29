@@ -7,7 +7,7 @@
 #include "framework64/util/bump_allocator.h"
 
 #include "player.h"
-#include "ui.h"
+#include "ui/ui.h"
 #include "audio_controller.h"
 #include "projectile_controller.h"
 #include "level_base.h"
@@ -34,7 +34,7 @@ typedef struct {
     ZombieSpawner zombie_spawner;
 } InteriorLevel;
 
-void interior_level_init(InteriorLevel* level, fw64Engine* engine, GameData* game_data, fw64Allocator* level_allocator);
+void interior_level_init(InteriorLevel* level, fw64Engine* engine, GameData* game_data, fw64Allocator* state_allocator);
 void interior_level_uninit(InteriorLevel* level);
 void interior_level_update(InteriorLevel* level);
 void interior_level_draw(InteriorLevel* level);

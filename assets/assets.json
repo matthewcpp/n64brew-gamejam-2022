@@ -49,6 +49,99 @@
             "hslices": 1,
             "vslices": 1,
             "resize": "16x16"
+        },
+        {
+            "src": "compass_bg.png",
+            "hslices": 1,
+            "vslices": 1,
+            "format": "rgba32"
+        },
+        {
+            "src": "home.png",
+            "hslices": 1,
+            "vslices": 1,
+            "resize": "16x16",
+            "format": "rgba32"
+        },
+        {
+            "src": "north.png",
+            "hslices": 1,
+            "vslices": 1,
+            "resize": "16x16",
+            "format": "rgba32"
+        },
+        {
+            "src": "dialogue_next.png",
+            "hslices": 1,
+            "vslices": 1,
+            "format": "rgba32"
+        },
+        {
+            "src": "dialogue_overlay.png",
+            "hslices": 1,
+            "vslices": 1,
+            "format": "rgba32",
+            "resize": "8x8"
+        },
+        {
+            "src": "intro_bg/jam_logo.png",
+            "hslices": 10,
+            "vslices": 15,
+            "resize": "320x240"
+        },
+        {
+            "src": "intro_bg/team_logo.png",
+            "hslices": 10,
+            "vslices": 15,
+            "resize": "320x240"
+        },
+        {
+            "src": "intro_bg/scary_logo.png",
+            "hslices": 10,
+            "vslices": 15,
+            "resize": "320x240"
+        },
+        {
+            "src": "intro_bg/menu_main.png",
+            "hslices": 10,
+            "vslices": 15,
+            "resize": "320x240"
+        },
+        {
+            "src": "intro_bg/menu_controls.png",
+            "hslices": 10,
+            "vslices": 15,
+            "resize": "320x240"
+        },
+        {
+            "name": "n64_buttons",
+            "comment": "12x12 image atlas",
+            "frames": [
+                "n64_buttons/button_a.png",
+                "n64_buttons/button_b.png",
+                "n64_buttons/button_c_down.png",
+                "n64_buttons/button_c_up.png",
+                "n64_buttons/button_c_left.png",
+                "n64_buttons/button_c_right.png",
+
+                "n64_buttons/button_l.png",
+                "n64_buttons/button_r.png",
+                "n64_buttons/d_pad_down.png",
+                "n64_buttons/d_pad_up.png",
+                "n64_buttons/d_pad_left.png",
+                "n64_buttons/d_pad_right.png",
+
+                "n64_buttons/button_start.png",
+                "n64_buttons/button_z.png",
+                "n64_buttons/stick_down.png",
+                "n64_buttons/stick_up.png",
+                "n64_buttons/stick_left.png",
+                "n64_buttons/stick_right.png"
+            ],
+            "hslices": 6,
+            "vslices": 3,
+            "frameSize": "128x128",
+            "resize": "72x36"
         }
     ],
     "levels": [
@@ -86,11 +179,29 @@
             "sourceString": "abcdefghijklmnopqrstuvwxyz 0123456789_-.>"
         },
         {
+            "src": "atwriter.ttf",
+            "size": 16,
+            "name": "menu",
+            "imageFormat": "rgba32",
+            "sourceString": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz 0123456789.>"
+        },
+        {
             "src": "texgyreadventor-bold.ttf",
             "size": 12,
             "name": "ui_hud",
-            "imageFormat": "rgba32",
             "sourceString": "0123456789/ "
+        },
+        {
+            "src": "texgyreadventor-bold.ttf",
+            "size": 12,
+            "name": "ui_interact",
+            "sourceString": "EnterReload"
+        },
+        {
+            "src": "texgyreadventor-bold.ttf",
+            "size": 12,
+            "name": "Dialogue",
+            "sourceFile": "dialogue.txt"
         }
     ],
     "layers": {
@@ -121,6 +232,15 @@
                 "Idle",
                 "FlyBack"
             ]
+        },
+        {
+            "src": "catherine/catherine.gltf",
+            "animations": [
+                "Idle"
+            ]
         }
+    ],
+    "raw": [
+        "dialogue.txt"
     ]
 }

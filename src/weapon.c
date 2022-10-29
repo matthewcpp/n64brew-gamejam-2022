@@ -28,7 +28,7 @@ static void init_handgun_info(WeaponInfo* weapon) {
     weapon->recoil_time = 0.12f;
 
     weapon->mag_size = 15;
-    weapon->max_additional_rounds = 90;
+    weapon->max_additional_rounds = UINT32_MAX;
 }
 
 static void init_ar15_info(WeaponInfo* weapon) {

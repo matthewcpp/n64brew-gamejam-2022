@@ -67,12 +67,12 @@ static void seed_tile_gen(InteriorLevel* level);
 static int  get_rand_tile();
 static uint32_t building_rand_seed = 1;
 
-void interior_level_init(InteriorLevel* level, fw64Engine* engine, GameData* game_data, fw64Allocator* level_allocator) {
+void interior_level_init(InteriorLevel* level, fw64Engine* engine, GameData* game_data, fw64Allocator* state_allocator) {
     // reset all room scenes
-	level_base_init(&level->base, engine, game_data, level_allocator, FW64_INVALID_ASSET_ID, FW64_ASSET_soundbank_sounds);
+	level_base_init(&level->base, engine, game_data, state_allocator);
 	for (int i = 0; i < ROOM_COUNT; i++) {
         level->room_handles[i] = FW64_LEVEL_INVALID_CHUNK_HANDLE;
-        fw64_bump_allocator_init(&level->allocators[i], BUMP_ALLOCATOR_SIZE);
+		fw64_bump_allocator_init_from_buffer(&level->allocators[i], state_allocator->memalign(state_allocator, 8, BUMP_ALLOCATOR_SIZE), BUMP_ALLOCATOR_SIZE);
     }
 	zombie_spawner_init(&level->zombie_spawner, engine, &level->base.level, &level->base.player.movement.camera.transform, level->base.allocator);
     
@@ -292,7 +292,7 @@ void interior_level_draw(InteriorLevel* level) {
     fw64Renderer* renderer = level->base.engine->renderer;
     fw64_renderer_set_anti_aliasing_enabled(renderer, 1);
     fw64_renderer_set_fog_enabled(renderer, 1);
-	fw64_renderer_begin(renderer, FW64_RENDERER_MODE_TRIANGLES,  FW64_RENDERER_FLAG_CLEAR);
+	fw64_renderer_begin(renderer, FW64_PRIMITIVE_MODE_TRIANGLES,  FW64_RENDERER_FLAG_CLEAR);
     player_draw(&level->base.player);
     zombie_spawner_draw(&level->zombie_spawner);
 	fw64_renderer_set_fog_enabled(renderer, 0);
