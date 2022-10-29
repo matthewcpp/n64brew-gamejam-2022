@@ -105,14 +105,12 @@
             "src": "intro_bg/menu_main.png",
             "hslices": 10,
             "vslices": 15,
-            "format": "rgba32",
             "resize": "320x240"
         },
         {
             "src": "intro_bg/menu_controls.png",
             "hslices": 10,
             "vslices": 15,
-            "format": "rgba32",
             "resize": "320x240"
         },
         {
@@ -172,8 +170,8 @@
             "dir": "sounds"
         },
         {
-            "name": "wav_music",
-            "dir": "wav_music"
+            "name": "sounds_intro",
+            "dir": "sounds_intro"
         }
     ],
     "fonts": [

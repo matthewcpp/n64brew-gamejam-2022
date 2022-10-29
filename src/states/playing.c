@@ -36,7 +36,7 @@ void game_state_playing_init(Playing* state, fw64Engine* engine, GameData* game_
 
         case LEVEL_NONE:
         case LEVEL_COUNT:
-            game_data->transition_to_state = GAME_STATE_LEVEL_SELECT;
+            game_data->transition_to_state = GAME_STATE_MENU;
             break;
     }
 }
@@ -77,7 +77,7 @@ void game_state_playing_update(Playing* state) {
     }
 
     if (state->return_to_level_select_time > 2.0f) {
-        state->game_data->transition_to_state = GAME_STATE_LEVEL_SELECT;
+        state->game_data->transition_to_state = GAME_STATE_MENU;
         return;
     }
     #endif
@@ -105,7 +105,7 @@ void game_state_playing_update(Playing* state) {
     }
 
     if (state->levels.current.player.current_health <= 0) {
-        state->game_data->transition_to_state = GAME_STATE_LEVEL_SELECT;
+        state->game_data->transition_to_state = GAME_STATE_MENU;
     }
 }
 

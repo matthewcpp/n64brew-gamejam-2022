@@ -17,5 +17,6 @@ typedef struct {
 
 void audio_controller_init(AudioController* controller, fw64Audio* audio);
 void audio_controller_update(AudioController* controller);
+void audio_controller_stop_all_sounds(AudioController* controller);
 int audio_controller_play(AudioController* controller, AudioControllerChannel channel, int sound);
 int audio_controller_channel_is_playing(AudioController* controller, AudioControllerChannel channel);

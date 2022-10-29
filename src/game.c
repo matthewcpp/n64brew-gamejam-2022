@@ -1,5 +1,4 @@
 #include "game.h"
-#include "game.h"
 
 static void game_transition_state(Game* game);
 
@@ -10,7 +9,7 @@ void game_init(Game* game, fw64Engine* engine) {
     game->current_state = GAME_STATE_NONE;
 
     // Set this to the state you want to being at
-    game->game_data.transition_to_state = GAME_STATE_SPLASH;
+    game->game_data.transition_to_state = GAME_STATE_MENU;
 
     // you can optionally set this to the level you want to begin at
     game->game_data.transition_to_level = LEVEL_NONE;
@@ -24,8 +23,8 @@ void game_update(Game* game) {
     }
 
     switch(game->current_state) {
-        case GAME_STATE_LEVEL_SELECT:
-            game_state_level_select_update(&game->states.level_select);
+        case GAME_STATE_MENU:
+            game_state_menu_update(&game->states.menu);
             break;
 
         case GAME_STATE_PLAYING:
@@ -43,8 +42,8 @@ void game_update(Game* game) {
 
 void game_draw(Game* game) {
     switch(game->current_state) {
-        case GAME_STATE_LEVEL_SELECT:
-            game_state_level_select_draw(&game->states.level_select);
+        case GAME_STATE_MENU:
+            game_state_menu_draw(&game->states.menu);
             break;
 
         case GAME_STATE_PLAYING:
@@ -62,8 +61,8 @@ void game_draw(Game* game) {
 
 void game_transition_state(Game* game) {
     switch(game->current_state) {
-        case GAME_STATE_LEVEL_SELECT:
-            game_state_level_select_uninit(&game->states.level_select);
+        case GAME_STATE_MENU:
+            game_state_menu_uninit(&game->states.menu);
             break;
 
         case GAME_STATE_PLAYING:
@@ -82,8 +81,8 @@ void game_transition_state(Game* game) {
     game->game_data.transition_to_state = GAME_STATE_NONE;
 
     switch(game->current_state) {
-        case GAME_STATE_LEVEL_SELECT:
-            game_state_level_select_init(&game->states.level_select, game->engine, &game->game_data);
+        case GAME_STATE_MENU:
+            game_state_menu_init(&game->states.menu, game->engine, &game->game_data);
             break;
 
         case GAME_STATE_PLAYING:

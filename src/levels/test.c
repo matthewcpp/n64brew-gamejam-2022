@@ -53,7 +53,7 @@ void test_level_draw(TestLevel* level) {
     fw64Renderer* renderer = level->base.engine->renderer;
 
     fw64_renderer_set_fog_enabled(renderer, 1);
-    fw64_renderer_begin(renderer, FW64_RENDERER_MODE_TRIANGLES,  FW64_RENDERER_FLAG_CLEAR);
+    fw64_renderer_begin(renderer, FW64_PRIMITIVE_MODE_TRIANGLES,  FW64_RENDERER_FLAG_CLEAR);
     player_draw(&level->base.player);
     pickups_draw(&level->base.pickups);
     zombie_spawner_draw(&level->zombie_spawner);    

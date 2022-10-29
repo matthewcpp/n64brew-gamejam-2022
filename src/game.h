@@ -4,14 +4,14 @@
 
 #include "game_data.h"
 
-#include "states/level_select.h"
+#include "states/menu.h"
 #include "states/playing.h"
 #include "states/splash.h"
 
 typedef union
 {
     Splash splash;
-    LevelSelect level_select;
+    Menu menu;
     Playing playing;
 } GameStates;
 

@@ -4,7 +4,9 @@
 #include "assets/assets.h"
 
 #define LEVEL_MEMORY_POOL_SIZE (400 * 1024)
-#define SPLASH_STATE_DURATION 3.0f
+#define SPLASH_STATE_DURATION 6.0f
+#define SPLASH_STATE_FADE_IN_END 2.0f
+#define SPLASH_STATE_FADE_OUT_START 4.0f
 
 static void transition_to_state(Splash* splash, SplashState state);
 static void transition_to_next(Splash* splash);
@@ -64,7 +66,7 @@ static void transition_to_next(Splash* splash) {
         transition_to_state(splash, splash->current_state + 1);
     }
     else {
-        splash->game_data->transition_to_state = GAME_STATE_LEVEL_SELECT;
+        splash->game_data->transition_to_state = GAME_STATE_MENU;
     }
 }
 
@@ -81,7 +83,7 @@ void game_state_splash_update(Splash* splash) {
     int skip_all = fw64_input_controller_button_pressed(splash->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_START);
 
     if (skip_all) {
-        splash->game_data->transition_to_state = GAME_STATE_LEVEL_SELECT;
+        splash->game_data->transition_to_state = GAME_STATE_MENU;
         return;
     }
 
@@ -96,7 +98,16 @@ void game_state_splash_update(Splash* splash) {
 void game_state_splash_draw(Splash* splash) {
     fw64Renderer* renderer = splash->engine->renderer;
 
-    fw64_renderer_begin(renderer, FW64_RENDERER_MODE_TRIANGLES, FW64_RENDERER_FLAG_CLEAR);
+    fw64_renderer_begin(renderer, FW64_PRIMITIVE_MODE_TRIANGLES, FW64_RENDERER_FLAG_CLEAR);
+
+    if(splash->current_state_time > SPLASH_STATE_FADE_OUT_START) {
+		uint8_t color = (int)(255.0 * ((6.0f - splash->current_state_time) * 0.5f));
+		fw64_renderer_set_fill_color(renderer, color, color, color, 255);
+	} else if(splash->current_state_time < SPLASH_STATE_FADE_IN_END) {
+		uint8_t color = (int)(255.0 * splash->current_state_time * 0.5f);
+		fw64_renderer_set_fill_color(renderer, color, color, color, 255);
+	}
+
     fw64_renderer_draw_sprite(renderer, splash->image_tex, 0, 0);
     fw64_renderer_end(renderer, FW64_RENDERER_FLAG_SWAP);
 }
