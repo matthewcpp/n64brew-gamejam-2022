@@ -20,11 +20,9 @@ typedef struct LevelBase{
     fw64Level level;
     Interaction interaction;
     Pickups pickups;
-    fw64MusicBank* music;
-    fw64SoundBank* sound;
     fw64Allocator* allocator;
 } LevelBase;
 
-void level_base_init(LevelBase* level, fw64Engine* engine, GameData* game_data, fw64Allocator* allocator, int music_bank, int sound_bank);
+void level_base_init(LevelBase* level, fw64Engine* engine, GameData* game_data, fw64Allocator* allocator);
 void level_base_uninit(LevelBase* level);
 void level_base_update(LevelBase* level);

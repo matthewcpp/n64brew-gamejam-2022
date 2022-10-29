@@ -9,7 +9,7 @@ static void setup_sound_trigger(HillLevel* hill_level, fw64Scene* scene, int tri
 static fw64Scene* setup_level(HillLevel* hill_level);
 
 void hill_level_init(HillLevel* level, fw64Engine* engine, GameData* game_data, fw64Allocator* level_allocator) {
-    level_base_init(&level->base, engine, game_data, level_allocator, FW64_ASSET_musicbank_music, FW64_ASSET_soundbank_sounds);
+    level_base_init(&level->base, engine, game_data, level_allocator);
 
     fw64_renderer_set_clear_color(engine->renderer, 20, 4, 40);
     fw64_renderer_set_fog_color(engine->renderer, 20, 4, 40);

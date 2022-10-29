@@ -168,10 +168,6 @@
         {
             "name": "sounds",
             "dir": "sounds"
-        },
-        {
-            "name": "sounds_intro",
-            "dir": "sounds_intro"
         }
     ],
     "fonts": [

@@ -69,7 +69,7 @@ static uint32_t building_rand_seed = 1;
 
 void interior_level_init(InteriorLevel* level, fw64Engine* engine, GameData* game_data, fw64Allocator* state_allocator) {
     // reset all room scenes
-	level_base_init(&level->base, engine, game_data, state_allocator, FW64_INVALID_ASSET_ID, FW64_ASSET_soundbank_sounds);
+	level_base_init(&level->base, engine, game_data, state_allocator);
 	for (int i = 0; i < ROOM_COUNT; i++) {
         level->room_handles[i] = FW64_LEVEL_INVALID_CHUNK_HANDLE;
 		fw64_bump_allocator_init_from_buffer(&level->allocators[i], state_allocator->memalign(state_allocator, 8, BUMP_ALLOCATOR_SIZE), BUMP_ALLOCATOR_SIZE);

@@ -1,5 +1,7 @@
 #include "game.h"
 
+#include "assets/assets.h"
+
 static void game_transition_state(Game* game);
 
 void game_init(Game* game, fw64Engine* engine) {
@@ -9,10 +11,16 @@ void game_init(Game* game, fw64Engine* engine) {
     game->current_state = GAME_STATE_NONE;
 
     // Set this to the state you want to being at
-    game->game_data.transition_to_state = GAME_STATE_MENU;
+    game->game_data.transition_to_state = GAME_STATE_SPLASH;
 
     // you can optionally set this to the level you want to begin at
     game->game_data.transition_to_level = LEVEL_NONE;
+
+    fw64SoundBank* sound_bank = fw64_sound_bank_load(engine->assets, FW64_ASSET_soundbank_sounds, fw64_default_allocator());
+    fw64MusicBank* music_bank = fw64_music_bank_load(engine->assets, FW64_ASSET_musicbank_music, fw64_default_allocator());
+
+    fw64_audio_set_sound_bank(engine->audio, sound_bank);
+    fw64_audio_set_music_bank(engine->audio, music_bank);
 
     game_transition_state(game);
 }

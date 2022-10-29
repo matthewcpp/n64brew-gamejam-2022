@@ -25,14 +25,10 @@ typedef struct {
 	fw64Camera camera;
 	GameData* game_data;
 	fw64Texture* bg;
-	AudioController audio_controller;
-	fw64SoundBank* sound;
 	fw64Font* font;
 	MenuScreen current_menu;
-	float timer;
 	int menu_choice;
 	int control_scheme;
-	int bg_music_id;
 } Menu;
 
 void game_state_menu_init(Menu* menu, fw64Engine* engine, GameData* game_data);

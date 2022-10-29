@@ -21,6 +21,7 @@
         "layers.h": "c",
         "level_base.h": "c",
         "tiles_test.h": "c",
-        "xstring": "cpp"
+        "xstring": "cpp",
+        "sound_bank_sounds_menu.h": "c"
     }
 }

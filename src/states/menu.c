@@ -7,7 +7,7 @@
 #include "levels/levels.h"
 
 #include "assets/assets.h"
-#include "assets/sound_bank_sounds_intro.h"
+#include "assets/music_bank_music.h"
 
 #include <stdio.h>
 
@@ -34,24 +34,12 @@ void game_state_menu_init(Menu* menu, fw64Engine* engine, GameData* game_data) {
 	mapped_input_set_map_layout(&menu->game_data->player_data.input_map, menu->control_scheme);
 
 	menu->font = fw64_font_load(engine->assets, FW64_ASSET_font_menu, &menu->bump_allocator.interface);
-	
-	menu->sound = fw64_sound_bank_load(menu->engine->assets, FW64_ASSET_soundbank_sounds_intro, &menu->bump_allocator.interface);
-    fw64_audio_set_sound_bank(menu->engine->audio, menu->sound);
-    audio_controller_init(&menu->audio_controller, menu->engine->audio);
-	menu->bg_music_id = sound_bank_sounds_intro_menu_song_01;
 
 	menu->bg = NULL;
 	set_menu_screen(menu, MENU_SCREEN_MAIN);
-	audio_controller_play(&menu->audio_controller, AUDIO_CONTROLLER_ENVIRONMENT, sound_bank_sounds_intro_menu_song_01);
 }
 
 void game_state_menu_update(Menu* menu) {
-	audio_controller_update(&menu->audio_controller);
-
-	if(!audio_controller_channel_is_playing(&menu->audio_controller, AUDIO_CONTROLLER_ENVIRONMENT)) {
-		// audio_controller_play(&menu->audio_controller, AUDIO_CONTROLLER_ENVIRONMENT, sound_bank_sounds_intro_menu_song_01);
-	}
-
 	process_input(menu);
 
 }
@@ -72,12 +60,10 @@ void game_state_menu_draw(Menu* menu) {
 void game_state_menu_uninit(Menu* menu) {
 	set_menu_screen(menu, MENU_SCREEN_NONE);
 	fw64_font_delete(menu->engine->assets, menu->font, &menu->bump_allocator.interface);
-
-	audio_controller_stop_all_sounds(&menu->audio_controller);
-	fw64_sound_bank_delete(menu->engine->assets, menu->sound, &menu->bump_allocator.interface);
 	
 	fw64_bump_allocator_uninit(&menu->image_allocator);
 	fw64_bump_allocator_uninit(&menu->bump_allocator);
+	fw64_audio_stop_music(menu->engine->audio);
 }
 
 static void set_menu_screen(Menu* menu, MenuScreen screen) {
