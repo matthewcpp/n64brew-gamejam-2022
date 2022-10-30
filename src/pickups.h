@@ -43,6 +43,7 @@ void pickups_set_callback(Pickups* pickups, PickupCallback callback, void* arg);
 
 int pickups_add(Pickups* pickups, PickupType type, uint32_t amount, fw64Node* node);
 void pickups_add_from_scene(Pickups* pickups, fw64Scene* scene);
+void pickups_remove_from_scene(Pickups* pickups, fw64Scene* scene);
 
 void pickups_update(Pickups* pickups);
 void pickups_draw(Pickups* pickups);

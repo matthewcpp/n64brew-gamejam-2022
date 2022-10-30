@@ -57,6 +57,19 @@ int pickups_add(Pickups* pickups, PickupType weapon_type, uint32_t amount, fw64N
     return 1;
 }
 
+void pickups_remove(Pickups* pickups, fw64Node* node) {
+    for (uint32_t i = 0; i < pickups->item_count; i++) {
+        Pickup* pickup = &pickups->items[i];
+
+        if (pickup->node != node)
+            continue;
+
+        Pickup* swap = &pickups->items[pickups->item_count - 1];
+        memcpy(pickup, swap, sizeof(Pickup));
+        pickups->item_count -= 1;
+    }
+}
+
 void pickups_add_from_scene(Pickups* pickups, fw64Scene* scene) {
     fw64Node* pickup_nodes[MAX_PICKUP_COUNT];
     uint32_t pickup_nodes_count = fw64_scene_find_nodes_with_layer_mask(scene, FW64_layer_pickups, &pickup_nodes[0], MAX_PICKUP_COUNT);
@@ -69,6 +82,15 @@ void pickups_add_from_scene(Pickups* pickups, fw64Scene* scene) {
             return;
 
         fw64_node_set_mesh(node, pickups->meshes[pickup_type]);
+    }
+}
+
+void pickups_remove_from_scene(Pickups* pickups, fw64Scene* scene) {
+    fw64Node* pickup_nodes[MAX_PICKUP_COUNT];
+    uint32_t pickup_nodes_count = fw64_scene_find_nodes_with_layer_mask(scene, FW64_layer_pickups, &pickup_nodes[0], MAX_PICKUP_COUNT);
+
+    for (uint32_t i = 0; i < pickup_nodes_count; i++) {
+        pickups_remove(pickups, pickup_nodes[i]);
     }
 }
 

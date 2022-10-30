@@ -1,6 +1,7 @@
 #include "tiles_test.h"
 #include "levels.h"
 #include "assets/assets.h"
+#include "assets/layers.h"
 #include "assets/sound_bank_sounds.h"
 
 #include "framework64/random.h"
@@ -26,7 +27,7 @@ static int  get_rand_tile(int32_t x, int32_t y);
 
 void tiles_test_level_init(TilesTestLevel* level, fw64Engine* engine, GameData* game_data, fw64Allocator* state_allocator) {
     level_base_init(&level->base, engine, game_data, state_allocator);
-    mesh_collection_init(&level->mesh_collection, engine->assets, FW64_ASSET_scene_city_mesh_collection, state_allocator);
+    mesh_collection_init(&level->mesh_collection, engine->assets, FW64_ASSET_scene_city_mesh_collection, FW64_layer_buildings | FW64_layer_ground, state_allocator);
     
     level->handle_nw = 0;
     level->handle_ne =  TILE_ROW_CELLS  - 1;
@@ -81,12 +82,6 @@ void tiles_test_level_init(TilesTestLevel* level, fw64Engine* engine, GameData* 
     vec3_copy(&level->player_prev_position, &level->base.player.node->transform.position);
 
     game_data_load_player_data(level->base.game_data, &level->base.player);
-    //player_pickup_ammo(&level->base.player, WEAPON_TYPE_HANDGUN, 0);
-    WeaponAmmo* ammo = &level->base.player.weapon_controller.weapon_ammo[WEAPON_TYPE_UZI];
-    int total_uzi_ammo = (ammo->current_mag_count + ammo->additional_rounds_count);
-    if(total_uzi_ammo < 45) {
-        player_add_ammo(&level->base.player, WEAPON_TYPE_UZI, 45 - total_uzi_ammo);
-    }
 
     int player_facing = NORTH;
     float player_x = level->base.player.node->transform.position.x;
@@ -196,6 +191,12 @@ void tiles_test_load_next_row(TilesTestLevel* level, CompassDirections dir) {
 void setup_city_level(uint32_t chunk_id, int scene_id, fw64Scene* scene, void* arg) {
     TilesTestLevel* level = (TilesTestLevel*)arg;
     mesh_collection_set_scene_meshes(&level->mesh_collection, scene);
+    pickups_add_from_scene(&level->base.pickups, scene);
+}
+
+void uninit_city_level(uint32_t chunk_id, int scene_id, fw64Scene* scene, void* arg) {
+    TilesTestLevel* level = (TilesTestLevel*)arg;
+    pickups_remove_from_scene(&level->base.pickups, scene);
 }
 
 void tiles_test_load_tile(TilesTestLevel* level, int index, Vec3* pos) {
@@ -206,6 +207,7 @@ void tiles_test_load_tile(TilesTestLevel* level, int index, Vec3* pos) {
     fw64LevelChunkInfo info;
     fw64_level_chunk_info_init(&info);
     info.init_func = setup_city_level;
+    info.uninit_func = uninit_city_level;
     info.callback_arg = level;
     
     int32_t grid_x = pos->x / TILE_SIZE;
@@ -303,6 +305,7 @@ void tiles_test_level_draw(TilesTestLevel* level) {
     fw64_renderer_set_fog_enabled(renderer, 1);
     fw64_renderer_begin(renderer, FW64_PRIMITIVE_MODE_TRIANGLES,  FW64_RENDERER_FLAG_CLEAR);
     player_draw(&level->base.player);
+    pickups_draw(&level->base.pickups);
     fw64_renderer_set_fog_enabled(renderer, 0);
     player_draw_weapon(&level->base.player);
     fw64_renderer_set_anti_aliasing_enabled(renderer, 0);

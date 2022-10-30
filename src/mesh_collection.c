@@ -1,10 +1,13 @@
 #include "mesh_collection.h"
 
+#include "assets/layers.h"
+
 #include <string.h>
 
-void mesh_collection_init(MeshCollection* collection, fw64AssetDatabase* assets, int source_scene_index, fw64Allocator* allocator) {
+void mesh_collection_init(MeshCollection* collection, fw64AssetDatabase* assets, int source_scene_index, uint32_t replacement_layer_mask, fw64Allocator* allocator) {
     memset(collection, 0 , sizeof(MeshCollection));
     collection->assets = assets;
+    collection->replacement_layer_mask = replacement_layer_mask;
     collection->source_scene = fw64_scene_load(assets, source_scene_index, allocator);
 
     uint32_t node_count = fw64_scene_get_node_count(collection->source_scene);
@@ -31,6 +34,10 @@ void mesh_collection_set_scene_meshes(MeshCollection* collection, fw64Scene* sce
 
     for (uint32_t i = 0; i < node_count; i++) {
         fw64Node* node = fw64_scene_get_node(scene, i);
+
+        if (!(node->layer_mask & collection->replacement_layer_mask)) {
+            continue;
+        }
 
         uint32_t data_index = (uint32_t)node->data;
 
