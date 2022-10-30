@@ -264,6 +264,7 @@ void tiles_test_level_uninit(TilesTestLevel* level) {
     }
 
     level_base_uninit(&level->base);
+    zombie_spawner_uninit(&level->zombie_spawner);
 }
 
 void tiles_test_level_update(TilesTestLevel* level) {
