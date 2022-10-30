@@ -20,6 +20,7 @@ typedef struct {
     float current_state_time;
     fw64Texture* image_tex;
     fw64Camera camera;
+    int sound_effect_handle;
 } Splash;
 
 void game_state_splash_init(Splash* splash, fw64Engine* engine, GameData* game_data);

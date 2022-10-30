@@ -2,6 +2,7 @@
 #include "framework64/texture.h"
 
 #include "assets/assets.h"
+#include "assets/sound_bank_sounds.h"
 
 #define LEVEL_MEMORY_POOL_SIZE (400 * 1024)
 #define SPLASH_STATE_DURATION 6.0f
@@ -19,7 +20,7 @@ void game_state_splash_init(Splash* splash, fw64Engine* engine, GameData* game_d
     fw64_bump_allocator_init(&splash->bump_allocator, LEVEL_MEMORY_POOL_SIZE);
 
     splash->image_tex = NULL;
-
+    splash->sound_effect_handle = -1;
     splash->current_state = SPLASH_STATE_NONE;
     transition_to_state(splash, SPLASH_STATE_JAMLOGO);
 }
@@ -29,6 +30,11 @@ void transition_to_state(Splash* splash, SplashState state) {
         fw64_image_delete(splash->engine->assets, fw64_texture_get_image(splash->image_tex), &splash->bump_allocator.interface);
         fw64_texture_delete(splash->image_tex, &splash->bump_allocator.interface);
         fw64_bump_allocator_reset(&splash->bump_allocator);
+    }
+
+    if (splash->sound_effect_handle > -1) {
+        fw64_audio_stop_sound(splash->engine->audio, splash->sound_effect_handle);
+        splash->sound_effect_handle = -1;
     }
 
     splash->current_state = state;
@@ -47,6 +53,7 @@ void transition_to_state(Splash* splash, SplashState state) {
 
         case SPLASH_STATE_SCARYLOGO:
             image_id = FW64_ASSET_image_scary_logo;
+            splash->sound_effect_handle = fw64_audio_play_sound(splash->engine->audio, sound_bank_sounds_scary_logo);
             break;
         case SPLASH_STATE_NONE:
             break;
