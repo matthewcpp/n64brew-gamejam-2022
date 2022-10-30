@@ -6,7 +6,7 @@ static void player_cool_stats_init(PlayerCoolStats* stats) {
     memset(stats, 0, sizeof(PlayerCoolStats));
 }
 
-static void player_data_init(PlayerData* data) {
+void player_data_init(PlayerData* data) {
     fw64_transform_init(&data->transform);
     data->health = PLAYER_MAX_HEALTH;
     data->equipped_weapon = WEAPON_TYPE_NONE;

@@ -1,6 +1,5 @@
 #include "playing.h"
 #include "framework64/random.h"
-#include "weapon.h"
 
 #define LEVEL_MEMORY_POOL_SIZE (400 * 1024)
 
@@ -14,7 +13,6 @@ void game_state_playing_init(Playing* state, fw64Engine* engine, GameData* game_
     state->current_level = LEVEL_NONE;
 
     fw64_random_set_seed(*(uint32_t*)&engine->time->total_time); //intentional type punning
-    init_weapon_info();
     state->return_to_level_select_time = 0.0f;
 
     switch_to_level(state, game_data->transition_to_level);

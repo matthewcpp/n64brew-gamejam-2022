@@ -40,5 +40,6 @@ typedef struct {
 } GameData;
 
 void game_data_init(GameData* game_data);
+void player_data_init(PlayerData* data);
 void game_data_save_player_data(GameData* game_data, Player* player);
 void game_data_load_player_data(GameData* game_data, Player* player);

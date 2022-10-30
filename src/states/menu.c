@@ -96,6 +96,19 @@ static void set_menu_screen(Menu* menu, MenuScreen screen) {
 	}
 }
 
+static void start_playing(Menu* menu, Level level) {
+	menu->game_data->transition_to_level = level;
+	menu->game_data->transition_to_state = GAME_STATE_PLAYING;
+
+	PlayerData* player_data = &menu->game_data->player_data;
+	WeaponInfo* handgun_info = weapon_get_info(WEAPON_TYPE_HANDGUN);
+
+	player_data_init(player_data);
+	player_data->equipped_weapon = WEAPON_TYPE_HANDGUN;
+	player_data->ammo[WEAPON_TYPE_HANDGUN].current_mag_count = handgun_info->mag_size;
+	player_data->ammo[WEAPON_TYPE_HANDGUN].additional_rounds_count = handgun_info->max_additional_rounds;
+}
+
 void process_input(Menu* menu) {
 	switch(menu->current_menu) {
 		case MENU_SCREEN_MAIN: {
@@ -105,12 +118,10 @@ void process_input(Menu* menu) {
 				if(go) {
 					switch(menu->menu_choice) {
 						case MAIN_MENU_START:
-							menu->game_data->transition_to_level = LEVEL_TILES;
-							menu->game_data->transition_to_state = GAME_STATE_PLAYING;
+							start_playing(menu, LEVEL_TILES);
 							break;
 						case MAIN_MENU_PRACTICE:
-							menu->game_data->transition_to_level = LEVEL_TEST;
-							menu->game_data->transition_to_state = GAME_STATE_PLAYING;
+							start_playing(menu, LEVEL_TEST);
 							break;
 						case MAIN_MENU_CONTROLS:
 							set_menu_screen(menu, MENU_SCREEN_CONTROLS);

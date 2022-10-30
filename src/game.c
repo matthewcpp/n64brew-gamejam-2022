@@ -1,5 +1,7 @@
 #include "game.h"
 
+#include "weapon.h"
+
 #include "assets/assets.h"
 
 static void game_transition_state(Game* game);
@@ -7,6 +9,7 @@ static void game_transition_state(Game* game);
 void game_init(Game* game, fw64Engine* engine) {
     game->engine = engine;
     game_data_init(&game->game_data);
+    init_weapon_info();
 
     game->current_state = GAME_STATE_NONE;
 
