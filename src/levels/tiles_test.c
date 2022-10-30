@@ -2,6 +2,7 @@
 #include "levels.h"
 #include "assets/assets.h"
 #include "assets/layers.h"
+#include "assets/scene_city_tile_mall.h"
 #include "assets/sound_bank_sounds.h"
 
 #include "framework64/random.h"
@@ -28,7 +29,8 @@ static int  get_rand_tile(int32_t x, int32_t y);
 void tiles_test_level_init(TilesTestLevel* level, fw64Engine* engine, GameData* game_data, fw64Allocator* state_allocator) {
     level_base_init(&level->base, engine, game_data, state_allocator);
     mesh_collection_init(&level->mesh_collection, engine->assets, FW64_ASSET_scene_city_mesh_collection, FW64_layer_buildings | FW64_layer_ground, state_allocator);
-    
+    zombie_spawner_init(&level->zombie_spawner, engine, &level->base.level, &level->base.player.node->transform, state_allocator);
+
     level->handle_nw = 0;
     level->handle_ne =  TILE_ROW_CELLS  - 1;
     level->handle_sw =  TILE_ROW_CELLS  * (TILE_COL_CELLS  - 1);
@@ -192,6 +194,11 @@ void setup_city_level(uint32_t chunk_id, int scene_id, fw64Scene* scene, void* a
     TilesTestLevel* level = (TilesTestLevel*)arg;
     mesh_collection_set_scene_meshes(&level->mesh_collection, scene);
     pickups_add_from_scene(&level->base.pickups, scene);
+
+    if (scene_id == FW64_ASSET_scene_city_tile_mall) {
+        fw64Node* node = fw64_scene_get_node(scene, FW64_scene_city_tile_mall_node_z_ar15_ammo_spawn);
+        zombie_spawner_spawn_at_pos(&level->zombie_spawner, 2, &node->transform.position);
+    }
 }
 
 void uninit_city_level(uint32_t chunk_id, int scene_id, fw64Scene* scene, void* arg) {
@@ -261,6 +268,8 @@ void tiles_test_level_uninit(TilesTestLevel* level) {
 
 void tiles_test_level_update(TilesTestLevel* level) {
     level_base_update(&level->base);
+    zombie_spawner_update(&level->zombie_spawner);
+
     Player* player = &level->base.player;
     Vec3 player_position;
     vec3_copy(&player_position, &player->node->transform.position);
@@ -306,6 +315,7 @@ void tiles_test_level_draw(TilesTestLevel* level) {
     fw64_renderer_begin(renderer, FW64_PRIMITIVE_MODE_TRIANGLES,  FW64_RENDERER_FLAG_CLEAR);
     player_draw(&level->base.player);
     pickups_draw(&level->base.pickups);
+    zombie_spawner_draw(&level->zombie_spawner);
     fw64_renderer_set_fog_enabled(renderer, 0);
     player_draw_weapon(&level->base.player);
     fw64_renderer_set_anti_aliasing_enabled(renderer, 0);

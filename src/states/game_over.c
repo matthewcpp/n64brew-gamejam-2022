@@ -59,12 +59,12 @@ static void draw_you_died_text(GameOver* state) {
     }
     float tex_width = (float)fw64_texture_width(state->you_died_texture);
 
-    float smoothed_t = fw64_smoothstep(0.0f, 1.0f, state->text_effect_time / TEXT_EFFECT_DURATION);
+    float t_val = fw64_lerp(0.0f, 1.0f, state->text_effect_time / TEXT_EFFECT_DURATION);
     float target_x = (float)(screen_size.x / 2) - tex_width / 2.0f;
     
-    float left_pos = YOU_DIED_BORDER_OFFSET + ((target_x - YOU_DIED_BORDER_OFFSET) * smoothed_t);
+    float left_pos = YOU_DIED_BORDER_OFFSET + ((target_x - YOU_DIED_BORDER_OFFSET) * t_val);
     float right_ref = (float)screen_size.x - (float)YOU_DIED_BORDER_OFFSET - tex_width;
-    float right_pos = right_ref - ((right_ref - target_x) * smoothed_t);
+    float right_pos = right_ref - ((right_ref - target_x) * t_val);
 
     fw64_renderer_set_fill_color(renderer, 255, 255, 255, 255);
     fw64_renderer_draw_sprite(state->engine->renderer, state->you_died_texture, (int)right_pos, YOU_DIED_BORDER_OFFSET);

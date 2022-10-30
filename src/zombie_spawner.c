@@ -6,7 +6,7 @@
 #include "assets/assets.h"
 #include "assets/scene_spooky_level.h"
 
-static void spawn_next_zombie(ZombieSpawner* spawner);
+static void spawn_next_zombie(ZombieSpawner* spawner, Vec3* spawn_position);
 static int get_free_slot(ZombieSpawner* spawner);
 static void set_free_slot(ZombieSpawner* spawner, int slot);
 
@@ -61,15 +61,23 @@ void zombie_spawner_remove_node(ZombieSpawner* spawner, fw64Node* node) {
 }
 
 void zombie_spawner_spawn_now(ZombieSpawner* spawner, uint8_t number_to_spawn) {
+    if(spawner->active_nodes < 1)
+        return;
+
     for(int i = 0; i < number_to_spawn; i++) {
-        spawn_next_zombie(spawner);
+        int node_index = fw64_random_int_in_range(0, spawner->active_nodes - 1);
+        Vec3* pos = &spawner->spawner_nodes[node_index]->transform.position;
+        spawn_next_zombie(spawner, pos);
     }
 }
 
-void spawn_next_zombie(ZombieSpawner* spawner) {
-    if(spawner->active_nodes < 1)
-        return;
-    
+void zombie_spawner_spawn_at_pos(ZombieSpawner* spawner, uint8_t number_to_spawn, Vec3* pos) {
+    for(int i = 0; i < number_to_spawn; i++) {
+        spawn_next_zombie(spawner, pos);
+    }
+}
+
+void spawn_next_zombie(ZombieSpawner* spawner, Vec3* spawn_position) {
     if(spawner->active_zombies >= ZOMBIE_SPAWNER_BIG_GROUP)
         return;
     
@@ -84,10 +92,9 @@ void spawn_next_zombie(ZombieSpawner* spawner) {
     zombie_ai_init(&zed->ai, zed->level, &zed->collider, &zed->node.transform, spawner->target);
 
     zed->health = 3;
-    int node_index = fw64_random_int_in_range(0, spawner->active_nodes - 1);
-    zed->node.transform.position = spawner->spawner_nodes[node_index]->transform.position;
+    zed->node.transform.position = *spawn_position;
     float radius = 15.0f; //10.0f + (2.0f * spawner->active_zombies);
-    Vec3 random_offset = {fw64_random_float_in_range(-radius,radius), spawner->spawner_nodes[node_index]->transform.position.y, fw64_random_float_in_range(-radius,radius)};
+    Vec3 random_offset = {fw64_random_float_in_range(-radius,radius), spawn_position->y, fw64_random_float_in_range(-radius,radius)};
     vec3_add(&zed->node.transform.position, &zed->node.transform.position, &random_offset);
     zed->rotation = fw64_random_float_in_range(0.0f, 359.9f);
     quat_from_euler(&zed->node.transform.rotation, 0.0f, zed->rotation, 0.0f);

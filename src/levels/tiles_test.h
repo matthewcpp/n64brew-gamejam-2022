@@ -13,6 +13,7 @@
 #include "projectile_controller.h"
 #include "level_base.h"
 #include "mesh_collection.h"
+#include "zombie_spawner.h"
 
 #include "framework64/vec3.h"
 #include "framework64/level.h"
@@ -36,6 +37,7 @@ typedef struct {
     Vec3 player_prev_position;
     MeshCollection mesh_collection;
     Compass compass;
+    ZombieSpawner zombie_spawner;
 } TilesTestLevel;
 
 void tiles_test_level_init(TilesTestLevel* level, fw64Engine* engine, GameData* game_data, fw64Allocator* state_allocator);
