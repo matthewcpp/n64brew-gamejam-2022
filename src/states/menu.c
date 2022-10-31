@@ -34,6 +34,7 @@ void game_state_menu_init(Menu* menu, fw64Engine* engine, GameData* game_data) {
 	mapped_input_set_map_layout(&menu->game_data->player_data.input_map, menu->control_scheme);
 
 	menu->font = fw64_font_load(engine->assets, FW64_ASSET_font_menu, &menu->bump_allocator.interface);
+	fw64_audio_play_music(engine->audio, music_bank_music_menu);
 
 	menu->bg = NULL;
 	set_menu_screen(menu, MENU_SCREEN_MAIN);
@@ -41,6 +42,9 @@ void game_state_menu_init(Menu* menu, fw64Engine* engine, GameData* game_data) {
 
 void game_state_menu_update(Menu* menu) {
 	process_input(menu);
+
+	if (fw64_audio_get_music_status(menu->engine->audio) != FW64_AUDIO_PLAYING)
+		fw64_audio_play_music(menu->engine->audio, music_bank_music_menu);
 
 }
 void game_state_menu_draw(Menu* menu) {
@@ -58,6 +62,7 @@ void game_state_menu_draw(Menu* menu) {
 	fw64_renderer_end(menu->engine->renderer, FW64_RENDERER_FLAG_SWAP);
 }
 void game_state_menu_uninit(Menu* menu) {
+	fw64_audio_stop_music(menu->engine->audio);
 	set_menu_screen(menu, MENU_SCREEN_NONE);
 	fw64_font_delete(menu->engine->assets, menu->font, &menu->bump_allocator.interface);
 	
