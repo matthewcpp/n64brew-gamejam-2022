@@ -22,6 +22,9 @@
         "level_base.h": "c",
         "tiles_test.h": "c",
         "xstring": "cpp",
-        "sound_bank_sounds_menu.h": "c"
+        "sound_bank_sounds_menu.h": "c",
+        "scene_city_tile_mall.h": "c",
+        "math.h": "c",
+        "music_bank_music.h": "c"
     }
 }
