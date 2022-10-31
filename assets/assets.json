@@ -224,7 +224,8 @@
             "buildings": 10,
             "entrance": 11,
             "interactable": 12,
-            "pickups": 13
+            "pickups": 13,
+            "zombiespawn": 14
     },
     "skinnedMeshes": [
         {

@@ -6,7 +6,7 @@
 #include "assets/assets.h"
 #include "assets/scene_spooky_level.h"
 
-static void spawn_next_zombie(ZombieSpawner* spawner, Vec3* spawn_position);
+static void spawn_next_zombie(ZombieSpawner* spawner, Vec3* spawn_position, uint32_t tag);
 static int get_free_slot(ZombieSpawner* spawner);
 static void set_free_slot(ZombieSpawner* spawner, int slot);
 
@@ -67,17 +67,17 @@ void zombie_spawner_spawn_now(ZombieSpawner* spawner, uint8_t number_to_spawn) {
     for(int i = 0; i < number_to_spawn; i++) {
         int node_index = fw64_random_int_in_range(0, spawner->active_nodes - 1);
         Vec3* pos = &spawner->spawner_nodes[node_index]->transform.position;
-        spawn_next_zombie(spawner, pos);
+        spawn_next_zombie(spawner, pos, 0);
     }
 }
 
-void zombie_spawner_spawn_at_pos(ZombieSpawner* spawner, uint8_t number_to_spawn, Vec3* pos) {
+void zombie_spawner_spawn_at_pos(ZombieSpawner* spawner, uint8_t number_to_spawn, Vec3* pos, uint32_t tag) {
     for(int i = 0; i < number_to_spawn; i++) {
-        spawn_next_zombie(spawner, pos);
+        spawn_next_zombie(spawner, pos, tag);
     }
 }
 
-void spawn_next_zombie(ZombieSpawner* spawner, Vec3* spawn_position) {
+void spawn_next_zombie(ZombieSpawner* spawner, Vec3* spawn_position, uint32_t tag) {
     if(spawner->active_zombies >= ZOMBIE_SPAWNER_BIG_GROUP)
         return;
     
@@ -85,6 +85,7 @@ void spawn_next_zombie(ZombieSpawner* spawner, Vec3* spawn_position) {
     if(next_slot < 0)
         return;
     Zombie* zed = &spawner->zombies[next_slot];
+    zed->node.data = (void*)tag;
     spawner->active_zombies++;
 
     zombie_reset(zed);
@@ -107,6 +108,22 @@ void spawn_next_zombie(ZombieSpawner* spawner, Vec3* spawn_position) {
 
     zombie_ai_set_logic_state(&zed->ai, ZLS_IDLE);
     zed->health = ZOMBIE_MAX_HEALTH;
+}
+
+void zombie_spawner_remove_with_tag(ZombieSpawner* spawner, uint32_t tag) {
+    for(int i = 0; i < ZOMBIE_SPAWNER_MAX_COUNT; i++) {
+        
+        if(!((1<<i) & spawner->zombie_slot_active))
+            continue;
+
+        Zombie* zombie = &spawner->zombies[i];
+        uint32_t zombie_tag = (uint32_t)zombie->node.data;
+        if(zombie_tag == tag) {
+            set_free_slot(spawner, i);
+            fw64_level_remove_dynamic_node(zombie->level, &zombie->node);
+            spawner->active_zombies--;
+        }
+    }
 }
 
 void zombie_spawner_update(ZombieSpawner* spawner) {

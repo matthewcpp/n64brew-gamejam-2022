@@ -30,6 +30,7 @@ void tiles_test_level_init(TilesTestLevel* level, fw64Engine* engine, GameData* 
     level_base_init(&level->base, engine, game_data, state_allocator);
     mesh_collection_init(&level->mesh_collection, engine->assets, FW64_ASSET_scene_city_mesh_collection, FW64_layer_buildings | FW64_layer_ground, state_allocator);
     zombie_spawner_init(&level->zombie_spawner, engine, &level->base.level, &level->base.player.node->transform, state_allocator);
+    zombie_control_init(&level->zombie_control, &level->base.player, &level->zombie_spawner);
 
     level->handle_nw = 0;
     level->handle_ne =  TILE_ROW_CELLS  - 1;
@@ -194,16 +195,19 @@ void setup_city_level(uint32_t chunk_id, int scene_id, fw64Scene* scene, void* a
     TilesTestLevel* level = (TilesTestLevel*)arg;
     mesh_collection_set_scene_meshes(&level->mesh_collection, scene);
     pickups_add_from_scene(&level->base.pickups, scene);
+    zombie_control_add_ref(&level->zombie_control, fw64_level_get_chunk_by_handle(&level->base.level, chunk_id));
 
     if (scene_id == FW64_ASSET_scene_city_tile_mall) {
         fw64Node* node = fw64_scene_get_node(scene, FW64_scene_city_tile_mall_node_z_ar15_ammo_spawn);
-        zombie_spawner_spawn_at_pos(&level->zombie_spawner, 2, &node->transform.position);
+        zombie_spawner_spawn_at_pos(&level->zombie_spawner, 2, &node->transform.position, chunk_id);
     }
 }
 
 void uninit_city_level(uint32_t chunk_id, int scene_id, fw64Scene* scene, void* arg) {
     TilesTestLevel* level = (TilesTestLevel*)arg;
     pickups_remove_from_scene(&level->base.pickups, scene);
+    zombie_spawner_remove_with_tag(&level->zombie_spawner, chunk_id);
+    zombie_control_remove_ref(&level->zombie_control, fw64_level_get_chunk_by_handle(&level->base.level, chunk_id));
 }
 
 void tiles_test_load_tile(TilesTestLevel* level, int index, Vec3* pos) {
@@ -223,7 +227,7 @@ void tiles_test_load_tile(TilesTestLevel* level, int index, Vec3* pos) {
     info.scene_id = (grid_x == 0 && grid_y == 0) ? FW64_ASSET_scene_city_tile_mall : tile_scenes[get_rand_tile(grid_x, grid_y)];
     info.allocator = &level->allocators[index].interface;
 
-    level->chunk_handles[index] = fw64_level_load_chunk_at_pos(&level->base.level, &info, pos);
+    level->chunk_handles[index] = fw64_level_load_chunk_at_pos(&level->base.level, &info, pos)->handle;
 }
 
 void rotate_all_handles(TilesTestLevel* level, CompassDirections dir) {
@@ -267,9 +271,14 @@ void tiles_test_level_uninit(TilesTestLevel* level) {
     zombie_spawner_uninit(&level->zombie_spawner);
 }
 
+static void manage_zombies(TilesTestLevel* level) {
+
+}
+
 void tiles_test_level_update(TilesTestLevel* level) {
     level_base_update(&level->base);
     zombie_spawner_update(&level->zombie_spawner);
+    zombie_control_update(&level->zombie_control);
 
     Player* player = &level->base.player;
     Vec3 player_position;

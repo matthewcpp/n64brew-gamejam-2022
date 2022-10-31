@@ -1,6 +1,9 @@
 #include "pickups.h"
 
 #include "weapon.h"
+
+#include "framework64/random.h"
+
 #include "assets/assets.h"
 #include "assets/layers.h"
 
@@ -20,6 +23,7 @@ void pickups_init(Pickups* pickups, fw64Engine* engine, Player* player, fw64Allo
     memset(&pickups->items[0], 0, sizeof(Pickup) * MAX_PICKUP_COUNT);
 
     pickups->meshes[PICKUP_TYPE_NONE] = NULL;
+    pickups->meshes[PICKUP_TYPE_RANDOM] = NULL;
 
     pickups->meshes[PICKUP_TYPE_SHOTGUN_AMMO] = fw64_mesh_load(engine->assets, FW64_ASSET_mesh_shotgun_pickup, allocator);
     pickups->meshes[PICKUP_TYPE_MAX_SHOTGUN_AMMO] = pickups->meshes[PICKUP_TYPE_SHOTGUN_AMMO];
@@ -70,6 +74,14 @@ void pickups_remove(Pickups* pickups, fw64Node* node) {
     }
 }
 
+#define RANDOM_AMMO_TYPES_COUNT 3
+
+static PickupType random_pickup_types[RANDOM_AMMO_TYPES_COUNT] = {
+    PICKUP_TYPE_SHOTGUN_AMMO,
+    PICKUP_TYPE_UZI_AMMO,
+    PICKUP_TYPE_AR15_AMMO
+};
+
 void pickups_add_from_scene(Pickups* pickups, fw64Scene* scene) {
     fw64Node* pickup_nodes[MAX_PICKUP_COUNT];
     uint32_t pickup_nodes_count = fw64_scene_find_nodes_with_layer_mask(scene, FW64_layer_pickups, &pickup_nodes[0], MAX_PICKUP_COUNT);
@@ -78,8 +90,14 @@ void pickups_add_from_scene(Pickups* pickups, fw64Scene* scene) {
         fw64Node* node = pickup_nodes[i];
         PickupType pickup_type = (PickupType)node->data;
 
-        if (!pickups_add(pickups, pickup_type, get_pickup_amount(pickup_type), node))
+        if (pickup_type == PICKUP_TYPE_RANDOM) {
+            pickup_type = random_pickup_types[fw64_random_int_in_range(0, RANDOM_AMMO_TYPES_COUNT - 1)];
+        }
+
+        if (!pickups_add(pickups, pickup_type, get_pickup_amount(pickup_type), node)) {
+            fw64_node_set_mesh(node, NULL);
             return;
+        }
 
         fw64_node_set_mesh(node, pickups->meshes[pickup_type]);
     }

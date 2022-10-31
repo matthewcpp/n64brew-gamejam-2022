@@ -186,9 +186,9 @@ void interior_load_room(InteriorLevel* level, int index, int room_scene, Vec3* p
     fw64_level_chunk_info_init(&info);
     info.scene_id = room_scenes[room_scene];
     info.allocator = &level->allocators[index].interface;
-    level->room_handles[index] = fw64_level_load_chunk_at_pos(&level->base.level, &info, pos);
+    level->room_handles[index] = fw64_level_load_chunk_at_pos(&level->base.level, &info, pos)->handle;
 
-	fw64Scene* scene = fw64_level_get_chunk_by_handle(&level->base.level, level->room_handles[index]);
+	fw64Scene* scene = fw64_level_get_chunk_by_handle(&level->base.level, level->room_handles[index])->scene;
 	uint32_t node_id;
 	switch(room_scene) {
 		case 0:

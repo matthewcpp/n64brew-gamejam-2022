@@ -3,7 +3,7 @@
 #include "player.h"
 #include "framework64/engine.h"
 
-#define MAX_PICKUP_COUNT 8
+#define MAX_PICKUP_COUNT 9
 #define PICKUP_DISTANCE_SQ 36.0f
 
 typedef enum {
@@ -14,6 +14,7 @@ typedef enum {
     PICKUP_TYPE_MAX_UZI_AMMO,
     PICKUP_TYPE_AR15_AMMO,
     PICKUP_TYPE_MAX_AR15_AMMO,
+    PICKUP_TYPE_RANDOM,
     PICKUP_TYPE_COUNT
 } PickupType;
 

@@ -6,6 +6,7 @@
 #include "framework64/n64/controller_button.h"
 
 #define ROTATION_SPEED 90.0f
+#define ZOMBIE_COUNT 7
 
 static fw64Scene* load_scene(TestLevel* level);
 static void init_weapon_pickups(TestLevel* level, fw64Scene* scene);
@@ -35,8 +36,8 @@ static fw64Scene* load_scene(TestLevel* level) {
 
     info.scene_id = FW64_ASSET_scene_spooky_level;
     info.allocator = level->base.allocator;
-    uint32_t chunk_handle = fw64_level_load_chunk(&level->base.level, &info);
-    return fw64_level_get_chunk_by_handle(&level->base.level, chunk_handle);
+    fw64LevelChunckRef* chunk_ref = fw64_level_load_chunk(&level->base.level, &info);
+    return chunk_ref->scene;
 }
 
 void test_level_uninit(TestLevel* level) {
@@ -47,8 +48,8 @@ void test_level_uninit(TestLevel* level) {
 void test_level_update(TestLevel* level){
     level_base_update(&level->base);
 
-    if (level->zombie_spawner.active_zombies < 5) {
-        zombie_spawner_spawn_now(&level->zombie_spawner, 5 - level->zombie_spawner.active_zombies);
+    if (level->zombie_spawner.active_zombies < ZOMBIE_COUNT) {
+        zombie_spawner_spawn_now(&level->zombie_spawner, ZOMBIE_COUNT - level->zombie_spawner.active_zombies);
     }
 
     zombie_spawner_update(&level->zombie_spawner);

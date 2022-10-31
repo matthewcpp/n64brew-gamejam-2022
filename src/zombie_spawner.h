@@ -32,4 +32,5 @@ void zombie_spawner_draw(ZombieSpawner* spawner);
 void zombie_spawner_add_node(ZombieSpawner* spawner, fw64Node* node); // add new spawn point
 void zombie_spawner_remove_node(ZombieSpawner* spawner, fw64Node* node);
 void zombie_spawner_spawn_now(ZombieSpawner* spawner, uint8_t number_to_spawn);
-void zombie_spawner_spawn_at_pos(ZombieSpawner* spawner, uint8_t number_to_spawn, Vec3* pos);
+void zombie_spawner_spawn_at_pos(ZombieSpawner* spawner, uint8_t number_to_spawn, Vec3* pos, uint32_t tag);
+void zombie_spawner_remove_with_tag(ZombieSpawner* spawner, uint32_t tag);

@@ -14,6 +14,7 @@
 #include "level_base.h"
 #include "mesh_collection.h"
 #include "zombie_spawner.h"
+#include "zombie_control.h"
 
 #include "framework64/vec3.h"
 #include "framework64/level.h"
@@ -38,6 +39,7 @@ typedef struct {
     MeshCollection mesh_collection;
     Compass compass;
     ZombieSpawner zombie_spawner;
+    ZombieControl zombie_control;
 } TilesTestLevel;
 
 void tiles_test_level_init(TilesTestLevel* level, fw64Engine* engine, GameData* game_data, fw64Allocator* state_allocator);

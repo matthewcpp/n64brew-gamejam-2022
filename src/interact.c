@@ -22,10 +22,10 @@ static fw64Scene* get_active_scene(Interaction* interaction) {
     uint32_t chunk_count = fw64_level_get_chunk_count(interaction->level);
 
     for (uint32_t i = 0; i < chunk_count; i++) {
-        fw64Scene* scene = fw64_level_get_chunk_by_index(interaction->level, i);
+        fw64LevelChunckRef* ref = fw64_level_get_chunk_by_index(interaction->level, i);
 
-        if (box_contains_point(fw64_scene_get_initial_bounds(scene), &interaction->target->position)) {
-            return scene;
+        if (box_contains_point(fw64_scene_get_initial_bounds(ref->scene), &interaction->target->position)) {
+            return ref->scene;
         }
     }
 
