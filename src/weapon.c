@@ -35,19 +35,19 @@ static void init_ar15_info(WeaponInfo* weapon) {
     weapon->type = WEAPON_TYPE_AR15;
     weapon->fire_rate = 0.333f;
     weapon->dry_fire_rate = 0.333f;
-    weapon->gunshot_sound = sound_bank_sounds_rifle_shot;
-    weapon->last_round_sound = sound_bank_sounds_rifle_shot;
-    weapon->reload_sound = sound_bank_sounds_rifle_reload;
-    weapon->empty_mag_sound = sound_bank_sounds_rifle_empty;
+    weapon->gunshot_sound = sound_bank_sounds_mp5_shoot;
+    weapon->last_round_sound = sound_bank_sounds_mp5_shoot;
+    weapon->reload_sound = sound_bank_sounds_mp5_reload;
+    weapon->empty_mag_sound = sound_bank_sounds_mp5_empty;
     
-    vec3_set(&weapon->default_position, 2.58f, -3.01f, -6.74f);
-    vec3_set(&weapon->lowered_position, 2.58f, -9.25f, -6.74f);
-    vec3_set_all(&weapon->default_scale, 0.1f);
+    vec3_set(&weapon->default_position, 2.54f, -3.47f, -8.49f);
+    vec3_set(&weapon->lowered_position, 2.54f, -9.25f, -8.49f);
+    vec3_set_all(&weapon->default_scale, 0.02f);
     quat_ident(&weapon->default_rotation);
 
-    vec3_set(&weapon->ejection_port_pos, 2.8f, -2.13f, -5.74f);
+    vec3_set(&weapon->ejection_port_pos, 2.53f, -1.64f, -6.40f);
 
-    vec3_set(&weapon->recoil_pos, 2.58f, -3.01f, -5.74f);
+    vec3_set(&weapon->recoil_pos, 2.54f, -3.47f, -6.50);
     weapon->recoil_time = 0.10f;
 
     weapon->mag_size = 30;
@@ -144,9 +144,9 @@ void weapon_init_handgun(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocato
 }
 
 void weapon_init_ar15(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator) {
-    weapon->mesh = fw64_mesh_load(assets, FW64_ASSET_mesh_us_ar33, allocator);
+    weapon->mesh = fw64_mesh_load(assets, FW64_ASSET_mesh_mp5, allocator);
     weapon->casing = fw64_mesh_load(assets, FW64_ASSET_mesh_9mm_round, allocator);
-    weapon->muzzle_flash = fw64_mesh_load(assets, FW64_ASSET_mesh_ar15_muzzle_flash, allocator);
+    weapon->muzzle_flash = fw64_mesh_load(assets, FW64_ASSET_mesh_mp5_muzzle_flash, allocator);
     weapon->crosshair = fw64_texture_create_from_image(fw64_image_load(assets, FW64_ASSET_image_crosshair, allocator), allocator);
     clamp_textures(weapon->muzzle_flash);
 

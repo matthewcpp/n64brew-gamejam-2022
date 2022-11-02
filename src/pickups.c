@@ -27,7 +27,7 @@ void pickups_init(Pickups* pickups, fw64Engine* engine, Player* player, fw64Allo
     pickups->meshes[PICKUP_TYPE_UZI_AMMO] = fw64_mesh_load(engine->assets, FW64_ASSET_mesh_uzi_pickup, allocator);
     pickups->meshes[PICKUP_TYPE_MAX_UZI_AMMO] = pickups->meshes[PICKUP_TYPE_UZI_AMMO];
 
-    pickups->meshes[PICKUP_TYPE_AR15_AMMO] = fw64_mesh_load(engine->assets, FW64_ASSET_mesh_ar15_pickup, allocator);
+    pickups->meshes[PICKUP_TYPE_AR15_AMMO] = fw64_mesh_load(engine->assets, FW64_ASSET_mesh_mp5_pickup, allocator);
     pickups->meshes[PICKUP_TYPE_MAX_AR15_AMMO] = pickups->meshes[PICKUP_TYPE_AR15_AMMO];
 }
 
