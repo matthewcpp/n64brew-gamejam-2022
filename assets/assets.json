@@ -10,13 +10,13 @@
             "src": "handgun_muzzle_flash/handgun_muzzle_flash.gltf"
         },
         {
-            "src": "us_ar33/us_ar33.gltf"
+            "src": "mp5/mp5.gltf"
         },
         {
-            "src": "ar15_muzzle_flash/ar15_muzzle_flash.gltf"
+            "src": "mp5_muzzle_flash/mp5_muzzle_flash.gltf"
         },
         {
-            "src": "ar15_pickup/ar15_pickup.gltf"
+            "src": "mp5_pickup/mp5_pickup.gltf"
         },
         {
             "src": "uzi/uzi.gltf"

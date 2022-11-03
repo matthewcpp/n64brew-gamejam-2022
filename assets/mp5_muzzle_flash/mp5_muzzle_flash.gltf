@@ -1,6 +1,6 @@
 {
     "asset" : {
-        "generator" : "Khronos glTF Blender I/O v3.2.40",
+        "generator" : "Khronos glTF Blender I/O v3.3.32",
         "version" : "2.0"
     },
     "scene" : 0,
@@ -15,7 +15,7 @@
     "nodes" : [
         {
             "mesh" : 0,
-            "name" : "AR15_MuzzleFlash"
+            "name" : "MP5_MuzzleFlash"
         }
     ],
     "materials" : [
@@ -50,7 +50,7 @@
     ],
     "meshes" : [
         {
-            "name" : "AR15_MuzzleFlash",
+            "name" : "MP5_MuzzleFlash",
             "primitives" : [
                 {
                     "attributes" : {
@@ -86,13 +86,13 @@
     "images" : [
         {
             "mimeType" : "image/png",
-            "name" : "AR15MuzzleFlash_Bottom",
-            "uri" : "AR15MuzzleFlash_Bottom.png"
+            "name" : "MP5MuzzleFlash_Bottom",
+            "uri" : "MP5MuzzleFlash_Bottom.png"
         },
         {
             "mimeType" : "image/png",
-            "name" : "AR15MuzzleFlash_Top",
-            "uri" : "AR15MuzzleFlash_Top.png"
+            "name" : "MP5MuzzleFlash_Top",
+            "uri" : "MP5MuzzleFlash_Top.png"
         }
     ],
     "accessors" : [
@@ -101,14 +101,14 @@
             "componentType" : 5126,
             "count" : 6,
             "max" : [
-                11.631609916687012,
-                21.813621520996094,
-                -62.85810470581055
+                74.79238891601562,
+                159.3416748046875,
+                -340.9477233886719
             ],
             "min" : [
-                -0.999999463558197,
-                -4.818543910980225,
-                -66.5303726196289
+                1.2400097846984863,
+                4.265705108642578,
+                -362.3309020996094
             ],
             "type" : "VEC3"
         },
@@ -135,14 +135,14 @@
             "componentType" : 5126,
             "count" : 6,
             "max" : [
-                -0.999999463558197,
-                21.813621520996094,
-                -62.85810470581055
+                1.2400097846984863,
+                159.3416748046875,
+                -340.9477233886719
             ],
             "min" : [
-                -13.631609916687012,
-                -4.818543910980225,
-                -66.5303726196289
+                -72.3123779296875,
+                4.265705108642578,
+                -362.3309020996094
             ],
             "type" : "VEC3"
         },
@@ -169,42 +169,50 @@
         {
             "buffer" : 0,
             "byteLength" : 72,
-            "byteOffset" : 0
+            "byteOffset" : 0,
+            "target" : 34962
         },
         {
             "buffer" : 0,
             "byteLength" : 72,
-            "byteOffset" : 72
+            "byteOffset" : 72,
+            "target" : 34962
         },
         {
             "buffer" : 0,
             "byteLength" : 48,
-            "byteOffset" : 144
+            "byteOffset" : 144,
+            "target" : 34962
         },
         {
             "buffer" : 0,
             "byteLength" : 12,
-            "byteOffset" : 192
+            "byteOffset" : 192,
+            "target" : 34963
         },
         {
             "buffer" : 0,
             "byteLength" : 72,
-            "byteOffset" : 204
+            "byteOffset" : 204,
+            "target" : 34962
         },
         {
             "buffer" : 0,
             "byteLength" : 72,
-            "byteOffset" : 276
+            "byteOffset" : 276,
+            "target" : 34962
         },
         {
             "buffer" : 0,
             "byteLength" : 48,
-            "byteOffset" : 348
+            "byteOffset" : 348,
+            "target" : 34962
         },
         {
             "buffer" : 0,
             "byteLength" : 12,
-            "byteOffset" : 396
+            "byteOffset" : 396,
+            "target" : 34963
         }
     ],
     "samplers" : [
@@ -216,7 +224,7 @@
     "buffers" : [
         {
             "byteLength" : 408,
-            "uri" : "ar15_muzzle_flash.bin"
+            "uri" : "mp5_muzzle_flash.bin"
         }
     ]
 }

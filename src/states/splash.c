@@ -4,7 +4,7 @@
 #include "assets/assets.h"
 #include "assets/sound_bank_sounds.h"
 
-#define LEVEL_MEMORY_POOL_SIZE (400 * 1024)
+#define LEVEL_MEMORY_POOL_SIZE (450 * 1024)
 #define SPLASH_STATE_DURATION 6.0f
 #define SPLASH_STATE_FADE_IN_END 2.0f
 #define SPLASH_STATE_FADE_OUT_START 4.0f

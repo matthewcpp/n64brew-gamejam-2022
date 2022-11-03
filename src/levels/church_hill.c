@@ -21,8 +21,8 @@ void hill_level_init(HillLevel* level, fw64Engine* engine, GameData* game_data, 
 
     fw64Node* start_node = fw64_scene_get_node(scene, FW64_scene_church_hill_node_Player_Start);
     player_set_position(&level->base.player, &start_node->transform.position);
-    player_add_ammo(&level->base.player, WEAPON_TYPE_AR15, 320);
-    player_set_weapon(&level->base.player, WEAPON_TYPE_AR15);
+    player_add_ammo(&level->base.player, WEAPON_TYPE_MP5, 320);
+    player_set_weapon(&level->base.player, WEAPON_TYPE_MP5);
 
     zombie_spawner_init(&level->zombie_spawner, engine, &level->base.level, &level->base.player.movement.camera.transform, level->base.allocator);
     zombie_spawner_add_node(&level->zombie_spawner,fw64_scene_get_node(scene, FW64_scene_church_hill_node_Zombie_Spawn_1));
