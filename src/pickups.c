@@ -27,14 +27,14 @@ void pickups_init(Pickups* pickups, fw64Engine* engine, Player* player, fw64Allo
     pickups->meshes[PICKUP_TYPE_UZI_AMMO] = fw64_mesh_load(engine->assets, FW64_ASSET_mesh_uzi_pickup, allocator);
     pickups->meshes[PICKUP_TYPE_MAX_UZI_AMMO] = pickups->meshes[PICKUP_TYPE_UZI_AMMO];
 
-    pickups->meshes[PICKUP_TYPE_AR15_AMMO] = fw64_mesh_load(engine->assets, FW64_ASSET_mesh_mp5_pickup, allocator);
-    pickups->meshes[PICKUP_TYPE_MAX_AR15_AMMO] = pickups->meshes[PICKUP_TYPE_AR15_AMMO];
+    pickups->meshes[PICKUP_TYPE_MP5_AMMO] = fw64_mesh_load(engine->assets, FW64_ASSET_mesh_mp5_pickup, allocator);
+    pickups->meshes[PICKUP_TYPE_MAX_MP5_AMMO] = pickups->meshes[PICKUP_TYPE_MP5_AMMO];
 }
 
 void pickups_uninit(Pickups* pickups) {
     fw64_mesh_delete(pickups->engine->assets, pickups->meshes[PICKUP_TYPE_SHOTGUN_AMMO], pickups->allocator);
     fw64_mesh_delete(pickups->engine->assets, pickups->meshes[PICKUP_TYPE_UZI_AMMO], pickups->allocator);
-    fw64_mesh_delete(pickups->engine->assets, pickups->meshes[PICKUP_TYPE_AR15_AMMO], pickups->allocator);
+    fw64_mesh_delete(pickups->engine->assets, pickups->meshes[PICKUP_TYPE_MP5_AMMO], pickups->allocator);
 }
 
 void pickups_set_callback(Pickups* pickups, PickupCallback callback, void* arg) {
@@ -151,12 +151,12 @@ int get_pickup_amount(PickupType pickup_type) {
             weapon_info = weapon_get_info(WEAPON_TYPE_UZI);
             return weapon_info->mag_size + weapon_info->max_additional_rounds;
 
-        case PICKUP_TYPE_AR15_AMMO:
-            weapon_info = weapon_get_info(WEAPON_TYPE_AR15);
+        case PICKUP_TYPE_MP5_AMMO:
+            weapon_info = weapon_get_info(WEAPON_TYPE_MP5);
             return weapon_info->mag_size;
 
-        case PICKUP_TYPE_MAX_AR15_AMMO:
-            weapon_info = weapon_get_info(WEAPON_TYPE_AR15);
+        case PICKUP_TYPE_MAX_MP5_AMMO:
+            weapon_info = weapon_get_info(WEAPON_TYPE_MP5);
             return weapon_info->mag_size + weapon_info->max_additional_rounds;
 
         case PICKUP_TYPE_NONE:
@@ -192,12 +192,12 @@ int process_pickup(Pickups* pickups, Pickup* pickup) {
             picked_up = pickup_max_ammo(pickups->player, WEAPON_TYPE_UZI);
             break;
 
-        case PICKUP_TYPE_AR15_AMMO:
-            picked_up = pickup_ammo(pickups->player, WEAPON_TYPE_AR15);
+        case PICKUP_TYPE_MP5_AMMO:
+            picked_up = pickup_ammo(pickups->player, WEAPON_TYPE_MP5);
             break;
 
-        case PICKUP_TYPE_MAX_AR15_AMMO:
-            picked_up = pickup_max_ammo(pickups->player, WEAPON_TYPE_AR15);
+        case PICKUP_TYPE_MAX_MP5_AMMO:
+            picked_up = pickup_max_ammo(pickups->player, WEAPON_TYPE_MP5);
             break;
 
         case PICKUP_TYPE_NONE:
