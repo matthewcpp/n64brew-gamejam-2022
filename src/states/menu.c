@@ -11,7 +11,7 @@
 
 #include <stdio.h>
 
-#define LEVEL_MEMORY_POOL_SIZE (400 * 1024)
+#define LEVEL_MEMORY_POOL_SIZE (450 * 1024)
 #define IMAGE_ALLOCATOR_BUFFER_SIZE (175 * 1024)
 
 static void main_menu_draw(Menu* menu);

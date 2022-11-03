@@ -5,7 +5,7 @@
 #include "assets/assets.h"
 #include "assets/sound_bank_sounds.h"
 
-#define LEVEL_MEMORY_POOL_SIZE (400 * 1024)
+#define LEVEL_MEMORY_POOL_SIZE (450 * 1024)
 
 #define TEXT_EFFECT_DURATION 3.0f
 

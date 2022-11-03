@@ -1,7 +1,7 @@
 #include "playing.h"
 #include "framework64/random.h"
 
-#define LEVEL_MEMORY_POOL_SIZE (400 * 1024)
+#define LEVEL_MEMORY_POOL_SIZE (450 * 1024)
 
 static void switch_to_level(Playing* state, Level level);
 
