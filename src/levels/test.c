@@ -20,8 +20,8 @@ void test_level_init(TestLevel* level, fw64Engine* engine, GameData* game_data, 
     fw64Node* player_spawn_node = fw64_scene_get_node(scene, FW64_scene_spooky_level_node_Player_Spawn);
     player_set_position(&level->base.player, &player_spawn_node->transform.position);
 
-    player_add_ammo(&level->base.player, WEAPON_TYPE_HANDGUN, 90);
-    player_set_weapon(&level->base.player, WEAPON_TYPE_HANDGUN);
+    player_add_ammo(&level->base.player, WEAPON_TYPE_1911, 90);
+    player_set_weapon(&level->base.player, WEAPON_TYPE_1911);
 
     fw64Renderer* renderer = engine->renderer;
     fw64_renderer_set_clear_color(renderer, 20, 4, 40);

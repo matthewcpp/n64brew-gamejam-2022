@@ -69,7 +69,7 @@ static void ui_draw_player_ammo_status(UI* ui, WeaponType weapon_type) {
 
     char ammo_text[16];
 
-    if (weapon_type == WEAPON_TYPE_HANDGUN)
+    if (weapon_type == WEAPON_TYPE_1911)
         sprintf(ammo_text, "%d", weapon_ammo->current_mag_count);
     else
         sprintf(ammo_text, "%d / %d", weapon_ammo->current_mag_count, weapon_ammo->additional_rounds_count);

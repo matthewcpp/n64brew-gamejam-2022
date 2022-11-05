@@ -4,10 +4,10 @@
             "src": "n64_logo_model/n64_logo.gltf"
         },
         {
-            "src": "handgun/handgun.gltf"
+            "src": "1911/1911.gltf"
         },
         {
-            "src": "handgun_muzzle_flash/handgun_muzzle_flash.gltf"
+            "src": "1911_muzzle_flash/1911_muzzle_flash.gltf"
         },
         {
             "src": "mp5/mp5.gltf"

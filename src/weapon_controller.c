@@ -245,8 +245,8 @@ void weapon_controller_set_weapon(WeaponController* controller, WeaponType weapo
 
     Weapon* weapon = &controller->weapon;
     switch(weapon_type) {
-        case WEAPON_TYPE_HANDGUN:
-            weapon_init_handgun(weapon, controller->engine->assets, &controller->weapon_allocator.interface);
+        case WEAPON_TYPE_1911:
+            weapon_init_1911(weapon, controller->engine->assets, &controller->weapon_allocator.interface);
         break;
 
         case WEAPON_TYPE_MP5:
