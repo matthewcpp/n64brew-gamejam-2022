@@ -7,8 +7,8 @@
 
 static WeaponInfo weapon_infos[WEAPON_COUNT];
 
-static void init_handgun_info(WeaponInfo* weapon) {
-    weapon->type = WEAPON_TYPE_HANDGUN;
+static void init_1911_info(WeaponInfo* weapon) {
+    weapon->type = WEAPON_TYPE_1911;
     weapon->fire_rate = 0.5f;
     weapon->dry_fire_rate = 0.3f;
 
@@ -108,7 +108,7 @@ WeaponInfo* weapon_get_info(WeaponType weapon_type) {
 
 void init_weapon_info() {
     memset(&weapon_infos[WEAPON_TYPE_NONE], 0 , sizeof(WeaponInfo));
-    init_handgun_info(weapon_get_info(WEAPON_TYPE_HANDGUN));
+    init_1911_info(weapon_get_info(WEAPON_TYPE_1911));
     init_mp5_info(weapon_get_info(WEAPON_TYPE_MP5));
     init_shotgun_info(weapon_get_info(WEAPON_TYPE_SHOTGUN));
     init_uzi_info(weapon_get_info(WEAPON_TYPE_UZI));
@@ -134,14 +134,14 @@ static void clamp_textures(fw64Mesh* mesh) {
     }
 }
 
-void weapon_init_handgun(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator) {
+void weapon_init_1911(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator) {
     weapon->mesh = fw64_mesh_load(assets, FW64_ASSET_mesh_1911, allocator);
     weapon->casing = fw64_mesh_load(assets, FW64_ASSET_mesh_9mm_round, allocator);
     weapon->muzzle_flash = fw64_mesh_load(assets, FW64_ASSET_mesh_1911_muzzle_flash, allocator);
     weapon->crosshair = fw64_texture_create_from_image(fw64_image_load(assets, FW64_ASSET_image_crosshair, allocator), allocator);
     clamp_textures(weapon->muzzle_flash);
 
-    weapon->info = &weapon_infos[WEAPON_TYPE_HANDGUN];
+    weapon->info = &weapon_infos[WEAPON_TYPE_1911];
 }
 
 void weapon_init_mp5(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator) {

@@ -8,7 +8,7 @@
 
 typedef enum {
     WEAPON_TYPE_NONE,
-    WEAPON_TYPE_HANDGUN,
+    WEAPON_TYPE_1911,
     WEAPON_TYPE_MP5,
     WEAPON_TYPE_SHOTGUN,
     WEAPON_TYPE_UZI,
@@ -49,7 +49,7 @@ typedef struct {
 */
 void weapon_init(Weapon* weapon);
 void weapon_init_none(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator);
-void weapon_init_handgun(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator);
+void weapon_init_1911(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator);
 void weapon_init_mp5(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator);
 void weapon_init_shotgun(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator);
 void weapon_init_uzi(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator);
