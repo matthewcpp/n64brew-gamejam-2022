@@ -17,14 +17,14 @@ static void init_handgun_info(WeaponInfo* weapon) {
     weapon->reload_sound = sound_bank_sounds_handgun_reload;
     weapon->empty_mag_sound = sound_bank_sounds_handgun_empty;
 
-    vec3_set(&weapon->default_position, 1.966, -2.44f, -4.87f);
-    vec3_set(&weapon->lowered_position, 1.96f, -4.82f, -4.87f);
+    vec3_set(&weapon->default_position, 2.19f, -2.61f, -5.6f);
+    vec3_set(&weapon->lowered_position, 2.19f, -5.8f, -5.6f);
     vec3_set_all(&weapon->default_scale, 0.01f);
     quat_ident(&weapon->default_rotation);
 
-    vec3_set(&weapon->ejection_port_pos, 2.6f, -1.983f, -5.241f);
+    vec3_set(&weapon->ejection_port_pos, 2.37f, -2.08f, -5.72f);
 
-    vec3_set(&weapon->recoil_pos, 1.966, -2.44f, -4.545);
+    vec3_set(&weapon->recoil_pos, 2.19f, -2.61f, -5.0f);
     weapon->recoil_time = 0.12f;
 
     weapon->mag_size = 15;
@@ -41,7 +41,7 @@ static void init_mp5_info(WeaponInfo* weapon) {
     weapon->empty_mag_sound = sound_bank_sounds_mp5_empty;
     
     vec3_set(&weapon->default_position, 3.65f, -4.52f, -11.18f);
-    vec3_set(&weapon->recoil_pos, 3.65f, -4.52f, -8.50);
+    vec3_set(&weapon->recoil_pos, 3.65f, -4.52f, -10.18);
     vec3_set(&weapon->lowered_position, 3.65f, -13.4f, -11.18f);
     vec3_set_all(&weapon->default_scale, 0.02f);
     quat_ident(&weapon->default_rotation);
@@ -89,7 +89,7 @@ static void init_uzi_info(WeaponInfo* weapon) {
     weapon->empty_mag_sound = sound_bank_sounds_uzi_empty;
 
     vec3_set(&weapon->default_position, 1.966, -2.44f, -4.87f);
-    vec3_set(&weapon->lowered_position, 1.96f, -4.82f, -4.87f);
+    vec3_set(&weapon->lowered_position, 1.96f, -5.10f, -4.87f);
     vec3_set_all(&weapon->default_scale, 0.01f);
     quat_ident(&weapon->default_rotation);
 
@@ -135,9 +135,9 @@ static void clamp_textures(fw64Mesh* mesh) {
 }
 
 void weapon_init_handgun(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator) {
-    weapon->mesh = fw64_mesh_load(assets, FW64_ASSET_mesh_handgun, allocator);
+    weapon->mesh = fw64_mesh_load(assets, FW64_ASSET_mesh_1911, allocator);
     weapon->casing = fw64_mesh_load(assets, FW64_ASSET_mesh_9mm_round, allocator);
-    weapon->muzzle_flash = fw64_mesh_load(assets, FW64_ASSET_mesh_handgun_muzzle_flash, allocator);
+    weapon->muzzle_flash = fw64_mesh_load(assets, FW64_ASSET_mesh_1911_muzzle_flash, allocator);
     weapon->crosshair = fw64_texture_create_from_image(fw64_image_load(assets, FW64_ASSET_image_crosshair, allocator), allocator);
     clamp_textures(weapon->muzzle_flash);
 
