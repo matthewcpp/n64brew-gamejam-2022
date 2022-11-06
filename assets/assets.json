@@ -189,7 +189,7 @@
             "size": 16,
             "name": "menu",
             "imageFormat": "rgba32",
-            "sourceString": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz 0123456789.>"
+            "sourceString": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz 0123456789:.>"
         },
         {
             "src": "texgyreadventor-bold.ttf",
