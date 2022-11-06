@@ -25,7 +25,9 @@ typedef struct {
 	fw64Camera camera;
 	GameData* game_data;
 	fw64Texture* bg;
+	fw64Texture* axis_arrows;
 	fw64Font* font;
+	fw64Font* font_small;
 	MenuScreen current_menu;
 	int menu_choice;
 	int control_scheme;

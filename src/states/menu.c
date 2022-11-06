@@ -34,9 +34,11 @@ void game_state_menu_init(Menu* menu, fw64Engine* engine, GameData* game_data) {
 	mapped_input_set_map_layout(&menu->game_data->player_data.input_map, menu->control_scheme);
 
 	menu->font = fw64_font_load(engine->assets, FW64_ASSET_font_menu, &menu->bump_allocator.interface);
+	menu->font_small = fw64_font_load(engine->assets, FW64_ASSET_font_menu_small, &menu->bump_allocator.interface);
 	fw64_audio_play_music(engine->audio, music_bank_music_menu);
 
 	menu->bg = NULL;
+	menu->axis_arrows = NULL;
 	set_menu_screen(menu, MENU_SCREEN_MAIN);
 }
 
@@ -65,7 +67,7 @@ void game_state_menu_uninit(Menu* menu) {
 	fw64_audio_stop_music(menu->engine->audio);
 	set_menu_screen(menu, MENU_SCREEN_NONE);
 	fw64_font_delete(menu->engine->assets, menu->font, &menu->bump_allocator.interface);
-	
+	fw64_font_delete(menu->engine->assets, menu->font_small, &menu->bump_allocator.interface);
 	fw64_bump_allocator_uninit(&menu->image_allocator);
 	fw64_bump_allocator_uninit(&menu->bump_allocator);
 	fw64_audio_stop_music(menu->engine->audio);
@@ -78,11 +80,18 @@ static void set_menu_screen(Menu* menu, MenuScreen screen) {
 		fw64_texture_delete(menu->bg, &menu->image_allocator.interface);
 		menu->bg = NULL;
 	}
+	if (menu->axis_arrows) {
+		fw64Image* image = fw64_texture_get_image(menu->axis_arrows);
+		fw64_image_delete(menu->engine->assets, image, &menu->image_allocator.interface);
+		fw64_texture_delete(menu->axis_arrows, &menu->image_allocator.interface);
+		menu->axis_arrows = NULL;
+	}
 
 	fw64_bump_allocator_reset(&menu->image_allocator);
 	menu->current_menu = screen;
 
 	fw64AssetId asset_id = FW64_INVALID_ASSET_ID;
+	fw64AssetId arrows_asset_id = FW64_INVALID_ASSET_ID;
 
 	switch (menu->current_menu)
 	{
@@ -92,6 +101,7 @@ static void set_menu_screen(Menu* menu, MenuScreen screen) {
 
 		case MENU_SCREEN_CONTROLS:
 			asset_id = FW64_ASSET_image_menu_controls;
+			arrows_asset_id = FW64_ASSET_image_axis_arrows;
 			break;
 	}
 
@@ -99,6 +109,12 @@ static void set_menu_screen(Menu* menu, MenuScreen screen) {
 		fw64Image* bg_image = fw64_image_load(menu->engine->assets, asset_id, &menu->image_allocator.interface);
 		menu->bg = fw64_texture_create_from_image(bg_image, &menu->image_allocator.interface);
 	}
+
+	if (arrows_asset_id != FW64_INVALID_ASSET_ID) {
+		fw64Image* arrows_image = fw64_image_load(menu->engine->assets, arrows_asset_id, &menu->image_allocator.interface);
+		menu->axis_arrows = fw64_texture_create_from_image(arrows_image, &menu->image_allocator.interface);
+	}
+
 }
 
 static void start_playing(Menu* menu, Level level) {
@@ -239,8 +255,8 @@ void controls_menu_draw(Menu* menu) {
 	IVec2 screen_size;
 	fw64_renderer_get_screen_size(menu->engine->renderer, &screen_size);
 	int x;
-	int y = 20;
-	int y_advance = 24;
+	int y = 16;
+	int y_advance = 20;
 	char text[20] = {0};
 
 	sprintf(text, "Control Scheme:");
@@ -250,19 +266,83 @@ void controls_menu_draw(Menu* menu) {
 
 	switch(menu->control_scheme) {
 		case INPUT_MAP_LAYOUT_PERFECTEYE:
+			fw64_renderer_set_fill_color(menu->engine->renderer, 224, 224, 224, 255);
 			sprintf(text, "Perfect Eye");
+			dimensions = fw64_font_measure_text(menu->font, text);
+			x = (screen_size.x / 2) - (dimensions.x / 2);
+			fw64_renderer_draw_text(menu->engine->renderer, menu->font, x, y + y_advance, text);
+			fw64_renderer_set_fill_color(menu->engine->renderer, 192, 192, 0, 255);
+			if(menu->axis_arrows) {
+				fw64_renderer_draw_sprite(menu->engine->renderer, menu->axis_arrows, 60, 94);
+				fw64_renderer_draw_sprite(menu->engine->renderer, menu->axis_arrows, 240, 92);
+				fw64_renderer_draw_sprite(menu->engine->renderer, menu->axis_arrows, 194, 200);
+			}
+			sprintf(text, "Look");
+			x = 36;
+			y = 94;
+			fw64_renderer_draw_text(menu->engine->renderer, menu->font_small, x, y, text);
+			x = 258;
+			y = 92;
+			fw64_renderer_draw_text(menu->engine->renderer, menu->font_small, x, y, text);
+			sprintf(text, "Strafe");
+			x = 24;
+			y = 110;
+			fw64_renderer_draw_text(menu->engine->renderer, menu->font_small, x, y, text);
+			x = 258;
+			y = 108;
+			fw64_renderer_draw_text(menu->engine->renderer, menu->font_small, x, y, text);
+			sprintf(text, "Move");
+			x = 210;
+			y = 200;
+			fw64_renderer_draw_text(menu->engine->renderer, menu->font_small, x, y, text);
+			sprintf(text, "Turn");
+			x = 210;
+			y = 216;
+			fw64_renderer_draw_text(menu->engine->renderer, menu->font_small, x, y, text);
+
 			break;
 		case INPUT_MAP_LAYOUT_MODERN_TWINSTICK:
+			fw64_renderer_set_fill_color(menu->engine->renderer, 224, 224, 224, 255);
 			sprintf(text, "Modern");
+			dimensions = fw64_font_measure_text(menu->font, text);
+			x = (screen_size.x / 2) - (dimensions.x / 2);
+			fw64_renderer_draw_text(menu->engine->renderer, menu->font, x, y + y_advance, text);
+			fw64_renderer_set_fill_color(menu->engine->renderer, 192, 192, 0, 255);
+			sprintf(text, "Look");
+			x = 48;
+			y = 102;
+			fw64_renderer_draw_text(menu->engine->renderer, menu->font_small, x, y, text);
+			x = 244;
+			y = 100;
+			fw64_renderer_draw_text(menu->engine->renderer, menu->font_small, x, y, text);
+			sprintf(text, "Move");
+			x = 196;
+			y = 206;
+			fw64_renderer_draw_text(menu->engine->renderer, menu->font_small, x, y, text);
 			break;
 		case INPUT_MAP_LAYOUT_MODERN_TWINSTICK_SWAPPED:
+			fw64_renderer_set_fill_color(menu->engine->renderer, 224, 224, 224, 255);
 			sprintf(text, "Modern Southpaw");
+			dimensions = fw64_font_measure_text(menu->font, text);
+			x = (screen_size.x / 2) - (dimensions.x / 2);
+			fw64_renderer_draw_text(menu->engine->renderer, menu->font, x, y + y_advance, text);
+			fw64_renderer_set_fill_color(menu->engine->renderer, 192, 192, 0, 255);
+			sprintf(text, "Move");
+			x = 48;
+			y = 102;
+			fw64_renderer_draw_text(menu->engine->renderer, menu->font_small, x, y, text);
+			x = 244;
+			y = 100;
+			fw64_renderer_draw_text(menu->engine->renderer, menu->font_small, x, y, text);
+			sprintf(text, "Look");
+			x = 196;
+			y = 206;
+			fw64_renderer_draw_text(menu->engine->renderer, menu->font_small, x, y, text);
+
 			break;
 		default:
 			break;
 	}
 
-	dimensions = fw64_font_measure_text(menu->font, text);
-	x = (screen_size.x / 2) - (dimensions.x / 2);
-	fw64_renderer_draw_text(menu->engine->renderer, menu->font, x, y + y_advance, text);
+
 }

@@ -114,6 +114,12 @@
             "resize": "320x240"
         },
         {
+            "src": "intro_bg/axis_arrows.png",
+            "hslices": 1,
+            "vslices": 1,
+            "format": "rgba32"
+        },
+        {
             "src": "you_died.png",
             "format": "rgba32",
             "hslices": 6,
@@ -190,6 +196,13 @@
             "name": "menu",
             "imageFormat": "rgba32",
             "sourceString": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz 0123456789:.>"
+        },
+        {
+            "src": "atwriter.ttf",
+            "size": 10,
+            "name": "menu_small",
+            "imageFormat": "rgba32",
+            "sourceString": "LookStrafeTurnMove "
         },
         {
             "src": "texgyreadventor-bold.ttf",
