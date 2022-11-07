@@ -11,6 +11,8 @@
 #define INPUT_MAP_ANALOG 2
 #define INPUT_MAP_ERROR -1
 
+#define DEFAULT_STICK_THRESHOLD 0.15f
+
 #define INPUT_MAP_TOTAL_ACTIONS 12
 #define INPUT_MAP_START 0x8001 //deconflict with both N64 and SDL mappings
 typedef enum {

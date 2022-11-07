@@ -1,7 +1,5 @@
 #include "mapped_input.h"
 
-#define DEFAULT_STICK_THRESHOLD 0.15f
-
 void mapped_input_init(InputMapping* mapping, fw64Input* fw64_input) {
 	mapping->fw64_input = fw64_input;
 	mapping->threshold.x = DEFAULT_STICK_THRESHOLD;

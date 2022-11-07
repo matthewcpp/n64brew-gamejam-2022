@@ -15,6 +15,8 @@ void player_data_init(PlayerData* data) {
         data->ammo[i].additional_rounds_count = 0;
     }
     mapped_input_set_map_layout(&data->input_map, INPUT_MAP_LAYOUT_MODERN_TWINSTICK); // does not set mapping's fw64Input*
+    Vec2 threshold = {DEFAULT_STICK_THRESHOLD, DEFAULT_STICK_THRESHOLD};
+    mapped_input_set_stick_threshold(&data->input_map, threshold);
     player_cool_stats_init(&data->stats);
 }
 
