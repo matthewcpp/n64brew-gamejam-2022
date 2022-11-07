@@ -6,19 +6,25 @@ static void player_cool_stats_init(PlayerCoolStats* stats) {
     memset(stats, 0, sizeof(PlayerCoolStats));
 }
 
-void player_data_init(PlayerData* data) {
-    fw64_transform_init(&data->transform);
+void player_data_reset(PlayerData* data) {
     data->health = PLAYER_MAX_HEALTH;
     data->equipped_weapon = WEAPON_TYPE_NONE;
     for(int i = 0; i < WEAPON_COUNT; i++) {
         data->ammo[i].current_mag_count = 0;
         data->ammo[i].additional_rounds_count = 0;
     }
+    player_cool_stats_init(&data->stats);
+}
+
+void player_data_init(PlayerData* data) {
+    player_data_reset(data);
+    fw64_transform_init(&data->transform);
     mapped_input_set_map_layout(&data->input_map, INPUT_MAP_LAYOUT_MODERN_TWINSTICK); // does not set mapping's fw64Input*
     Vec2 threshold = {DEFAULT_STICK_THRESHOLD, DEFAULT_STICK_THRESHOLD};
     mapped_input_set_stick_threshold(&data->input_map, threshold);
-    player_cool_stats_init(&data->stats);
 }
+
+
 
 static void door_data_init(DoorData* data) {
     data->city_cell.x = 0;

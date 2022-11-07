@@ -124,7 +124,7 @@ static void start_playing(Menu* menu, Level level) {
 	PlayerData* player_data = &menu->game_data->player_data;
 	WeaponInfo* handgun_info = weapon_get_info(WEAPON_TYPE_HANDGUN);
 
-	player_data_init(player_data);
+	player_data_reset(player_data);
 	player_data->equipped_weapon = WEAPON_TYPE_HANDGUN;
 	player_data->ammo[WEAPON_TYPE_HANDGUN].current_mag_count = handgun_info->mag_size;
 	player_data->ammo[WEAPON_TYPE_HANDGUN].additional_rounds_count = handgun_info->max_additional_rounds;

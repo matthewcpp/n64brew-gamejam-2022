@@ -13,6 +13,7 @@ void mapped_input_set_map_layout(InputMapping* mapping, InputMapLayout layout) {
 	mapping->buttons[INPUT_MAP_WEAPON_FIRE 		- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_Z;
 	mapping->buttons[INPUT_MAP_WEAPON_SWAP 		- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_B;
 	mapping->buttons[INPUT_MAP_WEAPON_RELOAD 	- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_R;
+	mapping->buttons[INPUT_MAP_WEAPON_RELOAD_2 	- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_L;
 	mapping->buttons[INPUT_MAP_INTERACT 		- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_A;
 
 	switch(layout) {
@@ -24,10 +25,18 @@ void mapped_input_set_map_layout(InputMapping* mapping, InputMapLayout layout) {
 			mapping->buttons[INPUT_MAP_MOVE_BACKWARD 	- INPUT_MAP_START] = INPUT_MAP_VSTICK_ANALOG_Y_NEG;
 			mapping->buttons[INPUT_MAP_MOVE_LEFT 		- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_C_LEFT;
 			mapping->buttons[INPUT_MAP_MOVE_RIGHT 		- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_C_RIGHT;
+			mapping->buttons[INPUT_MAP_MOVE_FORWARD_2 	- INPUT_MAP_START] = INPUT_MAP_INVALID;
+			mapping->buttons[INPUT_MAP_MOVE_BACKWARD_2 	- INPUT_MAP_START] = INPUT_MAP_INVALID;
+			mapping->buttons[INPUT_MAP_MOVE_LEFT_2 		- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_DPAD_LEFT;
+			mapping->buttons[INPUT_MAP_MOVE_RIGHT_2		- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_DPAD_RIGHT;
 			mapping->buttons[INPUT_MAP_LOOK_UP 			- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_C_UP;
 			mapping->buttons[INPUT_MAP_LOOK_DOWN 		- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_C_DOWN;
 			mapping->buttons[INPUT_MAP_LOOK_LEFT 		- INPUT_MAP_START] = INPUT_MAP_VSTICK_ANALOG_X_NEG;
 			mapping->buttons[INPUT_MAP_LOOK_RIGHT 		- INPUT_MAP_START] = INPUT_MAP_VSTICK_ANALOG_X_POS;
+			mapping->buttons[INPUT_MAP_LOOK_UP_2 		- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_DPAD_UP;
+			mapping->buttons[INPUT_MAP_LOOK_DOWN_2 		- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_DPAD_DOWN;
+			mapping->buttons[INPUT_MAP_LOOK_LEFT_2 		- INPUT_MAP_START] = INPUT_MAP_INVALID;
+			mapping->buttons[INPUT_MAP_LOOK_RIGHT_2		- INPUT_MAP_START] = INPUT_MAP_INVALID;
 			break;
 		case INPUT_MAP_LAYOUT_MODERN_TWINSTICK:
 			// Similar to a typical FPS control scheme for more modern controllers
@@ -37,23 +46,39 @@ void mapped_input_set_map_layout(InputMapping* mapping, InputMapLayout layout) {
 			mapping->buttons[INPUT_MAP_MOVE_BACKWARD 	- INPUT_MAP_START] = INPUT_MAP_VSTICK_ANALOG_Y_NEG;
 			mapping->buttons[INPUT_MAP_MOVE_LEFT 		- INPUT_MAP_START] = INPUT_MAP_VSTICK_ANALOG_X_NEG;
 			mapping->buttons[INPUT_MAP_MOVE_RIGHT 		- INPUT_MAP_START] = INPUT_MAP_VSTICK_ANALOG_X_POS;
+			mapping->buttons[INPUT_MAP_MOVE_FORWARD_2 	- INPUT_MAP_START] = INPUT_MAP_INVALID;
+			mapping->buttons[INPUT_MAP_MOVE_BACKWARD_2 	- INPUT_MAP_START] = INPUT_MAP_INVALID;
+			mapping->buttons[INPUT_MAP_MOVE_LEFT_2 		- INPUT_MAP_START] = INPUT_MAP_INVALID;
+			mapping->buttons[INPUT_MAP_MOVE_RIGHT_2		- INPUT_MAP_START] = INPUT_MAP_INVALID;
 			mapping->buttons[INPUT_MAP_LOOK_UP 			- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_C_UP;
 			mapping->buttons[INPUT_MAP_LOOK_DOWN 		- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_C_DOWN;
 			mapping->buttons[INPUT_MAP_LOOK_LEFT 		- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_C_LEFT;
 			mapping->buttons[INPUT_MAP_LOOK_RIGHT 		- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_C_RIGHT;
+			mapping->buttons[INPUT_MAP_LOOK_UP_2		- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_DPAD_UP;
+			mapping->buttons[INPUT_MAP_LOOK_DOWN_2 		- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_DPAD_DOWN;
+			mapping->buttons[INPUT_MAP_LOOK_LEFT_2 		- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_DPAD_LEFT;
+			mapping->buttons[INPUT_MAP_LOOK_RIGHT_2		- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_DPAD_RIGHT;
 			break;
 		case INPUT_MAP_LAYOUT_MODERN_TWINSTICK_SWAPPED:
 			// For those that have 1 stick and prefer precise aim at all times
 			// c-buttons move fwd/back and strafe
 			// analog stick looks up/down and turn left/right
-			mapping->buttons[INPUT_MAP_LOOK_UP		 	- INPUT_MAP_START] = INPUT_MAP_VSTICK_ANALOG_Y_POS;
-			mapping->buttons[INPUT_MAP_LOOK_DOWN	 	- INPUT_MAP_START] = INPUT_MAP_VSTICK_ANALOG_Y_NEG;
-			mapping->buttons[INPUT_MAP_LOOK_LEFT 		- INPUT_MAP_START] = INPUT_MAP_VSTICK_ANALOG_X_NEG;
-			mapping->buttons[INPUT_MAP_LOOK_RIGHT 		- INPUT_MAP_START] = INPUT_MAP_VSTICK_ANALOG_X_POS;
-			mapping->buttons[INPUT_MAP_MOVE_FORWARD 	- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_C_UP;
-			mapping->buttons[INPUT_MAP_MOVE_BACKWARD	- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_C_DOWN;
-			mapping->buttons[INPUT_MAP_MOVE_LEFT 		- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_C_LEFT;
+			mapping->buttons[INPUT_MAP_MOVE_FORWARD 	- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_C_UP;   
+			mapping->buttons[INPUT_MAP_MOVE_BACKWARD 	- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_C_DOWN; 
+			mapping->buttons[INPUT_MAP_MOVE_LEFT 		- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_C_LEFT; 
 			mapping->buttons[INPUT_MAP_MOVE_RIGHT 		- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_C_RIGHT;
+			mapping->buttons[INPUT_MAP_MOVE_FORWARD_2 	- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_DPAD_UP;   
+			mapping->buttons[INPUT_MAP_MOVE_BACKWARD_2 	- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_DPAD_DOWN; 
+			mapping->buttons[INPUT_MAP_MOVE_LEFT_2 		- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_DPAD_LEFT; 
+			mapping->buttons[INPUT_MAP_MOVE_RIGHT_2		- INPUT_MAP_START] = FW64_N64_CONTROLLER_BUTTON_DPAD_RIGHT;
+			mapping->buttons[INPUT_MAP_LOOK_UP 			- INPUT_MAP_START] = INPUT_MAP_VSTICK_ANALOG_Y_POS;     
+			mapping->buttons[INPUT_MAP_LOOK_DOWN 		- INPUT_MAP_START] = INPUT_MAP_VSTICK_ANALOG_Y_NEG;     
+			mapping->buttons[INPUT_MAP_LOOK_LEFT 		- INPUT_MAP_START] = INPUT_MAP_VSTICK_ANALOG_X_NEG;     
+			mapping->buttons[INPUT_MAP_LOOK_RIGHT 		- INPUT_MAP_START] = INPUT_MAP_VSTICK_ANALOG_X_POS;     
+			mapping->buttons[INPUT_MAP_LOOK_UP_2		- INPUT_MAP_START] = INPUT_MAP_INVALID;
+			mapping->buttons[INPUT_MAP_LOOK_DOWN_2 		- INPUT_MAP_START] = INPUT_MAP_INVALID;
+			mapping->buttons[INPUT_MAP_LOOK_LEFT_2 		- INPUT_MAP_START] = INPUT_MAP_INVALID;
+			mapping->buttons[INPUT_MAP_LOOK_RIGHT_2		- INPUT_MAP_START] = INPUT_MAP_INVALID;
 			break;
 		default: 
 			mapped_input_set_map_layout(mapping, INPUT_MAP_LAYOUT_MODERN_TWINSTICK);
@@ -70,19 +95,19 @@ void mapped_input_set_stick_threshold(InputMapping* mapping, Vec2 new_threshold)
 
 static int safety_check_button_value(int button) {
 	switch(button) {
-		case FW64_N64_CONTROLLER_BUTTON_A:
-		case FW64_N64_CONTROLLER_BUTTON_B:
-		case FW64_N64_CONTROLLER_BUTTON_L:
-		case FW64_N64_CONTROLLER_BUTTON_R:
-		case FW64_N64_CONTROLLER_BUTTON_Z:
-		case FW64_N64_CONTROLLER_BUTTON_START:
-		case FW64_N64_CONTROLLER_BUTTON_C_UP:
-		case FW64_N64_CONTROLLER_BUTTON_C_DOWN:
-		case FW64_N64_CONTROLLER_BUTTON_C_LEFT:
-		case FW64_N64_CONTROLLER_BUTTON_C_RIGHT:
-		case FW64_N64_CONTROLLER_BUTTON_DPAD_UP:
-		case FW64_N64_CONTROLLER_BUTTON_DPAD_DOWN:
-		case FW64_N64_CONTROLLER_BUTTON_DPAD_LEFT:
+		case FW64_N64_CONTROLLER_BUTTON_A:				/* fall through */
+		case FW64_N64_CONTROLLER_BUTTON_B:				/* fall through */
+		case FW64_N64_CONTROLLER_BUTTON_L:				/* fall through */
+		case FW64_N64_CONTROLLER_BUTTON_R:				/* fall through */
+		case FW64_N64_CONTROLLER_BUTTON_Z:				/* fall through */
+		case FW64_N64_CONTROLLER_BUTTON_START:			/* fall through */
+		case FW64_N64_CONTROLLER_BUTTON_C_UP:			/* fall through */
+		case FW64_N64_CONTROLLER_BUTTON_C_DOWN:			/* fall through */
+		case FW64_N64_CONTROLLER_BUTTON_C_LEFT:			/* fall through */
+		case FW64_N64_CONTROLLER_BUTTON_C_RIGHT:		/* fall through */
+		case FW64_N64_CONTROLLER_BUTTON_DPAD_UP:		/* fall through */
+		case FW64_N64_CONTROLLER_BUTTON_DPAD_DOWN:		/* fall through */
+		case FW64_N64_CONTROLLER_BUTTON_DPAD_LEFT:		/* fall through */
 		case FW64_N64_CONTROLLER_BUTTON_DPAD_RIGHT:
 			return 1;
 		default:
@@ -157,9 +182,95 @@ int mapped_input_controller_read(InputMapping* mapping, int controller, MappedBu
 			}
 			return 0;
 		default:
-			if(safety_check_button_value(mapping->buttons[button - INPUT_MAP_START])) {
-				return !!(fw64_input_controller_button_down(mapping->fw64_input, controller, mapping->buttons[button - INPUT_MAP_START]));
-			}
+		int val = 0;
+		switch(button) {
+			case INPUT_MAP_WEAPON_RELOAD:	/* fall through */
+			case INPUT_MAP_WEAPON_RELOAD_2:			
+				if(safety_check_button_value(mapping->buttons[INPUT_MAP_WEAPON_RELOAD - INPUT_MAP_START])) {
+					val |= !!(fw64_input_controller_button_down(mapping->fw64_input, controller, mapping->buttons[INPUT_MAP_WEAPON_RELOAD - INPUT_MAP_START]));
+				}
+				if(safety_check_button_value(mapping->buttons[INPUT_MAP_WEAPON_RELOAD_2 - INPUT_MAP_START])) {
+					val |= !!(fw64_input_controller_button_down(mapping->fw64_input, controller, mapping->buttons[INPUT_MAP_WEAPON_RELOAD_2 - INPUT_MAP_START]));
+				}
+				return val;
+			case INPUT_MAP_LOOK_UP:		/* fall through */
+			case INPUT_MAP_LOOK_UP_2:			
+				if(safety_check_button_value(mapping->buttons[INPUT_MAP_LOOK_UP - INPUT_MAP_START])) {
+					val |= !!(fw64_input_controller_button_down(mapping->fw64_input, controller, mapping->buttons[INPUT_MAP_LOOK_UP - INPUT_MAP_START]));
+				}
+				if(safety_check_button_value(mapping->buttons[INPUT_MAP_LOOK_UP_2 - INPUT_MAP_START])) {
+					val |= !!(fw64_input_controller_button_down(mapping->fw64_input, controller, mapping->buttons[INPUT_MAP_LOOK_UP_2 - INPUT_MAP_START]));
+				}
+				return val;
+			case INPUT_MAP_LOOK_DOWN:	/* fall through */
+			case INPUT_MAP_LOOK_DOWN_2:			
+				if(safety_check_button_value(mapping->buttons[INPUT_MAP_LOOK_DOWN - INPUT_MAP_START])) {
+					val |= !!(fw64_input_controller_button_down(mapping->fw64_input, controller, mapping->buttons[INPUT_MAP_LOOK_DOWN - INPUT_MAP_START]));
+				}
+				if(safety_check_button_value(mapping->buttons[INPUT_MAP_LOOK_DOWN_2 - INPUT_MAP_START])) {
+					val |= !!(fw64_input_controller_button_down(mapping->fw64_input, controller, mapping->buttons[INPUT_MAP_LOOK_DOWN_2 - INPUT_MAP_START]));
+				}
+				return val;
+			case INPUT_MAP_LOOK_LEFT:	/* fall through */
+			case INPUT_MAP_LOOK_LEFT_2:			
+				if(safety_check_button_value(mapping->buttons[INPUT_MAP_LOOK_LEFT - INPUT_MAP_START])) {
+					val |= !!(fw64_input_controller_button_down(mapping->fw64_input, controller, mapping->buttons[INPUT_MAP_LOOK_LEFT - INPUT_MAP_START]));
+				}
+				if(safety_check_button_value(mapping->buttons[INPUT_MAP_LOOK_LEFT_2 - INPUT_MAP_START])) {
+					val |= !!(fw64_input_controller_button_down(mapping->fw64_input, controller, mapping->buttons[INPUT_MAP_LOOK_LEFT_2 - INPUT_MAP_START]));
+				}
+				return val;
+			case INPUT_MAP_LOOK_RIGHT:	/* fall through */
+			case INPUT_MAP_LOOK_RIGHT_2:			
+				if(safety_check_button_value(mapping->buttons[INPUT_MAP_LOOK_RIGHT - INPUT_MAP_START])) {
+					val |= !!(fw64_input_controller_button_down(mapping->fw64_input, controller, mapping->buttons[INPUT_MAP_LOOK_RIGHT - INPUT_MAP_START]));
+				}
+				if(safety_check_button_value(mapping->buttons[INPUT_MAP_LOOK_RIGHT_2 - INPUT_MAP_START])) {
+					val |= !!(fw64_input_controller_button_down(mapping->fw64_input, controller, mapping->buttons[INPUT_MAP_LOOK_RIGHT_2 - INPUT_MAP_START]));
+				}
+				return val;
+			case INPUT_MAP_MOVE_FORWARD:		/* fall through */
+			case INPUT_MAP_MOVE_FORWARD_2:			
+				if(safety_check_button_value(mapping->buttons[INPUT_MAP_MOVE_FORWARD - INPUT_MAP_START])) {
+					val |= !!(fw64_input_controller_button_down(mapping->fw64_input, controller, mapping->buttons[INPUT_MAP_MOVE_FORWARD - INPUT_MAP_START]));
+				}
+				if(safety_check_button_value(mapping->buttons[INPUT_MAP_MOVE_FORWARD_2 - INPUT_MAP_START])) {
+					val |= !!(fw64_input_controller_button_down(mapping->fw64_input, controller, mapping->buttons[INPUT_MAP_MOVE_FORWARD_2 - INPUT_MAP_START]));
+				}
+				return val;
+			case INPUT_MAP_MOVE_BACKWARD:	/* fall through */
+			case INPUT_MAP_MOVE_BACKWARD_2:			
+				if(safety_check_button_value(mapping->buttons[INPUT_MAP_MOVE_BACKWARD - INPUT_MAP_START])) {
+					val |= !!(fw64_input_controller_button_down(mapping->fw64_input, controller, mapping->buttons[INPUT_MAP_MOVE_BACKWARD - INPUT_MAP_START]));
+				}
+				if(safety_check_button_value(mapping->buttons[INPUT_MAP_MOVE_BACKWARD_2 - INPUT_MAP_START])) {
+					val |= !!(fw64_input_controller_button_down(mapping->fw64_input, controller, mapping->buttons[INPUT_MAP_MOVE_BACKWARD_2 - INPUT_MAP_START]));
+				}
+				return val;
+			case INPUT_MAP_MOVE_LEFT:	/* fall through */
+			case INPUT_MAP_MOVE_LEFT_2:			
+				if(safety_check_button_value(mapping->buttons[INPUT_MAP_MOVE_LEFT - INPUT_MAP_START])) {
+					val |= !!(fw64_input_controller_button_down(mapping->fw64_input, controller, mapping->buttons[INPUT_MAP_MOVE_LEFT - INPUT_MAP_START]));
+				}
+				if(safety_check_button_value(mapping->buttons[INPUT_MAP_MOVE_LEFT_2 - INPUT_MAP_START])) {
+					val |= !!(fw64_input_controller_button_down(mapping->fw64_input, controller, mapping->buttons[INPUT_MAP_MOVE_LEFT_2 - INPUT_MAP_START]));
+				}
+				return val;
+			case INPUT_MAP_MOVE_RIGHT:	/* fall through */
+			case INPUT_MAP_MOVE_RIGHT_2:			
+				if(safety_check_button_value(mapping->buttons[INPUT_MAP_MOVE_RIGHT - INPUT_MAP_START])) {
+					val |= !!(fw64_input_controller_button_down(mapping->fw64_input, controller, mapping->buttons[INPUT_MAP_MOVE_RIGHT - INPUT_MAP_START]));
+				}
+				if(safety_check_button_value(mapping->buttons[INPUT_MAP_MOVE_RIGHT_2 - INPUT_MAP_START])) {
+					val |= !!(fw64_input_controller_button_down(mapping->fw64_input, controller, mapping->buttons[INPUT_MAP_MOVE_RIGHT_2 - INPUT_MAP_START]));
+				}
+				return val;			
+			default:
+				if(safety_check_button_value(mapping->buttons[button - INPUT_MAP_START])) {
+					return !!(fw64_input_controller_button_down(mapping->fw64_input, controller, mapping->buttons[button - INPUT_MAP_START]));
+				}
+				break;
+		}
 			break;
 	}
 
