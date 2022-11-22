@@ -35,8 +35,7 @@ static fw64Scene* load_scene(TestLevel* level) {
 
     info.scene_id = FW64_ASSET_scene_spooky_level;
     info.allocator = level->base.allocator;
-    uint32_t chunk_handle = fw64_level_load_chunk(&level->base.level, &info);
-    return fw64_level_get_chunk_by_handle(&level->base.level, chunk_handle);
+    return fw64_level_load_chunk(&level->base.level, &info)->scene;
 }
 
 void test_level_uninit(TestLevel* level) {

@@ -34,9 +34,7 @@ fw64Scene* setup_level(HillLevel* level) {
     fw64_level_chunk_info_init(&info);
     info.scene_id = FW64_ASSET_scene_church_hill;
     info.allocator = level->base.allocator;
-    uint32_t chunk_handle = fw64_level_load_chunk(&level->base.level, &info);
-
-    return fw64_level_get_chunk_by_handle(&level->base.level, chunk_handle);
+    return fw64_level_load_chunk(&level->base.level, &info)->scene;
 }
 
 void hill_level_uninit(HillLevel* level) {

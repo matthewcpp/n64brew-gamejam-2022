@@ -46,10 +46,24 @@ set(actor_files
 )
 
 set(main_game_files
-    game.h game.c
+    dead_ritual/game.h dead_ritual/game.c
     game_data.h game_data.c
 )
 
 create_game(
     TARGET spooky
     SOURCES ${main_game_files} ${core_files} ${level_files} ${game_state_files} ${ui_files} ${actor_files} ${main_game_files})
+
+target_include_directories(spooky PRIVATE dead_ritual)
+
+set(zombie_config_files
+    zombie_config/game.h zombie_config/game.c
+    zombie_config/arcball_camera.h zombie_config/arcball_camera.c
+)
+
+create_game(
+    TARGET zombie_config
+    SOURCES ${zombie_config_files}
+)
+
+target_include_directories(zombie_config PRIVATE zombie_config)
