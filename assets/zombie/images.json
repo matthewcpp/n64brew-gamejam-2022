@@ -67,11 +67,6 @@
     },
     {
         "src": "Z_Face01.png",
-        "format": "CI4",
-        "additionalPalettes": [
-            "Z_Face01_Col02.png",
-            "Z_Face02.png",
-            "Z_Face03.png"
-        ]
+        "format": "CI4"
     }
 ]

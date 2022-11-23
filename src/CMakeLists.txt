@@ -59,6 +59,8 @@ target_include_directories(spooky PRIVATE dead_ritual)
 set(zombie_config_files
     zombie_config/game.h zombie_config/game.c
     zombie_config/arcball_camera.h zombie_config/arcball_camera.c
+    zombie_config/zombie_config_ui.h zombie_config/zombie_config_ui.c
+    zombie_config.h zombie_config.c
 )
 
 create_game(

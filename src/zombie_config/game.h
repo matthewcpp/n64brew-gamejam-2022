@@ -5,6 +5,8 @@
 #include "framework64/level.h"
 
 #include "arcball_camera.h"
+#include "zombie_config.h"
+#include "zombie_config_ui.h"
 
 typedef struct {
     fw64Engine* engine;
@@ -12,6 +14,8 @@ typedef struct {
     fw64Node* node;
     fw64AnimationData* animation_data;
     fw64AnimationController* animation_controller;
+    ZombieConfigUi ui;
+    ZombieConfig zombie_config;
 } Game;
 
 #ifdef __cplusplus
