@@ -41,10 +41,6 @@ set(game_state_files
     states/playing.h states/playing.c
 )
 
-set(actor_files
-    actors/catherine.h actors/catherine.c
-)
-
 set(main_game_files
     dead_ritual/game.h dead_ritual/game.c
     game_data.h game_data.c
@@ -52,7 +48,7 @@ set(main_game_files
 
 create_game(
     TARGET spooky
-    SOURCES ${main_game_files} ${core_files} ${level_files} ${game_state_files} ${ui_files} ${actor_files} ${main_game_files})
+    SOURCES ${main_game_files} ${core_files} ${level_files} ${game_state_files} ${ui_files} ${main_game_files})
 
 target_include_directories(spooky PRIVATE dead_ritual)
 

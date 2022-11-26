@@ -6,6 +6,7 @@
 
 #include "framework64/n64/controller_button.h"
 
+#include <stdio.h>
 #include <string.h>
 
 const char* option_names[OPTION_COUNT] = {"Animation", "Top"};
@@ -127,7 +128,7 @@ static int change_texture_palette(ZombieConfigUi* ui, int direction, int texture
     return palette_index;
 }
 
-static int change_face_image(ZombieConfigUi* ui, int direction) {
+static void change_face_image(ZombieConfigUi* ui, int direction) {
     ui->current_face_image += direction;
 
     if (ui->current_face_image >= ZOMBIE_FACE_IMAGE_COUNT) {
