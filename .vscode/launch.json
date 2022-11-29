@@ -9,7 +9,7 @@
                 "<node_internals>/**"
             ],
             "type": "node",
-            "args":["n64"]
+            "args":["n64", "--plugins", "pipeline"]
         },
         {
             "name": "Debug Desktop Asset Pipeline",
@@ -19,19 +19,19 @@
                 "<node_internals>/**"
             ],
             "type": "node",
-            "args":["desktop"]
+            "args":["desktop", "--plugins", "pipeline"]
         },
         {
             "type": "by-gdb",
             "name": "CEN64 Debug ROM Windows / Mac",
             "request": "launch",
             "debuggerPath": "gdb-multiarch",
-            "program": "${workspaceFolder}/build_n64/src/spooky.elf",
+            "program": "${workspaceFolder}/build_n64/src/zombie_config.elf",
             "remote": {
                 "enabled": true,
                 "address": "host.docker.internal:8080",
                 "mode": "remote",
-                "execfile": "${workspaceFolder}/build_n64/src/spooky.elf"
+                "execfile": "${workspaceFolder}/build_n64/src/zombie_config.elf"
             },
             "commandsBeforeExec": [
                 "set arch mips:4300",

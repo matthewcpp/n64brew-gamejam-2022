@@ -1,0 +1,72 @@
+[
+    {
+        "src": "Z_Top_ArmLong.png",
+        "format": "CI4",
+        "additionalPalettes": [
+            "Z_Top_ArmLong_Col01.png",
+            "Z_Top_ArmLong_Col02.png",
+            "Z_Top_ArmLong_Col03.png",
+            "Z_Top_ArmLong_Col04.png",
+            "Z_Top_ArmLong_Col05.png",
+            "Z_Top_ArmLong_Col06.png",
+            "Z_Top_ArmLong_Col07.png"
+        ]
+    },
+    {
+        "src": "Z_TopBack.png",
+        "format": "CI4",
+        "additionalPalettes": [
+            "Z_TopBack_Col01.png",
+            "Z_TopBack_Col02.png",
+            "Z_TopBack_Col03.png",
+            "Z_TopBack_Col04.png",
+            "Z_TopBack_Col05.png",
+            "Z_TopBack_Col06.png",
+            "Z_TopBack_Col07.png"
+        ]
+    },
+    {
+        "src": "Z_TopFront.png",
+        "format": "CI4",
+        "additionalPalettes": [
+            "Z_TopFront_Col01.png",
+            "Z_TopFront_Col02.png",
+            "Z_TopFront_Col03.png",
+            "Z_TopFront_Col04.png",
+            "Z_TopFront_Col05.png",
+            "Z_TopFront_Col06.png",
+            "Z_TopFront_Col07.png"
+        ]
+    },
+    {
+        "src": "Z_JeanLegL.png",
+        "format": "CI4",
+        "additionalPalettes": [
+            "Z_JeanLegL_Col02.png",
+            "Z_JeanLegL_Col03.png",
+            "Z_JeanLegL_Col04.png"
+        ]
+    },
+    {
+        "src": "Z_JeanLegR.png",
+        "format": "CI4",
+        "additionalPalettes": [
+            "Z_JeanLegR_Col02.png",
+            "Z_JeanLegR_Col03.png",
+            "Z_JeanLegR_Col04.png"
+        ]
+    },
+    {
+        "src": "Z_JeanTop.png",
+        "format": "CI4",
+        "additionalPalettes": [
+            "Z_JeanTop_Col02.png",
+            "Z_JeanTop_Col03.png",
+            "Z_JeanTop_Col04.png"
+        ]
+    },
+    {
+        "src": "Z_Face01.png",
+        "format": "CI4"
+    }
+]

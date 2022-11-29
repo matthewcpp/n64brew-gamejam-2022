@@ -148,6 +148,19 @@
             "vslices": 3,
             "frameSize": "128x128",
             "resize": "72x36"
+        },
+        {
+            "src": "zombie/Z_Face02.png",
+            "format": "CI4"
+        },
+        {
+            "src": "zombie/Z_Face03.png",
+            "format": "CI4"
+        },
+        {
+            "src": "zombie/Z_Face01_Col02.png",
+            "name": "Z_Face01_alt",
+            "format": "CI4"
         }
     ],
     "levels": [
@@ -181,14 +194,12 @@
             "src": "Consolas.ttf",
             "size": 12,
             "name": "level_select",
-            "imageFormat": "rgba32",
             "sourceString": "abcdefghijklmnopqrstuvwxyz 0123456789_-.>"
         },
         {
             "src": "atwriter.ttf",
             "size": 16,
             "name": "menu",
-            "imageFormat": "rgba32",
             "sourceString": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz 0123456789.>"
         },
         {
@@ -208,6 +219,11 @@
             "size": 12,
             "name": "Dialogue",
             "sourceFile": "dialogue.txt"
+        },
+        {
+            "src": "texgyreadventor-bold.ttf",
+            "size": 12,
+            "name": "zombie_config"
         }
     ],
     "layers": {
@@ -237,12 +253,6 @@
                 "Attack",
                 "Idle",
                 "FlyBack"
-            ]
-        },
-        {
-            "src": "catherine/catherine.gltf",
-            "animations": [
-                "Idle"
             ]
         }
     ],

@@ -2,7 +2,7 @@
   "name": "spooky",
   "version": "0.0.1",
   "scripts": {
-    "prepare-game-assets": "node lib/framework64/scripts/PrepareGameAssets.js",
+    "prepare-game-assets": "node lib/framework64/scripts/PrepareGameAssets.js --plugins pipeline",
     "configure-environment-n64-modernsdk": "node lib/framework64/scripts/ConfigureEnvironment.js n64-modernsdk"
   },
   "dependencies": {

@@ -216,7 +216,7 @@ void tiles_test_load_tile(TilesTestLevel* level, int index, Vec3* pos) {
     info.scene_id = (grid_x == 0 && grid_y == 0) ? FW64_ASSET_scene_city_tile_mall : tile_scenes[get_rand_tile(grid_x, grid_y)];
     info.allocator = &level->allocators[index].interface;
 
-    level->chunk_handles[index] = fw64_level_load_chunk_at_pos(&level->base.level, &info, pos);
+    level->chunk_handles[index] = fw64_level_load_chunk_at_pos(&level->base.level, &info, pos)->handle;
 }
 
 void rotate_all_handles(TilesTestLevel* level, CompassDirections dir) {
