@@ -47,10 +47,10 @@ set(main_game_files
 )
 
 create_game(
-    TARGET spooky
+    TARGET dead_ritual
     SOURCES ${main_game_files} ${core_files} ${level_files} ${game_state_files} ${ui_files} ${main_game_files})
 
-target_include_directories(spooky PRIVATE dead_ritual)
+target_include_directories(dead_ritual PRIVATE dead_ritual)
 
 set(zombie_config_files
     zombie_config/game.h zombie_config/game.c
