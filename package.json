@@ -1,5 +1,5 @@
 {
-  "name": "spooky",
+  "name": "dead_ritual",
   "version": "0.0.1",
   "scripts": {
     "prepare-game-assets": "node lib/framework64/scripts/PrepareGameAssets.js --plugins pipeline",
