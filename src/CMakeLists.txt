@@ -65,3 +65,16 @@ create_game(
 )
 
 target_include_directories(zombie_config PRIVATE zombie_config)
+
+set(scene_test_files
+    scene_test/game.h scene_test/game.c
+    scene_test/scene_viewer.h scene_test/scene_viewer.c
+    scene_test/fly_camera.h scene_test/fly_camera.c
+)
+
+create_game(
+    TARGET scene_test
+    SOURCES ${scene_test_files}
+)
+
+target_include_directories(scene_test PRIVATE scene_test)

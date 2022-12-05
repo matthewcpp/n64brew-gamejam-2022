@@ -175,6 +175,9 @@
         },
         {
             "src": "city_grid/city_grid.gltf"
+        },
+        {
+            "src": "interiors/1_door.gltf"
         }
     ],
     "musicBanks": [
@@ -223,7 +226,7 @@
         {
             "src": "texgyreadventor-bold.ttf",
             "size": 12,
-            "name": "zombie_config"
+            "name": "tools_default"
         }
     ],
     "layers": {
@@ -240,7 +243,8 @@
             "buildings": 10,
             "entrance": 11,
             "interactable": 12,
-            "pickups": 13
+            "pickups": 13,
+            "start": 14
     },
     "skinnedMeshes": [
         {
