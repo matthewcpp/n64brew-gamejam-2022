@@ -11,7 +11,7 @@
 
 #include <stdio.h>
 
-#define LEVEL_MEMORY_POOL_SIZE (400 * 1024)
+#define LEVEL_MEMORY_POOL_SIZE (450 * 1024)
 #define IMAGE_ALLOCATOR_BUFFER_SIZE (175 * 1024)
 
 static void main_menu_draw(Menu* menu);
@@ -122,12 +122,12 @@ static void start_playing(Menu* menu, Level level) {
 	menu->game_data->transition_to_state = GAME_STATE_PLAYING;
 
 	PlayerData* player_data = &menu->game_data->player_data;
-	WeaponInfo* handgun_info = weapon_get_info(WEAPON_TYPE_HANDGUN);
+	WeaponInfo* handgun_info = weapon_get_info(WEAPON_TYPE_1911);
 
 	player_data_reset(player_data);
-	player_data->equipped_weapon = WEAPON_TYPE_HANDGUN;
-	player_data->ammo[WEAPON_TYPE_HANDGUN].current_mag_count = handgun_info->mag_size;
-	player_data->ammo[WEAPON_TYPE_HANDGUN].additional_rounds_count = handgun_info->max_additional_rounds;
+	player_data->equipped_weapon = WEAPON_TYPE_1911;
+	player_data->ammo[WEAPON_TYPE_1911].current_mag_count = handgun_info->mag_size;
+	player_data->ammo[WEAPON_TYPE_1911].additional_rounds_count = handgun_info->max_additional_rounds;
 }
 
 void process_input(Menu* menu) {

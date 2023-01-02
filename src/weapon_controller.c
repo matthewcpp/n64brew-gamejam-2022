@@ -10,7 +10,7 @@
 #define WEAPON_CONTROLLER_TRANSITION_SPEED 0.50f
 #define WEAPON_CONTROLLER_MUZZLE_FLASH_TIME 0.1f
 
-#define WEAPON_CONTROLLER_MEMORY_POOL_SIZE (50 * 1024)
+#define WEAPON_CONTROLLER_MEMORY_POOL_SIZE (75 * 1024)
 
 static void weapon_controller_fire(WeaponController* controller);
 static int weapon_controller_is_idle(WeaponController* controller);
@@ -245,12 +245,12 @@ void weapon_controller_set_weapon(WeaponController* controller, WeaponType weapo
 
     Weapon* weapon = &controller->weapon;
     switch(weapon_type) {
-        case WEAPON_TYPE_HANDGUN:
-            weapon_init_handgun(weapon, controller->engine->assets, &controller->weapon_allocator.interface);
+        case WEAPON_TYPE_1911:
+            weapon_init_1911(weapon, controller->engine->assets, &controller->weapon_allocator.interface);
         break;
 
-        case WEAPON_TYPE_AR15:
-            weapon_init_ar15(weapon, controller->engine->assets, &controller->weapon_allocator.interface);
+        case WEAPON_TYPE_MP5:
+            weapon_init_mp5(weapon, controller->engine->assets, &controller->weapon_allocator.interface);
         break;
 
         case WEAPON_TYPE_SHOTGUN:
@@ -281,7 +281,7 @@ void weapon_controller_set_weapon(WeaponController* controller, WeaponType weapo
     fw64_transform_update_matrix(&controller->weapon_transform);
 
     if (weapon->casing) {
-        if (weapon->info->type == WEAPON_TYPE_AR15) // temp fix
+        if (weapon->info->type == WEAPON_TYPE_MP5) // temp fix
             vec3_set_all(&controller->casing_transform.scale, 0.02f);
         else
             controller->casing_transform.scale = weapon->info->default_scale;

@@ -7,8 +7,8 @@
 
 static WeaponInfo weapon_infos[WEAPON_COUNT];
 
-static void init_handgun_info(WeaponInfo* weapon) {
-    weapon->type = WEAPON_TYPE_HANDGUN;
+static void init_1911_info(WeaponInfo* weapon) {
+    weapon->type = WEAPON_TYPE_1911;
     weapon->fire_rate = 0.5f;
     weapon->dry_fire_rate = 0.3f;
 
@@ -17,37 +17,38 @@ static void init_handgun_info(WeaponInfo* weapon) {
     weapon->reload_sound = sound_bank_sounds_handgun_reload;
     weapon->empty_mag_sound = sound_bank_sounds_handgun_empty;
 
-    vec3_set(&weapon->default_position, 1.966, -2.44f, -4.87f);
-    vec3_set(&weapon->lowered_position, 1.96f, -4.82f, -4.87f);
+    vec3_set(&weapon->default_position, 2.19f, -2.61f, -5.6f);
+    vec3_set(&weapon->lowered_position, 2.19f, -5.8f, -5.6f);
     vec3_set_all(&weapon->default_scale, 0.01f);
     quat_ident(&weapon->default_rotation);
 
-    vec3_set(&weapon->ejection_port_pos, 2.6f, -1.983f, -5.241f);
+    vec3_set(&weapon->ejection_port_pos, 2.37f, -2.08f, -5.72f);
 
-    vec3_set(&weapon->recoil_pos, 1.966, -2.44f, -4.545);
+    vec3_set(&weapon->recoil_pos, 2.19f, -2.61f, -5.0f);
     weapon->recoil_time = 0.12f;
 
     weapon->mag_size = 15;
     weapon->max_additional_rounds = UINT32_MAX;
 }
 
-static void init_ar15_info(WeaponInfo* weapon) {
-    weapon->type = WEAPON_TYPE_AR15;
-    weapon->fire_rate = 0.333f;
-    weapon->dry_fire_rate = 0.333f;
-    weapon->gunshot_sound = sound_bank_sounds_rifle_shot;
-    weapon->last_round_sound = sound_bank_sounds_rifle_shot;
-    weapon->reload_sound = sound_bank_sounds_rifle_reload;
-    weapon->empty_mag_sound = sound_bank_sounds_rifle_empty;
+static void init_mp5_info(WeaponInfo* weapon) {
+    weapon->type = WEAPON_TYPE_MP5;
+    weapon->fire_rate = 0.25f;
+    weapon->dry_fire_rate = 0.15f;
+    weapon->gunshot_sound = sound_bank_sounds_mp5_shoot;
+    weapon->last_round_sound = sound_bank_sounds_mp5_shoot;
+    weapon->reload_sound = sound_bank_sounds_mp5_reload;
+    weapon->empty_mag_sound = sound_bank_sounds_mp5_empty;
     
-    vec3_set(&weapon->default_position, 2.58f, -3.01f, -6.74f);
-    vec3_set(&weapon->lowered_position, 2.58f, -9.25f, -6.74f);
-    vec3_set_all(&weapon->default_scale, 0.1f);
+    vec3_set(&weapon->default_position, 3.65f, -4.52f, -11.18f);
+    vec3_set(&weapon->recoil_pos, 3.65f, -4.52f, -10.18);
+    vec3_set(&weapon->lowered_position, 3.65f, -13.4f, -11.18f);
+    vec3_set_all(&weapon->default_scale, 0.02f);
     quat_ident(&weapon->default_rotation);
 
-    vec3_set(&weapon->ejection_port_pos, 2.8f, -2.13f, -5.74f);
+    vec3_set(&weapon->ejection_port_pos, 3.78f, -2.93f, -8.03);
 
-    vec3_set(&weapon->recoil_pos, 2.58f, -3.01f, -5.74f);
+    
     weapon->recoil_time = 0.10f;
 
     weapon->mag_size = 30;
@@ -88,7 +89,7 @@ static void init_uzi_info(WeaponInfo* weapon) {
     weapon->empty_mag_sound = sound_bank_sounds_uzi_empty;
 
     vec3_set(&weapon->default_position, 1.966, -2.44f, -4.87f);
-    vec3_set(&weapon->lowered_position, 1.96f, -4.82f, -4.87f);
+    vec3_set(&weapon->lowered_position, 1.96f, -5.10f, -4.87f);
     vec3_set_all(&weapon->default_scale, 0.01f);
     quat_ident(&weapon->default_rotation);
 
@@ -107,8 +108,8 @@ WeaponInfo* weapon_get_info(WeaponType weapon_type) {
 
 void init_weapon_info() {
     memset(&weapon_infos[WEAPON_TYPE_NONE], 0 , sizeof(WeaponInfo));
-    init_handgun_info(weapon_get_info(WEAPON_TYPE_HANDGUN));
-    init_ar15_info(weapon_get_info(WEAPON_TYPE_AR15));
+    init_1911_info(weapon_get_info(WEAPON_TYPE_1911));
+    init_mp5_info(weapon_get_info(WEAPON_TYPE_MP5));
     init_shotgun_info(weapon_get_info(WEAPON_TYPE_SHOTGUN));
     init_uzi_info(weapon_get_info(WEAPON_TYPE_UZI));
 }
@@ -133,24 +134,24 @@ static void clamp_textures(fw64Mesh* mesh) {
     }
 }
 
-void weapon_init_handgun(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator) {
-    weapon->mesh = fw64_mesh_load(assets, FW64_ASSET_mesh_handgun, allocator);
+void weapon_init_1911(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator) {
+    weapon->mesh = fw64_mesh_load(assets, FW64_ASSET_mesh_1911, allocator);
     weapon->casing = fw64_mesh_load(assets, FW64_ASSET_mesh_9mm_round, allocator);
-    weapon->muzzle_flash = fw64_mesh_load(assets, FW64_ASSET_mesh_handgun_muzzle_flash, allocator);
+    weapon->muzzle_flash = fw64_mesh_load(assets, FW64_ASSET_mesh_1911_muzzle_flash, allocator);
     weapon->crosshair = fw64_texture_create_from_image(fw64_image_load(assets, FW64_ASSET_image_crosshair, allocator), allocator);
     clamp_textures(weapon->muzzle_flash);
 
-    weapon->info = &weapon_infos[WEAPON_TYPE_HANDGUN];
+    weapon->info = &weapon_infos[WEAPON_TYPE_1911];
 }
 
-void weapon_init_ar15(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator) {
-    weapon->mesh = fw64_mesh_load(assets, FW64_ASSET_mesh_us_ar33, allocator);
+void weapon_init_mp5(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator) {
+    weapon->mesh = fw64_mesh_load(assets, FW64_ASSET_mesh_mp5, allocator);
     weapon->casing = fw64_mesh_load(assets, FW64_ASSET_mesh_9mm_round, allocator);
-    weapon->muzzle_flash = fw64_mesh_load(assets, FW64_ASSET_mesh_ar15_muzzle_flash, allocator);
+    weapon->muzzle_flash = fw64_mesh_load(assets, FW64_ASSET_mesh_mp5_muzzle_flash, allocator);
     weapon->crosshair = fw64_texture_create_from_image(fw64_image_load(assets, FW64_ASSET_image_crosshair, allocator), allocator);
     clamp_textures(weapon->muzzle_flash);
 
-    weapon->info = &weapon_infos[WEAPON_TYPE_AR15];
+    weapon->info = &weapon_infos[WEAPON_TYPE_MP5];
 }
 
 void weapon_init_shotgun(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator) {

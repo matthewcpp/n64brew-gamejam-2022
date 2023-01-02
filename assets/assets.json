@@ -4,19 +4,19 @@
             "src": "n64_logo_model/n64_logo.gltf"
         },
         {
-            "src": "handgun/handgun.gltf"
+            "src": "1911/1911.gltf"
         },
         {
-            "src": "handgun_muzzle_flash/handgun_muzzle_flash.gltf"
+            "src": "1911_muzzle_flash/1911_muzzle_flash.gltf"
         },
         {
-            "src": "us_ar33/us_ar33.gltf"
+            "src": "mp5/mp5.gltf"
         },
         {
-            "src": "ar15_muzzle_flash/ar15_muzzle_flash.gltf"
+            "src": "mp5_muzzle_flash/mp5_muzzle_flash.gltf"
         },
         {
-            "src": "ar15_pickup/ar15_pickup.gltf"
+            "src": "mp5_pickup/mp5_pickup.gltf"
         },
         {
             "src": "uzi/uzi.gltf"
@@ -154,6 +154,19 @@
             "vslices": 3,
             "frameSize": "128x128",
             "resize": "72x36"
+        },
+        {
+            "src": "zombie/Z_Face02.png",
+            "format": "CI4"
+        },
+        {
+            "src": "zombie/Z_Face03.png",
+            "format": "CI4"
+        },
+        {
+            "src": "zombie/Z_Face01_Col02.png",
+            "name": "Z_Face01_alt",
+            "format": "CI4"
         }
     ],
     "levels": [
@@ -187,7 +200,6 @@
             "src": "Consolas.ttf",
             "size": 12,
             "name": "level_select",
-            "imageFormat": "rgba32",
             "sourceString": "abcdefghijklmnopqrstuvwxyz 0123456789_-.>"
         },
         {
@@ -221,6 +233,11 @@
             "size": 12,
             "name": "Dialogue",
             "sourceFile": "dialogue.txt"
+        },
+        {
+            "src": "texgyreadventor-bold.ttf",
+            "size": 12,
+            "name": "zombie_config"
         }
     ],
     "layers": {
@@ -250,12 +267,6 @@
                 "Attack",
                 "Idle",
                 "FlyBack"
-            ]
-        },
-        {
-            "src": "catherine/catherine.gltf",
-            "animations": [
-                "Idle"
             ]
         }
     ],
