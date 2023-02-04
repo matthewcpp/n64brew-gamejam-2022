@@ -1,0 +1,77 @@
+[
+	{
+		"src": "cardboard.png",
+		"format": "ci4"
+	},
+	{
+		"src": "Ceiling01.png",
+		"format": "ci4"
+	},
+	{
+		"src": "Door.png",
+		"format": "ci4"
+	},
+	{
+		"src": "DoorBottom.png",
+		"format": "ci4"
+	},
+	{
+		"src": "DoorTop.png",
+		"format": "ci4"
+	},
+	{
+		"src": "Pipe.png",
+		"format": "ci4"
+	},
+	{
+		"src": "PlywoodEdge.png",
+		"format": "ci4"
+	},
+	{
+		"src": "PlywoodLeft.png",
+		"format": "ci4"
+	},
+	{
+		"src": "PlywoodRight.png",
+		"format": "ci4"
+	},
+	{
+		"src": "WallBrickLarge_Bot.png",
+		"format": "ci4"
+	},
+	{
+		"src": "WallBrickLarge_Top.png",
+		"format": "ci4"
+	},
+	{
+		"src": "WallConcreteLarge_Bot.png",
+		"format": "ci4"
+	},
+	{
+		"src": "WallConcreteLarge_Top.png",
+		"format": "ci4"
+	},
+	{
+		"src": "WallPlasterDirty_Bot.png",
+		"format": "ci4"
+	},
+	{
+		"src": "WallPlasterDirty_Top.png",
+		"format": "ci4"
+	},
+	{
+		"src": "WindowBoarded.png",
+		"format": "ci4"
+	},
+	{
+		"src": "needs_resize",
+		"items": [
+			"TentacleEmerge.png",
+			"Plywood02.png",
+			"Planks",
+			"BoxSide.png",
+			"BoxSidetext03.png",
+			"Boxtop.png"
+		]
+	}
+]
