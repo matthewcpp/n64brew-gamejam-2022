@@ -2,7 +2,7 @@
 
 #include "framework64/n64/controller_button.h"
 
-#define DEFAULT_MOVEMENT_SPEED 8.0f
+#define DEFAULT_MOVEMENT_SPEED 10.0f
 #define DEFAULT_TURN_SPEED 90.0f
 #define STICK_THRESHOLD 0.15
 
@@ -71,10 +71,13 @@ void fw64_fly_camera_move(fw64FlyCamera* fly_cam, float time_delta) {
 
 void fw64_fly_camera_dolly(fw64FlyCamera* fly_cam, float time_delta) {
     if (fw64_input_controller_button_down(fly_cam->input, fly_cam->player_index, FW64_N64_CONTROLLER_BUTTON_C_RIGHT)) {
-        
+        Vec3 right;
+        fw64_transform_right(&fly_cam->camera.transform, &right);
+        vec3_add_and_scale(&fly_cam->camera.transform.position, &fly_cam->camera.transform.position, &right, fly_cam->movement_speed * time_delta);
     }
-
-    if (fw64_input_controller_button_down(fly_cam->input, fly_cam->player_index, FW64_N64_CONTROLLER_BUTTON_C_LEFT)) {
-        
+    else if (fw64_input_controller_button_down(fly_cam->input, fly_cam->player_index, FW64_N64_CONTROLLER_BUTTON_C_LEFT)) {
+        Vec3 left;
+        fw64_transform_left(&fly_cam->camera.transform, &left);
+        vec3_add_and_scale(&fly_cam->camera.transform.position, &fly_cam->camera.transform.position, &left, fly_cam->movement_speed * time_delta);
     }
 }

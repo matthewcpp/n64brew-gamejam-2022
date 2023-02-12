@@ -9,6 +9,7 @@ void fw64_scene_viewer_init(fw64SceneViewer* viewer, fw64Engine* engine, fw64Fon
 
     fw64_bump_allocator_init(&viewer->allocator, bump_allocator_size);
     fw64_fly_camera_init(&viewer->fly_cam, engine->input);
+    viewer->fly_cam.camera.transform.position.y = 8.0f;
     viewer->fly_cam.movement_speed *= 2.0f;
 }
 
@@ -47,13 +48,13 @@ void fw64_scene_viewer_draw(fw64SceneViewer* viewer) {
     fw64_renderer_set_camera(renderer, &viewer->fly_cam.camera);
 
     if (viewer->scene) {
-        //fw64Frustum frustum;
-        //fw64_camera_extract_frustum_planes(&viewer->fly_cam.camera, &frustum);
-        //fw64_scene_draw_frustrum(viewer->scene, renderer, &frustum);
-        fw64_scene_draw_all(viewer->scene, renderer);
+        fw64Frustum frustum;
+        fw64_camera_extract_frustum_planes(&viewer->fly_cam.camera, &frustum);
+        fw64_scene_draw_frustrum(viewer->scene, renderer, &frustum);
+        //fw64_scene_draw_all(viewer->scene, renderer);
     }
         
-
+    fw64_renderer_set_fill_color(renderer, 255, 255, 255, 255);
     fw64_renderer_draw_text(renderer, viewer->font, 10, 10, buffer);
     
     fw64_renderer_end(renderer, FW64_RENDERER_FLAG_SWAP);

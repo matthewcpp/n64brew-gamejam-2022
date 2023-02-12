@@ -44,6 +44,10 @@
         "format": "ci4"
     },
     {
+        "src": "Eye.png",
+        "format": "rgba16"
+    },
+    {
         "src": "Pipe.png",
         "format": "ci4"
     },
@@ -62,6 +66,10 @@
     {
         "src": "TentacleEmerge.png",
         "format": "ci4"
+    },
+    {
+        "src": "Vents.png",
+        "format": "rgba16"
     },
     {
         "src": "WallBrickLarge_Bot.png",
