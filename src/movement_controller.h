@@ -10,6 +10,17 @@
 #include "framework64/level.h"
 #include "weapon_bob.h"
 
+//#define DOOMGUY_SPEED
+
+#ifdef DOOMGUY_SPEED
+#define DEFAULT_MOVEMENT_SPEED 60.0f
+#else
+#define DEFAULT_MOVEMENT_SPEED 30.0f
+#endif
+#define DEFAULT_X_TURN_SPEED 90.0f  // look up-down
+#define DEFAULT_Y_TURN_SPEED 180.0f // look left-right
+#define STICK_THRESHOLD 0.15
+
 typedef struct {
     fw64Level* level;
     fw64Collider* collider;

@@ -11,6 +11,7 @@
 #include "levels/church_hill.h"
 #include "levels/tiles_test.h"
 #include "levels/interior.h"
+#include "levels/eldrich_interior.h"
 
 typedef union {
     LevelBase current;
@@ -18,6 +19,7 @@ typedef union {
     HillLevel church_hill;
     TilesTestLevel tiles_test;
     InteriorLevel interior;
+    EldrichLevel eldrich_interior;
 } Levels;
 
 typedef struct {

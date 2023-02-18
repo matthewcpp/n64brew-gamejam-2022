@@ -18,11 +18,6 @@ void game_init(Game* game, fw64Engine* engine) {
 }
 
 void game_update(Game* game){
-    if (fw64_input_controller_button_pressed(game->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_START)) {
-        fw64Allocator* allocator = &game->allocator.interface;
-        allocator->malloc(allocator, sizeof(uint32_t));
-    }
-
     fw64_scene_viewer_update(&game->scene_viewer);
 }
 

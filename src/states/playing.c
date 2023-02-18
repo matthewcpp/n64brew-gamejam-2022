@@ -63,6 +63,10 @@ void game_state_playing_update(Playing* state) {
             interior_level_update(&state->levels.interior);
             break;
 
+        case LEVEL_ELDRICH_INTERIOR:
+            eldrich_interior_level_update(&state->levels.eldrich_interior);
+            break;
+
         case LEVEL_NONE:
         case LEVEL_COUNT:
             break;
@@ -91,6 +95,10 @@ void game_state_playing_draw(Playing* state) {
             interior_level_draw(&state->levels.interior);
             break;
 
+        case LEVEL_ELDRICH_INTERIOR:
+            eldrich_interior_level_draw(&state->levels.eldrich_interior);
+            break;
+
         case LEVEL_NONE:
         case LEVEL_COUNT:
             break;
@@ -113,6 +121,10 @@ void switch_to_level(Playing* state, Level level) {
 
         case LEVEL_INTERIOR:
             interior_level_uninit(&state->levels.interior);
+            break;
+
+        case LEVEL_ELDRICH_INTERIOR:
+            eldrich_interior_level_uninit(&state->levels.eldrich_interior);
             break;
 
         case LEVEL_NONE:
@@ -138,6 +150,10 @@ void switch_to_level(Playing* state, Level level) {
 
         case LEVEL_INTERIOR:
             interior_level_init(&state->levels.interior, state->engine, state->game_data, &state->bump_allocator.interface);
+            break;
+
+        case LEVEL_ELDRICH_INTERIOR:
+            eldrich_interior_level_init(&state->levels.eldrich_interior, state->engine, state->game_data, &state->bump_allocator.interface);
             break;
 
         case LEVEL_NONE:

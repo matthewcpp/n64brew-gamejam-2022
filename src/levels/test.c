@@ -8,7 +8,6 @@
 #define ROTATION_SPEED 90.0f
 
 static fw64Scene* load_scene(TestLevel* level);
-static void init_weapon_pickups(TestLevel* level, fw64Scene* scene);
 
 void test_level_init(TestLevel* level, fw64Engine* engine, GameData* game_data, fw64Allocator* state_allocator) {
     level_base_init(&level->base, engine, game_data, state_allocator);

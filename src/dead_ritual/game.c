@@ -14,10 +14,10 @@ void game_init(Game* game, fw64Engine* engine) {
     game->current_state = GAME_STATE_NONE;
 
     // Set this to the state you want to being at
-    game->game_data.transition_to_state = GAME_STATE_SPLASH;
+    game->game_data.transition_to_state = GAME_STATE_PLAYING;
 
     // you can optionally set this to the level you want to begin at
-    game->game_data.transition_to_level = LEVEL_NONE;
+    game->game_data.transition_to_level = LEVEL_ELDRICH_INTERIOR;
 
     fw64SoundBank* sound_bank = fw64_sound_bank_load(engine->assets, FW64_ASSET_soundbank_sounds, fw64_default_allocator());
     fw64MusicBank* music_bank = fw64_music_bank_load(engine->assets, FW64_ASSET_musicbank_music, fw64_default_allocator());

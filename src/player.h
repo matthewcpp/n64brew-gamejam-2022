@@ -15,6 +15,7 @@
 #include "weapon_bob.h"
 
 #define PLAYER_MAX_HEALTH 100
+#define PLAYER_DEFAULT_HEIGHT 12.0f
 
 typedef struct {
     fw64Engine* engine;
@@ -44,7 +45,7 @@ void player_draw_damage(Player* player);
 /** 
  * player attempts to pick up ammo.  will return false if their inventory is maxed out.
  * note this will also play a weapon animation and pickup sound.
- * so simply add ammo to the player use \ref player_add_ammo
+ * to simply add ammo to the player use \ref player_add_ammo
  * */
 int player_pickup_ammo(Player* player, WeaponType weapon_type, uint32_t amount);
 int player_add_ammo(Player* player, WeaponType weapon_type, uint32_t amount);

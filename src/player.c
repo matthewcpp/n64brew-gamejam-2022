@@ -20,7 +20,7 @@ void player_init(Player* player, fw64Engine* engine, fw64Level* level, Projectil
     weapon_bob_init(&player->weapon_bob);
 
     movement_controller_init(&player->movement, &player->input_map, &player->weapon_bob, level, player->node->collider);
-    player->movement.height = 5.0f;
+    player->movement.height = PLAYER_DEFAULT_HEIGHT;
     player->movement.collision_mask = FW64_layer_obstacles | FW64_layer_wall | FW64_layer_buildings;
     player->movement.camera.near = 1.0f;
     player->movement.camera.far = 225.0f;

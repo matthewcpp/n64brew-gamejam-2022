@@ -5,17 +5,6 @@
 #include "framework64/n64/controller_button.h"
 #include "framework64/math.h"
 
-//#define DOOMGUY_SPEED
-
-#ifdef DOOMGUY_SPEED
-#define DEFAULT_MOVEMENT_SPEED 40.0f
-#else
-#define DEFAULT_MOVEMENT_SPEED 20.0f
-#endif
-#define DEFAULT_X_TURN_SPEED 90.0f  // look up-down
-#define DEFAULT_Y_TURN_SPEED 180.0f // look left-right
-#define STICK_THRESHOLD 0.15
-
 static void movement_controller_get_ground_height(MovementController* controller);
 
 void movement_controller_init(MovementController* controller, InputMapping* input_map, WeaponBob* weapon_bob, fw64Level* level, fw64Collider* collider){
