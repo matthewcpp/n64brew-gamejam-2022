@@ -55,7 +55,7 @@ static void fps_cam_right(MovementController* fps, Vec3* out) {
     quat_from_euler(&q, 0.0f, fps->rotation.y, 0.0f);
 
     Vec3 right = { 1.0f, 0.0f, 0.0f };
-    quat_transform_vec3(out, &q, &right);
+    quat_transform_vec3(&q, &right, out);
 }
 
 static void fps_cam_left(MovementController* fps, Vec3* out) {
@@ -205,7 +205,7 @@ void movement_controller_update(MovementController* fps, float time_delta) {
     Vec3 up = {0.0f, 1.0f, 0.0f};
 
     fw64_transform_look_at(&fps->camera->node->transform, &tar, &up);
-    fw64_camera_update_view_matrix(&fps->camera);
+    fw64_camera_update_view_matrix(fps->camera);
 }
 
 void movement_controller_get_ground_height(MovementController* controller) {

@@ -12,11 +12,11 @@ void ui_init(UI* ui, fw64Engine* engine, fw64Allocator* allocator, LevelBase* le
     ui->allocator = allocator;
     ui->level = level;
 
-    ui->hud_font = fw64_font_load(ui->engine->assets, FW64_ASSET_font_ui_hud, ui->allocator);
+    ui->hud_font = fw64_assets_load_font(ui->engine->assets, FW64_ASSET_font_ui_hud, ui->allocator);
     healthbar_init(&ui->healthbar, &ui->level->player, ui->hud_font, engine->renderer);
 
-    ui->interaction_font = fw64_font_load(ui->engine->assets, FW64_ASSET_font_ui_interact, ui->allocator);
-    fw64Image* button_image = fw64_image_load_with_options(engine->assets, FW64_ASSET_image_n64_buttons, FW64_IMAGE_FLAG_DMA_MODE, ui->allocator);
+    ui->interaction_font = fw64_assets_load_font(ui->engine->assets, FW64_ASSET_font_ui_interact, ui->allocator);
+    fw64Image* button_image = fw64_assets_load_image_dma(engine->assets, FW64_ASSET_image_n64_buttons, ui->allocator);
     ui->interaction_button = fw64_texture_create_from_image(button_image, ui->allocator);
     ui->interaction_text[0] = 0;
     ui->interaction_image_frame = 0;

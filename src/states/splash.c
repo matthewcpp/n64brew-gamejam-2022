@@ -73,7 +73,7 @@ void transition_to_state(Splash* splash, SplashState state) {
         splash->image_tex = NULL;
     }
     else {
-        fw64Image* image = fw64_image_load(splash->engine->assets, image_id, &splash->bump_allocator.interface);
+        fw64Image* image = fw64_assets_load_image(splash->engine->assets, image_id, &splash->bump_allocator.interface);
         splash->image_tex = fw64_texture_create_from_image(image, &splash->bump_allocator.interface);
     }
 }
@@ -115,18 +115,21 @@ void game_state_splash_update(Splash* splash) {
 }
 
 void game_state_splash_draw(Splash* splash) {
-    fw64Renderer* renderer = splash->engine->renderer;
-
-    fw64_renderer_begin(renderer, FW64_PRIMITIVE_MODE_TRIANGLES, FW64_RENDERER_FLAG_CLEAR);
-
     if(splash->current_state_time > SPLASH_STATE_FADE_OUT_START) {
 		uint8_t color = (int)(255.0 * ((6.0f - splash->current_state_time) * 0.5f));
-		fw64_renderer_set_fill_color(renderer, color, color, color, 255);
+        fw64_spritebatch_set_color(splash->spritebatch, color, color, color, 255);
 	} else if(splash->current_state_time < SPLASH_STATE_FADE_IN_END) {
 		uint8_t color = (int)(255.0 * splash->current_state_time * 0.5f);
-		fw64_renderer_set_fill_color(renderer, color, color, color, 255);
+		fw64_spritebatch_set_color(splash->spritebatch, color, color, color, 255);
 	}
 
-    fw64_renderer_draw_sprite(renderer, splash->image_tex, 0, 0);
-    fw64_renderer_end(renderer, FW64_RENDERER_FLAG_SWAP);
+    fw64_spritebatch_begin(splash->spritebatch);
+    fw64_spritebatch_draw_sprite(splash->spritebatch, splash->image_tex, 0, 0);
+    fw64_spritebatch_end(splash->spritebatch);
+
+    fw64_renderpass_begin(splash->renderpass);
+    fw64_renderpass_draw_sprite_batch(splash->renderpass, splash->spritebatch);
+    fw64_renderpass_end(splash->renderpass);
+
+    fw64_renderer_submit_renderpass(splash->engine->renderer, splash->renderpass);
 }

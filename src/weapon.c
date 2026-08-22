@@ -127,48 +127,49 @@ void weapon_init_none(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* 
 /** TODO: this should probably be controlled in export? */
 static void clamp_textures(fw64Mesh* mesh) {
     int primitive_count = fw64_mesh_get_primitive_count(mesh);
-    for (int i = 0; i < primitive_count; i++) {
-        fw64Material* material = fw64_mesh_get_material_for_primitive(mesh, i);
+    fw64MaterialCollection* materials = fw64_mesh_get_material_collection(mesh);
+    for (uint32_t i = 0; i < materials->size; i++) {
+        fw64Material* material = fw64_material_collection_get_material(materials, i);
         fw64Texture* texture = fw64_material_get_texture(material);
         fw64_texture_set_wrap_mode(texture, FW64_TEXTURE_WRAP_CLAMP, FW64_TEXTURE_WRAP_CLAMP);
     }
 }
 
 void weapon_init_1911(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator) {
-    weapon->mesh = fw64_mesh_load(assets, FW64_ASSET_mesh_1911, allocator);
-    weapon->casing = fw64_mesh_load(assets, FW64_ASSET_mesh_9mm_round, allocator);
-    weapon->muzzle_flash = fw64_mesh_load(assets, FW64_ASSET_mesh_1911_muzzle_flash, allocator);
-    weapon->crosshair = fw64_texture_create_from_image(fw64_image_load(assets, FW64_ASSET_image_crosshair, allocator), allocator);
+    weapon->mesh = fw64_assets_load_mesh(assets, FW64_ASSET_mesh_1911, allocator);
+    weapon->casing = fw64_assets_load_mesh(assets, FW64_ASSET_mesh_9mm_round, allocator);
+    weapon->muzzle_flash = fw64_assets_load_mesh(assets, FW64_ASSET_mesh_1911_muzzle_flash, allocator);
+    weapon->crosshair = fw64_texture_create_from_image(fw64_assets_load_image(assets, FW64_ASSET_image_crosshair, allocator), allocator);
     clamp_textures(weapon->muzzle_flash);
 
     weapon->info = &weapon_infos[WEAPON_TYPE_1911];
 }
 
 void weapon_init_mp5(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator) {
-    weapon->mesh = fw64_mesh_load(assets, FW64_ASSET_mesh_mp5, allocator);
-    weapon->casing = fw64_mesh_load(assets, FW64_ASSET_mesh_9mm_round, allocator);
-    weapon->muzzle_flash = fw64_mesh_load(assets, FW64_ASSET_mesh_mp5_muzzle_flash, allocator);
-    weapon->crosshair = fw64_texture_create_from_image(fw64_image_load(assets, FW64_ASSET_image_crosshair, allocator), allocator);
+    weapon->mesh = fw64_assets_load_mesh(assets, FW64_ASSET_mesh_mp5, allocator);
+    weapon->casing = fw64_assets_load_mesh(assets, FW64_ASSET_mesh_9mm_round, allocator);
+    weapon->muzzle_flash = fw64_assets_load_mesh(assets, FW64_ASSET_mesh_mp5_muzzle_flash, allocator);
+    weapon->crosshair = fw64_texture_create_from_image(fw64_assets_load_image(assets, FW64_ASSET_image_crosshair, allocator), allocator);
     clamp_textures(weapon->muzzle_flash);
 
     weapon->info = &weapon_infos[WEAPON_TYPE_MP5];
 }
 
 void weapon_init_shotgun(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator) {
-    weapon->mesh = fw64_mesh_load(assets, FW64_ASSET_mesh_shotgun, allocator);
-    weapon->casing = fw64_mesh_load(assets, FW64_ASSET_mesh_shotgun_shell, allocator);
-    weapon->muzzle_flash = fw64_mesh_load(assets, FW64_ASSET_mesh_shotgun_muzzle_flash, allocator);
-    weapon->crosshair = fw64_texture_create_from_image(fw64_image_load(assets, FW64_ASSET_image_crosshair, allocator), allocator);
+    weapon->mesh = fw64_assets_load_mesh(assets, FW64_ASSET_mesh_shotgun, allocator);
+    weapon->casing = fw64_assets_load_mesh(assets, FW64_ASSET_mesh_shotgun_shell, allocator);
+    weapon->muzzle_flash = fw64_assets_load_mesh(assets, FW64_ASSET_mesh_shotgun_muzzle_flash, allocator);
+    weapon->crosshair = fw64_texture_create_from_image(fw64_assets_load_image(assets, FW64_ASSET_image_crosshair, allocator), allocator);
     clamp_textures(weapon->muzzle_flash);
 
     weapon->info = &weapon_infos[WEAPON_TYPE_SHOTGUN];
 }
 
 void weapon_init_uzi(Weapon* weapon, fw64AssetDatabase* assets, fw64Allocator* allocator) {
-    weapon->mesh = fw64_mesh_load(assets, FW64_ASSET_mesh_uzi, allocator);
-    weapon->casing = fw64_mesh_load(assets, FW64_ASSET_mesh_9mm_round, allocator);
-    weapon->muzzle_flash = fw64_mesh_load(assets, FW64_ASSET_mesh_uzi_muzzle_flash, allocator);
-    weapon->crosshair = fw64_texture_create_from_image(fw64_image_load(assets, FW64_ASSET_image_crosshair, allocator), allocator);
+    weapon->mesh = fw64_assets_load_mesh(assets, FW64_ASSET_mesh_uzi, allocator);
+    weapon->casing = fw64_assets_load_mesh(assets, FW64_ASSET_mesh_9mm_round, allocator);
+    weapon->muzzle_flash = fw64_assets_load_mesh(assets, FW64_ASSET_mesh_uzi_muzzle_flash, allocator);
+    weapon->crosshair = fw64_texture_create_from_image(fw64_assets_load_image(assets, FW64_ASSET_image_crosshair, allocator), allocator);
     clamp_textures(weapon->muzzle_flash);
 
     weapon->info = &weapon_infos[WEAPON_TYPE_UZI];

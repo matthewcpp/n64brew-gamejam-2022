@@ -53,7 +53,9 @@ set(main_game_files
 
 create_game(
     TARGET dead_ritual
-    SOURCES ${main_game_files} ${core_files} ${level_files} ${game_state_files} ${ui_files} ${fw64_component_files} ${main_game_files})
+    SOURCES ${main_game_files} ${core_files} ${level_files} ${game_state_files} ${ui_files} ${fw64_component_files} ${main_game_files}
+    ALL_WARNINGS_AS_ERRORS
+)
 
 target_include_directories(dead_ritual PRIVATE dead_ritual)
 

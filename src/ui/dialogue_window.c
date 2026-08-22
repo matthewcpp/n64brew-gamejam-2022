@@ -1,7 +1,7 @@
 #include "dialogue_window.h"
 
 #include "framework64/filesystem.h"
-#include "framework64/n64/controller_button.h"
+#include "framework64/controller_mapping/n64.h"
 
 #include "assets/assets.h"
 
@@ -14,10 +14,10 @@ static void read_next_character(DialogueWindow* window);
 
 void dialogue_window_init(DialogueWindow* window, fw64Engine* engine, int font_asset, int dialogue_asset, IVec2* position, IVec2* size, fw64Allocator* allocator) {
     window->engine = engine;
-    window->font = fw64_font_load(engine->assets, font_asset, allocator);
+    window->font = fw64_assets_load_font(engine->assets, font_asset, allocator);
 
-    window->background_texture = fw64_texture_create_from_image(fw64_image_load(engine->assets, FW64_ASSET_image_dialogue_overlay, allocator), allocator);
-    window->next_indicator = fw64_texture_create_from_image(fw64_image_load(engine->assets, FW64_ASSET_image_dialogue_next, allocator), allocator);
+    window->background_texture = fw64_texture_create_from_image(fw64_assets_load_image(engine->assets, FW64_ASSET_image_dialogue_overlay, allocator), allocator);
+    window->next_indicator = fw64_texture_create_from_image(fw64_assets_load_image(engine->assets, FW64_ASSET_image_dialogue_next, allocator), allocator);
 
     dialogue_window_reset(window);
 
@@ -32,6 +32,8 @@ void dialogue_window_init(DialogueWindow* window, fw64Engine* engine, int font_a
 
     window->position = *position;
     window->size = *size;
+
+    window->spritebatch = fw64_spritebatch_create(1, allocator);
 }
 
 void dialogue_window_uninit(DialogueWindow* window, fw64Allocator* allocator) {
@@ -46,6 +48,7 @@ void dialogue_window_uninit(DialogueWindow* window, fw64Allocator* allocator) {
     fw64_texture_delete(window->next_indicator, allocator);
 
     fw64_font_delete(window->engine->assets, window->font, allocator);
+    fw64_spritebatch_delete(window->spritebatch);
 
     allocator->free(allocator, window->dialogue_data);
 }
@@ -105,14 +108,10 @@ void dialogue_window_draw(DialogueWindow* window) {
     if (window->status == DIALOGUE_WINDOW_STATUS_INACTIVE)
         return;
 
-    fw64Renderer* renderer = window->engine->renderer;
+    fw64_spritebatch_begin(window->spritebatch);
+    fw64_spritebatch_set_color(window->spritebatch, 255, 255, 255, 255);
 
-    float scale_x = (float)window->size.x / (float)fw64_texture_height(window->background_texture);
-    float scale_y = (float)window->size.y / (float)fw64_texture_width(window->background_texture);
-
-    fw64_renderer_set_fill_color(renderer, 255, 255, 255, 255);
-
-    fw64_renderer_draw_sprite_slice_transform(renderer, window->background_texture, 0, window->position.x, window->position.y, scale_x, scale_y, 0.0f);
+    fw64_spritebatch_draw_sprite_slice_rect(window->spritebatch, window->background_texture, 0, window->position.x, window->position.y, window->size.x, window->size.y);
 
     int draw_x = window->position.x + 5;
     int draw_y = window->position.y + 5;
@@ -121,7 +120,7 @@ void dialogue_window_draw(DialogueWindow* window) {
         if (!window->lines[0].text)
             continue;
 
-        fw64_renderer_draw_text_count(renderer, window->font, draw_x, draw_y, window->lines[i].text, window->lines[i].count);
+        fw64_spritebatch_draw_string_count(window->spritebatch, window->font, draw_x, draw_y, window->lines[i].text, window->lines[i].count);
 
         draw_y += fw64_font_size(window->font) + 3;
     }
@@ -130,8 +129,10 @@ void dialogue_window_draw(DialogueWindow* window) {
         draw_x = window->position.x + window->size.x - fw64_texture_width(window->next_indicator) - 2;
         draw_y = window->position.y + window->size.y - fw64_texture_height(window->next_indicator) / 2;
 
-        fw64_renderer_draw_sprite(renderer, window->next_indicator, draw_x, draw_y);
+        fw64_spritebatch_draw_sprite(window->spritebatch, window->next_indicator, draw_x, draw_y);
     }
+
+    fw64_spritebatch_end(window->spritebatch);
 }
 
 static void read_next_character(DialogueWindow* window) {

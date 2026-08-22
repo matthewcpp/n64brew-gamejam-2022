@@ -7,13 +7,15 @@ void compass_init(Compass* compass, fw64Engine* engine, fw64Allocator* allocator
 	compass->allocator = allocator;
 	compass->player_pos = player_pos;
 
-	fw64Image* bg_image = fw64_image_load_with_options(engine->assets, FW64_ASSET_image_compass_bg, FW64_IMAGE_FLAG_DMA_MODE, compass->allocator);
+	fw64Image* bg_image = fw64_assets_load_image(engine->assets, FW64_ASSET_image_compass_bg, compass->allocator);
 	compass->compass_bg = fw64_texture_create_from_image(bg_image, compass->allocator);
-	fw64Image* home_image = fw64_image_load_with_options(engine->assets, FW64_ASSET_image_home, FW64_IMAGE_FLAG_DMA_MODE, compass->allocator);
+	fw64Image* home_image = fw64_assets_load_image(engine->assets, FW64_ASSET_image_home, compass->allocator);
     compass->home_icon = fw64_texture_create_from_image(home_image, compass->allocator);
-	fw64Image* north_image = fw64_image_load_with_options(engine->assets, FW64_ASSET_image_north, FW64_IMAGE_FLAG_DMA_MODE, compass->allocator);
+	fw64Image* north_image = fw64_assets_load_image(engine->assets, FW64_ASSET_image_north, compass->allocator);
 	compass->north_icon = fw64_texture_create_from_image(north_image, compass->allocator);
 	compass->turn_compass = 1;
+
+	fw64_spritebatch_create(1, allocator);
 }
 
 void compass_uninit(Compass* compass) {
@@ -23,9 +25,11 @@ void compass_uninit(Compass* compass) {
     fw64_texture_delete(compass->home_icon, compass->allocator);
 	fw64_image_delete(compass->engine->assets, fw64_texture_get_image(compass->north_icon), compass->allocator);
     fw64_texture_delete(compass->north_icon, compass->allocator);
+
+	fw64_spritebatch_delete(compass->spritebatch);
 }
 
-void compass_draw(Compass* compass) {
+void compass_draw(Compass* compass, fw64RenderPass* renderpass) {
 	static Vec3 home_pos = { 0.0f, 0.0f, 0.0f };
 	static Vec3 north = { 0.0f, 0.0f, -1.0f };
 	static float radius = 14.0f;
@@ -47,10 +51,15 @@ void compass_draw(Compass* compass) {
 		quat_transform_vec3(&compass_rotate, &temp_north, &temp_north);
 		quat_transform_vec3(&compass_rotate, &home_dir, &home_dir);
 	}
-	fw64_renderer_set_fill_color(compass->engine->renderer, 255, 255, 255, 200);
-	fw64_renderer_draw_sprite(compass->engine->renderer, compass->compass_bg, compass_pos.x - 16.0f, compass_pos.y - 16.0f);
-	fw64_renderer_set_fill_color(compass->engine->renderer, 64, 128, 64, 200);
-	fw64_renderer_draw_sprite(compass->engine->renderer, compass->north_icon, compass_pos.x - 8.0f + (temp_north.x * radius), compass_pos.y - 8.0f + (temp_north.z * radius));
-	fw64_renderer_set_fill_color(compass->engine->renderer, 64, 64, 128, 200);
-	fw64_renderer_draw_sprite(compass->engine->renderer, compass->home_icon, compass_pos.x - 8.0f + home_dir.x, compass_pos.y - 8.0f + home_dir.z);
+
+	fw64_spritebatch_begin(compass->spritebatch);
+	fw64_spritebatch_set_color(compass->spritebatch, 255, 255, 255, 200);
+	fw64_spritebatch_draw_sprite(compass->spritebatch, compass->compass_bg, compass_pos.x - 16.0f, compass_pos.y - 16.0f);
+	fw64_spritebatch_set_color(compass->spritebatch, 64, 128, 64, 200);
+	fw64_spritebatch_draw_sprite(compass->spritebatch, compass->north_icon, compass_pos.x - 8.0f + (temp_north.x * radius), compass_pos.y - 8.0f + (temp_north.z * radius));
+	fw64_spritebatch_set_color(compass->spritebatch, 64, 64, 128, 200);
+	fw64_spritebatch_draw_sprite(compass->spritebatch, compass->home_icon, compass_pos.x - 8.0f + home_dir.x, compass_pos.y - 8.0f + home_dir.z);
+	fw64_spritebatch_end(compass->spritebatch);
+
+	fw64_renderpass_draw_sprite_batch(renderpass, compass->spritebatch);
 }

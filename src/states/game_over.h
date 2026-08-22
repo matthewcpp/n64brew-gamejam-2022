@@ -11,6 +11,8 @@ typedef struct GameOver {
     fw64Camera* camera;
     fw64BumpAllocator bump_allocator;
     fw64Texture* you_died_texture;
+    fw64RenderPass* renderpass;
+    fw64SpriteBatch* spritebatch;
     float text_effect_time;
     int sound_handle;
 } GameOver;

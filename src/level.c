@@ -223,7 +223,6 @@ int fw64_level_moving_spheres_dynamic_intersection(fw64Level* level, Vec3* cente
 
 
 void fw64_level_draw_camera(fw64Level* level, fw64RenderPass* renderpass, fw64Camera* camera) {
-    fw64Renderer* renderer = level->engine->renderer;
     fw64Frustum frustum;
     fw64_camera_extract_frustum_planes(camera, &frustum);
 
@@ -243,7 +242,6 @@ void fw64_level_draw_camera(fw64Level* level, fw64RenderPass* renderpass, fw64Ca
 }
 
 void fw64_level_draw_camera_all(fw64Level* level, fw64RenderPass* renderpass, fw64Camera* camera) {
-    fw64Renderer* renderer = level->engine->renderer;
     fw64Frustum frustum;
     fw64_camera_extract_frustum_planes(camera, &frustum);
 

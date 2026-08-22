@@ -1,7 +1,7 @@
 #include "menu.h"
 #include "audio_controller.h"
-#include "framework64/n64/controller_button.h"
-#include "framework64/util/renderer_util.h"
+#include "framework64/controller_mapping/n64.h"
+#include <framework64/util/renderpass_util.h>
 
 #include "mapped_input.h"
 #include "levels/levels.h"
@@ -24,16 +24,26 @@ void game_state_menu_init(Menu* menu, fw64Engine* engine, GameData* game_data) {
 	menu->game_data = game_data;
 	menu->menu_choice = 0;
 
-	fw64_camera_init(&menu->camera);
-	fw64_bump_allocator_init(&menu->bump_allocator, LEVEL_MEMORY_POOL_SIZE);
+	fw64Display* display = fw64_displays_get_primary(engine->displays);
+	fw64Allocator* allocator = fw64_bump_allocator_init(&menu->bump_allocator, LEVEL_MEMORY_POOL_SIZE);
 
-	uint8_t* image_buffer = menu->bump_allocator.interface.memalign(&menu->bump_allocator.interface, 8, IMAGE_ALLOCATOR_BUFFER_SIZE);
+	fw64Node* camera_node = fw64_allocator_malloc(allocator, sizeof(fw64Node));
+	fw64_node_init(camera_node);
+	fw64_camera_init(&menu->camera, camera_node, display);
+
+	menu->renderpass = fw64_renderpass_create(display, allocator);
+	fw64_renderpass_util_ortho2d(menu->renderpass);
+	fw64_renderpass_set_camera(menu->renderpass, &menu->camera);
+
+	menu->spritebatch = fw64_spritebatch_create(1, allocator);
+
+	char* image_buffer = fw64_allocator_memalign(allocator, 8, IMAGE_ALLOCATOR_BUFFER_SIZE);
 	fw64_bump_allocator_init_from_buffer(&menu->image_allocator, image_buffer, IMAGE_ALLOCATOR_BUFFER_SIZE);
 
 	menu->control_scheme = INPUT_MAP_LAYOUT_MODERN_TWINSTICK;
 	mapped_input_set_map_layout(&menu->game_data->player_data.input_map, menu->control_scheme);
 
-	menu->font = fw64_font_load(engine->assets, FW64_ASSET_font_menu, &menu->bump_allocator.interface);
+	menu->font = fw64_assets_load_font(engine->assets, FW64_ASSET_font_menu, &menu->bump_allocator.interface);
 	fw64_audio_play_music(engine->audio, music_bank_music_menu);
 
 	menu->bg = NULL;
@@ -48,23 +58,29 @@ void game_state_menu_update(Menu* menu) {
 
 }
 void game_state_menu_draw(Menu* menu) {
-	fw64_renderer_begin(menu->engine->renderer, FW64_PRIMITIVE_MODE_TRIANGLES, FW64_RENDERER_FLAG_CLEAR);
-	fw64_renderer_set_camera(menu->engine->renderer, &menu->camera);
-
-	fw64_renderer_draw_sprite(menu->engine->renderer, menu->bg, 0, 0);
+	fw64_spritebatch_begin(menu->spritebatch);
+	fw64_spritebatch_draw_sprite(menu->spritebatch, menu->bg, 0, 0);
 	
 	if(menu->current_menu == MENU_SCREEN_MAIN) {
 		main_menu_draw(menu);
 	} else if (menu->current_menu == MENU_SCREEN_CONTROLS) {
 		controls_menu_draw(menu);
 	}
+	fw64_spritebatch_end(menu->spritebatch);
 
-	fw64_renderer_end(menu->engine->renderer, FW64_RENDERER_FLAG_SWAP);
+	fw64_renderpass_begin(menu->renderpass);
+	fw64_renderpass_draw_sprite_batch(menu->renderpass, menu->spritebatch);
+	fw64_renderpass_end(menu->renderpass);
+
+	fw64_renderer_submit_renderpass(menu->engine->renderer, menu->renderpass);
 }
 void game_state_menu_uninit(Menu* menu) {
 	fw64_audio_stop_music(menu->engine->audio);
 	set_menu_screen(menu, MENU_SCREEN_NONE);
 	fw64_font_delete(menu->engine->assets, menu->font, &menu->bump_allocator.interface);
+
+	fw64_renderpass_delete(menu->renderpass);
+	fw64_spritebatch_delete(menu->spritebatch);
 	
 	fw64_bump_allocator_uninit(&menu->image_allocator);
 	fw64_bump_allocator_uninit(&menu->bump_allocator);
@@ -96,7 +112,7 @@ static void set_menu_screen(Menu* menu, MenuScreen screen) {
 	}
 
 	if (asset_id != FW64_INVALID_ASSET_ID) {
-		fw64Image* bg_image = fw64_image_load(menu->engine->assets, asset_id, &menu->image_allocator.interface);
+		fw64Image* bg_image = fw64_assets_load_image(menu->engine->assets, asset_id, &menu->image_allocator.interface);
 		menu->bg = fw64_texture_create_from_image(bg_image, &menu->image_allocator.interface);
 	}
 }

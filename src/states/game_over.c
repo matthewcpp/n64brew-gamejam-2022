@@ -1,6 +1,7 @@
 #include "game_over.h"
-#include "framework64/n64/controller_button.h"
+#include "framework64/controller_mapping/n64.h"
 #include "framework64/math.h"
+#include <framework64/util/renderpass_util.h>
 
 #include "assets/assets.h"
 #include "assets/sound_bank_sounds.h"
@@ -12,15 +13,25 @@
 void game_state_game_over_init(GameOver* state, fw64Engine* engine, GameData* game_data) {
     state->engine = engine;
     state->game_data = game_data;
-    fw64_bump_allocator_init(&state->bump_allocator, LEVEL_MEMORY_POOL_SIZE);
+    
+    fw64Display* display = fw64_displays_get_primary(engine->displays);
+    fw64Allocator* allocator = fw64_bump_allocator_init(&state->bump_allocator, LEVEL_MEMORY_POOL_SIZE);
+
+    fw64Node* camera_node = fw64_allocator_malloc(allocator, sizeof(fw64Node));
+    fw64_node_init(camera_node);
+    state->camera = fw64_allocator_malloc(allocator, sizeof(fw64Camera));
+    fw64_camera_init(state->camera, camera_node, display);
+
+    state->renderpass = fw64_renderpass_create(display, allocator);
+    fw64_renderpass_util_ortho2d(state->renderpass);
+
+    state->spritebatch = fw64_spritebatch_create(1, allocator);
 
     state->text_effect_time = 0.0f;
 
-    fw64Image* you_died_img = fw64_image_load(engine->assets, FW64_ASSET_image_you_died, &state->bump_allocator.interface);
+    fw64Image* you_died_img = fw64_assets_load_image(engine->assets, FW64_ASSET_image_you_died, &state->bump_allocator.interface);
     state->you_died_texture = fw64_texture_create_from_image(you_died_img, &state->bump_allocator.interface);
     state->sound_handle = fw64_audio_play_sound(engine->audio, sound_bank_sounds_you_died);
-
-    fw64_renderer_set_clear_color(engine->renderer, 0, 0, 0);
 }
 
 void game_state_game_over_uninit(GameOver* state) {
@@ -30,6 +41,9 @@ void game_state_game_over_uninit(GameOver* state) {
     
     fw64_image_delete(state->engine->assets, fw64_texture_get_image(state->you_died_texture), &state->bump_allocator.interface);
     fw64_texture_delete(state->you_died_texture, &state->bump_allocator.interface);
+
+    fw64_spritebatch_delete(state->spritebatch);
+    fw64_renderpass_delete(state->renderpass);
 
     fw64_bump_allocator_uninit(&state->bump_allocator);
 }
@@ -54,9 +68,10 @@ static void draw_you_died_text(GameOver* state) {
 
     if (state->text_effect_time == TEXT_EFFECT_DURATION) {
         int draw_x = (screen_size.x / 2) - (fw64_texture_width(state->you_died_texture) / 2);
-        fw64_renderer_draw_sprite(state->engine->renderer, state->you_died_texture, draw_x, YOU_DIED_BORDER_OFFSET);
+        fw64_spritebatch_draw_sprite(state->spritebatch, state->you_died_texture, draw_x, YOU_DIED_BORDER_OFFSET);
         return;
     }
+
     float tex_width = (float)fw64_texture_width(state->you_died_texture);
 
     float smoothed_t = fw64_smoothstep(0.0f, 1.0f, state->text_effect_time / TEXT_EFFECT_DURATION);
@@ -66,19 +81,23 @@ static void draw_you_died_text(GameOver* state) {
     float right_ref = (float)screen_size.x - (float)YOU_DIED_BORDER_OFFSET - tex_width;
     float right_pos = right_ref - ((right_ref - target_x) * smoothed_t);
 
-    fw64_renderer_set_fill_color(renderer, 255, 255, 255, 255);
-    fw64_renderer_draw_sprite(state->engine->renderer, state->you_died_texture, (int)right_pos, YOU_DIED_BORDER_OFFSET);
+    fw64_spritebatch_set_color(state->spritebatch, 255, 255, 255, 255);
+    fw64_spritebatch_draw_sprite(state->spritebatch, state->you_died_texture, (int)right_pos, YOU_DIED_BORDER_OFFSET);
 
-    fw64_renderer_set_fill_color(renderer, 255, 255, 255, 100);
-    fw64_renderer_draw_sprite(state->engine->renderer, state->you_died_texture, (int)left_pos, YOU_DIED_BORDER_OFFSET);
+    fw64_spritebatch_set_color(state->spritebatch, 255, 255, 255, 100);
+    fw64_spritebatch_draw_sprite(state->spritebatch, state->you_died_texture, (int)left_pos, YOU_DIED_BORDER_OFFSET);
 
-    fw64_renderer_set_fill_color(renderer, 255, 255, 255, 255);
+    fw64_spritebatch_set_color(state->spritebatch, 255, 255, 255, 255);
 }
 
 void game_state_game_over_draw(GameOver* state) {
-    fw64Renderer* renderer = state->engine->renderer;
-
-    fw64_renderer_begin(renderer, FW64_PRIMITIVE_MODE_TRIANGLES, FW64_RENDERER_FLAG_CLEAR);
+    fw64_spritebatch_begin(state->spritebatch);
     draw_you_died_text(state);
-    fw64_renderer_end(renderer, FW64_RENDERER_FLAG_SWAP);
+    fw64_spritebatch_end(state->spritebatch);
+
+    fw64_renderpass_begin(state->renderpass);
+    fw64_renderpass_draw_sprite_batch(state->renderpass, state->spritebatch);
+    fw64_renderpass_end(state->renderpass);
+
+    fw64_renderer_submit_renderpass(state->engine->renderer, state->renderpass);
 }

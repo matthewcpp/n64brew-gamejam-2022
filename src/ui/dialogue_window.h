@@ -24,6 +24,7 @@ typedef struct {
     fw64Font* font;
     fw64Texture* background_texture;
     fw64Texture* next_indicator;
+    fw64SpriteBatch* spritebatch;
     DialogueWindowStatus status;
     uint32_t data_size;
     char* dialogue_data;

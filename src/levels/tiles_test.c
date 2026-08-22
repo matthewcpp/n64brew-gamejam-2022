@@ -317,7 +317,7 @@ void tiles_test_level_draw(TilesTestLevel* level) {
     renderpass = level->base.renderpasses[RENDER_PASS_UI];
     fw64_renderpass_begin(renderpass);
     ui_draw(&level->base.ui);
-    compass_draw(&level->compass);
+    compass_draw(&level->compass, renderpass);
     fw64_renderpass_end(renderpass);
 }
 
