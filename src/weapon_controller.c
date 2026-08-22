@@ -1,7 +1,7 @@
 #include "weapon_controller.h"
 
 #include "framework64/math.h"
-#include "framework64/n64/controller_button.h"
+#include "framework64/controller_mapping/n64.h"
 
 #include "zombie.h"
 
@@ -16,7 +16,7 @@ static void weapon_controller_fire(WeaponController* controller);
 static int weapon_controller_is_idle(WeaponController* controller);
 static void free_existing_weapon_data(WeaponController* controller);
 
-void weapon_controller_init(WeaponController* controller, fw64Engine* engine, WeaponBob* weapon_bob, ProjectileController* projectile_controller, AudioController* audio_controller, fw64Allocator* player_allocator, InputMapping* input_map, int controller_index) {
+void weapon_controller_init(WeaponController* controller, fw64Engine* engine, fw64Camera* weapon_camera, WeaponBob* weapon_bob, ProjectileController* projectile_controller, AudioController* audio_controller, fw64Allocator* player_allocator, InputMapping* input_map, int controller_index) {
     controller->engine = engine;
     controller->weapon_bob = weapon_bob;
     controller->projectile_controller = projectile_controller;
@@ -32,14 +32,14 @@ void weapon_controller_init(WeaponController* controller, fw64Engine* engine, We
 
     fw64_bump_allocator_init_from_buffer(&controller->weapon_allocator, player_allocator->memalign(player_allocator, 8, WEAPON_CONTROLLER_MEMORY_POOL_SIZE), WEAPON_CONTROLLER_MEMORY_POOL_SIZE);
 
-    fw64_camera_init(&controller->weapon_camera);
-    vec3_zero(&controller->weapon_camera.transform.position);
-    fw64_camera_update_view_matrix(&controller->weapon_camera);
+    controller->weapon_camera = weapon_camera;
+    vec3_set_all(&controller->weapon_camera->node->transform.position, 0.0f);
+    fw64_camera_update_view_matrix(controller->weapon_camera);
 
-    controller->weapon_camera.near = 1.0f;
-    controller->weapon_camera.far = 125.0f;
-    controller->weapon_camera.fovy = 60.0f;
-    fw64_camera_update_projection_matrix(&controller->weapon_camera);
+    controller->weapon_camera->near = 1.0f;
+    controller->weapon_camera->far = 125.0f;
+    controller->weapon_camera->fovy = 60.0f;
+    fw64_camera_update_projection_matrix(controller->weapon_camera);
 
     fw64_transform_init(&controller->weapon_transform);
     fw64_transform_init(&controller->casing_transform);
@@ -57,12 +57,15 @@ void weapon_controller_uninit(WeaponController* controller) {
 }
 
 void free_existing_weapon_data(WeaponController* controller) {
-    if (controller->weapon.mesh)
-        fw64_mesh_delete(controller->engine->assets, controller->weapon.mesh, &controller->weapon_allocator.interface);
-    if (controller->weapon.casing)
-        fw64_mesh_delete(controller->engine->assets, controller->weapon.casing, &controller->weapon_allocator.interface);
-    if (controller->weapon.muzzle_flash)
-        fw64_mesh_delete(controller->engine->assets, controller->weapon.muzzle_flash, &controller->weapon_allocator.interface);
+    if (controller->weapon.mesh){
+        fw64_mesh_delete(controller->weapon.mesh, controller->engine->assets, &controller->weapon_allocator.interface);
+    }
+    if (controller->weapon.casing) {
+        fw64_mesh_delete(controller->weapon.casing, controller->engine->assets, &controller->weapon_allocator.interface);
+    }
+    if (controller->weapon.muzzle_flash) {
+        fw64_mesh_delete(controller->weapon.muzzle_flash, controller->engine->assets, &controller->weapon_allocator.interface);
+    }
     if (controller->weapon.crosshair) {
         fw64_image_delete(controller->engine->assets, fw64_texture_get_image(controller->weapon.crosshair), &controller->weapon_allocator.interface);
         fw64_texture_delete(controller->weapon.crosshair, &controller->weapon_allocator.interface);
@@ -121,10 +124,10 @@ static void weapon_controller_update_recoil(WeaponController* controller) {
     float smoothed_time = fw64_smoothstep(0.0f, 1.0f, controller->recoil_time / weapon->info->recoil_time);
 
     if (controller->recoil_state == WEAPON_RECOIL_RECOILING) {
-        vec3_lerp(&controller->weapon_transform.position, &weapon->info->default_position, &weapon->info->recoil_pos, smoothed_time);
+        vec3_lerp(&weapon->info->default_position, &weapon->info->recoil_pos, smoothed_time, &controller->weapon_transform.position);
     }
     else if (controller->recoil_state == WEAPON_RECOIL_RECOVERING) {
-        vec3_lerp(&controller->weapon_transform.position, &weapon->info->recoil_pos, &weapon->info->default_position, smoothed_time);
+        vec3_lerp(&weapon->info->recoil_pos, &weapon->info->default_position, smoothed_time, &controller->weapon_transform.position);
     }
 
     vec3_add(&controller->weapon_transform.position, &controller->weapon_transform.position, &controller->weapon_bob->translation);
@@ -173,11 +176,11 @@ static void weapon_controller_update_transition(WeaponController* controller, Ve
     controller->transition_time += controller->engine->time->time_delta;
 
     if (controller->transition_time >= 1.0f) {
-        vec3_copy(&controller->weapon_transform.position, end);
+        vec3_copy(end, &controller->weapon_transform.position);
     }
     else {
         float t = controller->transition_time / WEAPON_CONTROLLER_TRANSITION_SPEED;
-        vec3_smoothstep(&controller->weapon_transform.position, start, end, t);
+        vec3_smoothstep(start, end, t, &controller->weapon_transform.position);
     }
     
     fw64_transform_update_matrix(&controller->weapon_transform);
@@ -220,7 +223,7 @@ void weapon_controller_update(WeaponController* controller) {
     }
 }
 
-void weapon_controller_draw(WeaponController* controller) {
+void weapon_controller_draw(WeaponController* controller, fw64RenderPass* renderpass) {
     fw64Renderer* renderer = controller->engine->renderer;
     Weapon* weapon = &controller->weapon;
 

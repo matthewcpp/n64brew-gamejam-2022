@@ -3,7 +3,7 @@
 #include "framework64/engine.h"
 #include "framework64/node.h"
 
-#include "framework64/level.h"
+#include "level.h"
 #include "zombie.h"
 #include "zombie_logic.h"
 
@@ -21,8 +21,7 @@ typedef struct {
     Zombie zombies[ZOMBIE_SPAWNER_MAX_COUNT];
     unsigned int zombie_slot_active; // bitset. todo: make a proper clone procedure instead
     int active_zombies;
-    fw64Mesh* zombie_mesh;
-    fw64AnimationData* animation_data;
+    fw64SkinnedMesh* zombie_mesh;
 } ZombieSpawner;
 
 void zombie_spawner_init(ZombieSpawner* spawner, fw64Engine* engine, fw64Level* level, fw64Transform* target, fw64Allocator* allocator);

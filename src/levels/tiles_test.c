@@ -79,7 +79,7 @@ void tiles_test_level_init(TilesTestLevel* level, fw64Engine* engine, GameData* 
     Vec3 starting_pos = {0.0f, 0.0f, 0.0f};
     vec3_add(&starting_pos, &starting_pos, &level->base.game_data->player_data.transform.position);
     player_set_position(&level->base.player, &starting_pos);
-    vec3_copy(&level->player_prev_position, &level->base.player.node->transform.position);
+    vec3_copy(&level->base.player.node->transform.position, &level->player_prev_position);
 
     game_data_load_player_data(level->base.game_data, &level->base.player);
 
@@ -263,7 +263,7 @@ void tiles_test_level_update(TilesTestLevel* level) {
     level_base_update(&level->base);
     Player* player = &level->base.player;
     Vec3 player_position;
-    vec3_copy(&player_position, &player->node->transform.position);
+    vec3_copy(&player->node->transform.position, &player_position);
     
     if (level->player_prev_position.z > level->next_row_trigger[NORTH] &&  player_position.z <= level->next_row_trigger[NORTH]) {
         tiles_test_load_next_row(level, NORTH);
@@ -277,7 +277,7 @@ void tiles_test_level_update(TilesTestLevel* level) {
         tiles_test_load_next_row(level, EAST);
     }
     
-    vec3_copy(&level->player_prev_position, &player_position);
+    vec3_copy(&player_position, &level->player_prev_position);
 
     if (level->base.interaction.interesting_node && player_is_interacting(&level->base.player)) {
         if(1) {  // can open door. temp set to always true

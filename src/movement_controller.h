@@ -7,7 +7,7 @@
 #include "framework64/vec2.h"
 
 #include "mapped_input.h"
-#include "framework64/level.h"
+#include "level.h"
 #include "weapon_bob.h"
 
 typedef struct {
@@ -15,7 +15,7 @@ typedef struct {
     fw64Collider* collider;
     InputMapping* input_map;
     WeaponBob* weapon_bob;
-    fw64Camera camera;
+    fw64Camera* camera;
     float movement_speed;
     float injury_speed_mod;
     float staggered_timer;
@@ -31,7 +31,7 @@ typedef struct {
 extern "C" {
 #endif
 
-void movement_controller_init(MovementController* controller, InputMapping* input_map, WeaponBob* weapon_bob, fw64Level* level, fw64Collider* collider);
+void movement_controller_init(MovementController* controller, InputMapping* input_map, WeaponBob* weapon_bob, fw64Level* level, fw64Collider* collider, fw64Camera* camera);
 void movement_controller_update(MovementController* controller, float time_delta);
 
 #ifdef __cplusplus

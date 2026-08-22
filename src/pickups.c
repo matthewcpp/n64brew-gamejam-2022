@@ -21,20 +21,24 @@ void pickups_init(Pickups* pickups, fw64Engine* engine, Player* player, fw64Allo
 
     pickups->meshes[PICKUP_TYPE_NONE] = NULL;
 
-    pickups->meshes[PICKUP_TYPE_SHOTGUN_AMMO] = fw64_mesh_load(engine->assets, FW64_ASSET_mesh_shotgun_pickup, allocator);
+    pickups->meshes[PICKUP_TYPE_SHOTGUN_AMMO] = fw64_assets_load_mesh(engine->assets, FW64_ASSET_mesh_shotgun_pickup, allocator);
     pickups->meshes[PICKUP_TYPE_MAX_SHOTGUN_AMMO] = pickups->meshes[PICKUP_TYPE_SHOTGUN_AMMO];
 
-    pickups->meshes[PICKUP_TYPE_UZI_AMMO] = fw64_mesh_load(engine->assets, FW64_ASSET_mesh_uzi_pickup, allocator);
+    pickups->meshes[PICKUP_TYPE_UZI_AMMO] = fw64_assets_load_mesh(engine->assets, FW64_ASSET_mesh_uzi_pickup, allocator);
     pickups->meshes[PICKUP_TYPE_MAX_UZI_AMMO] = pickups->meshes[PICKUP_TYPE_UZI_AMMO];
 
-    pickups->meshes[PICKUP_TYPE_MP5_AMMO] = fw64_mesh_load(engine->assets, FW64_ASSET_mesh_mp5_pickup, allocator);
+    pickups->meshes[PICKUP_TYPE_MP5_AMMO] = fw64_assets_load_mesh(engine->assets, FW64_ASSET_mesh_mp5_pickup, allocator);
     pickups->meshes[PICKUP_TYPE_MAX_MP5_AMMO] = pickups->meshes[PICKUP_TYPE_MP5_AMMO];
+
+    fw64_billboard_nodes_init(&pickups->billboard_nodes, allocator);
 }
 
 void pickups_uninit(Pickups* pickups) {
-    fw64_mesh_delete(pickups->engine->assets, pickups->meshes[PICKUP_TYPE_SHOTGUN_AMMO], pickups->allocator);
-    fw64_mesh_delete(pickups->engine->assets, pickups->meshes[PICKUP_TYPE_UZI_AMMO], pickups->allocator);
-    fw64_mesh_delete(pickups->engine->assets, pickups->meshes[PICKUP_TYPE_MP5_AMMO], pickups->allocator);
+    fw64_mesh_delete(pickups->meshes[PICKUP_TYPE_SHOTGUN_AMMO], pickups->engine->assets, pickups->allocator);
+    fw64_mesh_delete(pickups->meshes[PICKUP_TYPE_UZI_AMMO], pickups->engine->assets, pickups->allocator);
+    fw64_mesh_delete(pickups->meshes[PICKUP_TYPE_MP5_AMMO], pickups->engine->assets, pickups->allocator);
+
+    fw64_billboard_nodes_uninit(&pickups->billboard_nodes);
 }
 
 void pickups_set_callback(Pickups* pickups, PickupCallback callback, void* arg) {
@@ -51,6 +55,7 @@ int pickups_add(Pickups* pickups, PickupType weapon_type, uint32_t amount, fw64N
     pickup->type = weapon_type;
     pickup->amount = amount;
     pickup->node = node;
+    fw64_billboard_nodes_create(&pickups->billboard_nodes, node, pickups->player->player_camera, &pickup->billboard_handle);
 
     pickups->item_count += 1;
 
@@ -63,6 +68,8 @@ void pickups_remove(Pickups* pickups, fw64Node* node) {
 
         if (pickup->node != node)
             continue;
+
+        
 
         Pickup* swap = &pickups->items[pickups->item_count - 1];
         memcpy(pickup, swap, sizeof(Pickup));
@@ -81,7 +88,7 @@ void pickups_add_from_scene(Pickups* pickups, fw64Scene* scene) {
         if (!pickups_add(pickups, pickup_type, get_pickup_amount(pickup_type), node))
             return;
 
-        fw64_node_set_mesh(node, pickups->meshes[pickup_type]);
+        fw64_mesh_instance_set_mesh(node->mesh_instance, pickups->meshes[pickup_type]);
     }
 }
 
@@ -118,7 +125,7 @@ void pickups_update(Pickups* pickups) {
             if (pickups->callback)
                 pickups->callback(pickup, pickups->callback_arg);
 
-            fw64_node_set_mesh(pickup->node, NULL);
+            fw64_mesh_instance_set_mesh(pickup->node->mesh_instance, NULL);
             Pickup* swap = &pickups->items[pickups->item_count - 1];
             memcpy(pickup, swap, sizeof(Pickup));
             pickups->item_count -= 1;
@@ -126,10 +133,9 @@ void pickups_update(Pickups* pickups) {
     }
 }
 
-void pickups_draw(Pickups* weapon_pickups) {
-    for (uint32_t i = 0; i < weapon_pickups->item_count; i++) {
-        fw64_node_billboard(weapon_pickups->items[i].node, &weapon_pickups->player->movement.camera);
-    }
+void pickups_draw(Pickups* pickups) {
+    // TODO: do these nodes need to be drawn here?
+    fw64_billboard_nodes_update(&pickups->billboard_nodes);
 }
 
 int get_pickup_amount(PickupType pickup_type) {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "framework64/level.h"
+#include "level.h"
 #include "weapon.h"
 #include "ray.h"
 

@@ -1,9 +1,8 @@
 #include "church_hill.h"
 
 #include "assets/assets.h"
-#include "assets/scene_church_hill.h"
+#include "assets/scene_Church_Hill.h"
 #include "assets/sound_bank_sounds.h"
-#include "framework64/util/renderer_util.h"
 
 static void setup_sound_trigger(HillLevel* hill_level, fw64Scene* scene, int trigger_box_index, int node_index);
 static fw64Scene* setup_level(HillLevel* hill_level);
@@ -16,23 +15,23 @@ void hill_level_init(HillLevel* level, fw64Engine* engine, GameData* game_data, 
     fw64_renderer_set_fog_positions(engine->renderer, 0.8, 1.0f);
 
     fw64Scene* scene = setup_level(level);
-    setup_sound_trigger(level, scene, HILL_LEVEL_TRIGGER_CROW, FW64_scene_church_hill_node_CrowTrigger);
-    setup_sound_trigger(level, scene, HILL_LEVEL_TRIGGER_HOWL, FW64_scene_church_hill_node_HowlTrigger);
+    setup_sound_trigger(level, scene, HILL_LEVEL_TRIGGER_CROW, FW64_scene_Church_Hill_node_CrowTrigger);
+    setup_sound_trigger(level, scene, HILL_LEVEL_TRIGGER_HOWL, FW64_scene_Church_Hill_node_HowlTrigger);
 
-    fw64Node* start_node = fw64_scene_get_node(scene, FW64_scene_church_hill_node_Player_Start);
+    fw64Node* start_node = fw64_scene_get_node(scene, FW64_scene_Church_Hill_node_Player_Start);
     player_set_position(&level->base.player, &start_node->transform.position);
     player_add_ammo(&level->base.player, WEAPON_TYPE_MP5, 320);
     player_set_weapon(&level->base.player, WEAPON_TYPE_MP5);
 
     zombie_spawner_init(&level->zombie_spawner, engine, &level->base.level, &level->base.player.movement.camera.transform, level->base.allocator);
-    zombie_spawner_add_node(&level->zombie_spawner,fw64_scene_get_node(scene, FW64_scene_church_hill_node_Zombie_Spawn_1));
-    zombie_spawner_add_node(&level->zombie_spawner,fw64_scene_get_node(scene, FW64_scene_church_hill_node_Zombie_Spawn_2));
+    zombie_spawner_add_node(&level->zombie_spawner,fw64_scene_get_node(scene, FW64_scene_Church_Hill_node_Zombie_Spawn_1));
+    zombie_spawner_add_node(&level->zombie_spawner,fw64_scene_get_node(scene, FW64_scene_Church_Hill_node_Zombie_Spawn_2));
 }
 
 fw64Scene* setup_level(HillLevel* level) {
     fw64LevelChunkInfo info;
     fw64_level_chunk_info_init(&info);
-    info.scene_id = FW64_ASSET_scene_church_hill;
+    info.scene_id = FW64_ASSET_scene_Church_Hill;
     info.allocator = level->base.allocator;
     return fw64_level_load_chunk(&level->base.level, &info)->scene;
 }
@@ -80,8 +79,10 @@ void hill_level_draw(HillLevel* level) {
     fw64_renderer_set_fog_enabled(renderer, 0);
     player_draw_weapon(&level->base.player);
 
-    if (level->base.player.damage_overlay_time > 0.0f)
-        fw64_renderer_util_fullscreen_overlay(renderer, 165, 0, 0, 100);
+    // if (level->base.player.damage_overlay_time > 0.0f){
+    //     fw64_renderer_util_fullscreen_overlay(renderer, 165, 0, 0, 100);
+    // }
+        
 
     ui_draw(&level->base.ui);
     fw64_renderer_end(renderer, FW64_RENDERER_FLAG_SWAP);

@@ -9,25 +9,26 @@
 
 static void zombie_move(Zombie* zombie);
 
-void zombie_init(Zombie* zombie, fw64Engine* engine, fw64Level* level, fw64Mesh* mesh, fw64AnimationData* animation_data, fw64Allocator* allocator) {
+void zombie_init(Zombie* zombie, fw64Engine* engine, fw64Level* level, fw64SkinnedMesh* mesh, fw64Allocator* allocator) {
     zombie->engine = engine;
     zombie->level = level;
     zombie->mesh = mesh;
 
     zombie_reset(zombie);
 
-    fw64_animation_controller_init(&zombie->animation_controller, animation_data, zombie_animation_Idle, allocator);
+    //fw64_animation_controller_init(&zombie->animation_controller, animation_data, zombie_animation_Idle, allocator);
 }
 
 void zombie_reset(Zombie* zombie) {
     zombie->target = NULL;
     fw64_node_init(&zombie->node);
     zombie->node.layer_mask = ZOMBIE_LAYER;
-    zombie->node.data = zombie;
-    fw64_node_set_mesh(&zombie->node, zombie->mesh);
-    fw64_node_set_box_collider(&zombie->node, &zombie->collider);
+    zombie->node.data = (uintptr_t)zombie;
+    //TODO: mesh instance
+    // fw64_node_set_mesh(&zombie->node, zombie->mesh);
+    // fw64_node_set_box_collider(&zombie->node, &zombie->collider);
 
-    vec3_zero(&zombie->targetVelocity);
+    vec3_set_all(&zombie->targetVelocity, 0.0f);
     zombie->previous_state = ZOMBIE_STATE_INACTIVE;
     zombie->state = ZOMBIE_STATE_INACTIVE;
     zombie->health = ZOMBIE_MAX_HEALTH;
@@ -48,7 +49,7 @@ static void zombie_move(Zombie* zombie) {
 
     // rotate mesh to face direction of vel vector
     Vec3 ref_zero;
-    vec3_zero(&ref_zero);
+    vec3_set_all(&ref_zero, 0.0f);
     if((vec3_distance_squared(&ref_zero, &zombie->ai.velocity.linear )) > 0.01f)
     {
         float zombie_new_direction = atan2(-zombie->ai.velocity.linear.z, zombie->ai.velocity.linear.x) + (M_PI / 2.0f);
@@ -63,7 +64,7 @@ static void zombie_move(Zombie* zombie) {
     }
 
     Vec3 delta_vel;
-    vec3_scale(&delta_vel, &zombie->ai.velocity.linear, zombie->engine->time->time_delta);
+    vec3_scale(&zombie->ai.velocity.linear, zombie->engine->time->time_delta, &delta_vel);
 
     if(vec3_dot(&delta_vel, &delta_vel) < EPSILON)
         return;
@@ -94,7 +95,7 @@ static void zombie_move(Zombie* zombie) {
     }
 
     float strength = fw64_fabsf(vec3_dot(&delta_vel, &collision_normal));
-    vec3_add_and_scale(&delta_vel, &delta_vel, &collision_normal, strength);
+    vec3_add_and_scale(&delta_vel, &collision_normal, strength, &delta_vel);
     vec3_add(&zombie->node.transform.position, &zombie->node.transform.position, &delta_vel);   
     zombie_set_to_ground_height(zombie);
     fw64_node_update(&zombie->node);
@@ -137,9 +138,9 @@ static void zombie_update_attack(Zombie* zombie) {
     if(zombie->animation_controller.current_time > (zombie->animation_controller.current_animation->total_time*0.50f)){
         if(!zombie->this_attack_hit) {
             Vec3 pos, target_pos;
-            vec3_copy(&pos, &zombie->node.transform.position);
+            vec3_copy(&zombie->node.transform.position, &pos);
             pos.y = 0.0f;
-            vec3_copy(&target_pos, &zombie->ai.target->position);
+            vec3_copy(&zombie->ai.target->position, &target_pos);
             target_pos.y = 0.0f;
             float dist_sq = vec3_distance_squared(&pos, &target_pos);
             if(dist_sq <= attack_radius*attack_radius) {
@@ -147,7 +148,7 @@ static void zombie_update_attack(Zombie* zombie) {
                 vec3_subtract(&dir, &target_pos, &pos);
                 vec3_normalize(&dir);
                 Vec3 facing = {0.0f, 0.0f, 1.0f};
-                quat_transform_vec3(&facing, &zombie->node.transform.rotation, &facing);
+                quat_transform_vec3(&zombie->node.transform.rotation, &facing, &facing);
                 if(vec3_dot(&dir, &facing) > 0) {
                     damage_player(zombie);
                     zombie->this_attack_hit = 1;

@@ -13,7 +13,7 @@
 
 #include "levels/level_base.h"
 
-#include "framework64/level.h"
+#include "level.h"
 
 typedef struct {
     LevelBase base;

@@ -5,7 +5,7 @@
 #include "framework64/animation_data.h"
 #include "framework64/animation_controller.h"
 
-#include "framework64/level.h"
+#include "level.h"
 #include "weapon.h"
 #include "zombie_logic.h"
 #include "behaviors.h"
@@ -27,7 +27,7 @@ typedef enum {
 
 typedef struct {
     fw64Engine* engine;
-    fw64Mesh* mesh;
+    fw64SkinnedMesh* mesh;
     fw64Level* level;
     fw64Node node;
     fw64Collider collider;
@@ -43,7 +43,7 @@ typedef struct {
     int this_attack_hit;
 } Zombie;
 
-void zombie_init(Zombie* zombie, fw64Engine* engine, fw64Level* level, fw64Mesh* mesh, fw64AnimationData* animation_data, fw64Allocator* allocator);
+void zombie_init(Zombie* zombie, fw64Engine* engine, fw64Level* level, fw64SkinnedMesh* mesh, fw64Allocator* allocator);
 void zombie_uninit(Zombie* zombie, fw64Allocator* allocator);
 
 void zombie_reset(Zombie* zombie);

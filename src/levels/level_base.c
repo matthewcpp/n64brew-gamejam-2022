@@ -2,6 +2,8 @@
 #include "assets/layers.h"
 #include "assets/image_atlas_n64_buttons.h"
 
+#include <framework64/util/renderpass_util.h>
+
 static void level_base_init_audio(LevelBase* level, int music_bank, int sound_bank);
 
 void level_base_init(LevelBase* level, fw64Engine* engine, GameData* game_data, fw64Allocator* allocator) {
@@ -19,12 +21,22 @@ void level_base_init(LevelBase* level, fw64Engine* engine, GameData* game_data, 
     ui_init(&level->ui, engine, level->allocator, level);
     interaction_init(&level->interaction, &level->level, &level->player.node->transform, FW64_layer_interactable);
     audio_controller_init(&level->audio_controller, level->engine->audio);
+
+    for (int i = 0; i < RENDER_PASS_COUNT; i++) {
+        level->renderpasses[i] = fw64_renderpass_create(fw64_displays_get_primary(engine->displays), allocator);
+    }
+
+    fw64_renderpass_util_ortho2d(level->renderpasses[RENDER_PASS_UI]);
 }
 
 void level_base_uninit(LevelBase* level) {
     player_uninit(&level->player);
     fw64_level_uninit(&level->level);
     ui_uninit(&level->ui);
+
+    for (int i = 0; i < RENDER_PASS_COUNT; i++) {
+        fw64_renderpass_delete(level->renderpasses[i]);
+    }
 }
 
 static void update_ui_interaction_text(LevelBase* level) {

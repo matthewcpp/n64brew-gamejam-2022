@@ -81,7 +81,7 @@ void interior_level_init(InteriorLevel* level, fw64Engine* engine, GameData* gam
 	Room all_rooms[ROOM_COUNT];
 	Room* current_room = &all_rooms[0];
 	vec2_set(&current_room->cell, 0.0f, 0.0f);
-	vec3_copy(&current_room->pos, &start_room_pos);
+	vec3_copy(&start_room_pos, &current_room->pos);
 	current_room->doors = 0;
 
 	current_room->parent_dir = ROOM_DIR_S;
@@ -171,7 +171,7 @@ void interior_level_init(InteriorLevel* level, fw64Engine* engine, GameData* gam
     }
 
     Vec3 starting_pos = {0.0f, 5.0f, 15.0f};
-	vec3_copy(&level->exits[BUILDING_EXIT], &starting_pos);
+	vec3_copy(&starting_pos, &level->exits[BUILDING_EXIT]);
     player_set_position(&level->base.player, &starting_pos);
 
     fw64_renderer_set_clear_color(engine->renderer, 32, 32, 32);

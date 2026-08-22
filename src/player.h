@@ -7,7 +7,7 @@
 #include "framework64/vec3.h"
 #include "movement_controller.h"
 
-#include "framework64/level.h"
+#include "level.h"
 #include "audio_controller.h"
 #include "weapon_controller.h"
 #include "ray.h"
@@ -21,6 +21,8 @@ typedef struct {
     fw64Allocator* allocator;
     fw64Level* level;
     fw64Node* node;
+    fw64Camera* player_camera;
+    fw64Camera* weapon_camera;
     WeaponBob weapon_bob;
     MovementController movement;
     WeaponController weapon_controller;
@@ -37,9 +39,9 @@ typedef struct {
 void player_init(Player* player, fw64Engine* engine, fw64Level* level, ProjectileController* projectile_controller, AudioController* audio_controller, fw64Allocator* allocator);
 void player_uninit(Player* player);
 void player_update(Player* player);
-void player_draw(Player* player);
-void player_draw_weapon(Player* player);
-void player_draw_damage(Player* player);
+void player_draw(Player* player, fw64RenderPass* renderpass);
+void player_draw_weapon(Player* player, fw64RenderPass* renderpass);
+void player_draw_damage(Player* player, fw64RenderPass* renderpass);
 
 /** 
  * player attempts to pick up ammo.  will return false if their inventory is maxed out.

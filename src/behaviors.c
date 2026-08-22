@@ -4,7 +4,7 @@
 #include "framework64/math.h"
 
 static void steering_behavior_data_zero(SteeringBehaviorData* data) {
-	vec3_zero(&data->linearAccel);
+	vec3_set_all(&data->linearAccel, 0.0f);
 	data->angularAccel = 0.0f;
 }
 
@@ -32,8 +32,8 @@ void steering_seek(float strength, SteeringBehaviorData* data) {
 	Vec3 seekAccel;
 	vec3_subtract(&seekAccel, &data->targetPosition, &data->position);
 	vec3_normalize(&seekAccel);
-	vec3_scale(&seekAccel, &seekAccel, data->maxLinearAccel);
-	vec3_add_and_scale(&data->linearAccel, &data->linearAccel, &seekAccel, strength);
+	vec3_scale(&seekAccel, data->maxLinearAccel, &seekAccel);
+	vec3_add_and_scale(&data->linearAccel, &seekAccel, strength, &data->linearAccel);
 }
 
 // Max acceleration directly away from a given point
@@ -42,8 +42,8 @@ void steering_flee(float strength, SteeringBehaviorData* data) {
 	Vec3 fleeAccel;
 	vec3_subtract(&fleeAccel, &data->position, &data->targetPosition);
 	vec3_normalize(&fleeAccel);
-	vec3_scale(&fleeAccel, &fleeAccel, data->maxLinearAccel);
-	vec3_add_and_scale(&data->linearAccel, &data->linearAccel, &fleeAccel, strength);
+	vec3_scale(&fleeAccel, data->maxLinearAccel, &fleeAccel);
+	vec3_add_and_scale(&data->linearAccel, &fleeAccel, strength, &data->linearAccel);
 }
 
 // seek towards a given point, slow to a stop when getting close
@@ -53,7 +53,7 @@ void steering_arrive(float slowRadius, float stopRadius, float strength, Steerin
 	float currentDistance = vec3_distance(&data->targetPosition, &data->position);
 	if(currentDistance <= (stopRadius)) { 	// we have arrived
 		steering_behavior_data_zero(data); 	//zero out our steering accelerations
-		vec3_zero(data->linearVel); 		//zero out host velocity
+		vec3_set_all(data->linearVel, 0.0f); 		//zero out host velocity
 		return;
 	}
 	if(currentDistance <= (slowRadius)) {
@@ -86,10 +86,10 @@ void steering_avoid_collision(float strength, SteeringBehaviorData* data) {
 	float targetDist = vec3_distance(&data->position, &data->targetPosition);
 	float lookAhead = 30.0f;
 	Vec3 pos;
-	vec3_copy(&pos, &data->position);
+	vec3_copy(&data->position, &pos);
 	pos.y -= 1.0f;
 	Vec3 vel;
-	vec3_copy(&vel, data->linearVel);
+	vec3_copy(data->linearVel, &vel);
 	//vec3_normalize(&vel);
 
 	fw64IntersectMovingBoxQuery query;
@@ -97,19 +97,19 @@ void steering_avoid_collision(float strength, SteeringBehaviorData* data) {
 	if(fw64_level_moving_box_intersection(data->level, &data->collider->bounding, &vel, mask, &query)) {
         if(query.results[0].tfirst > lookAhead)
 			return;
-		if(vec3_distance(&data->collider->transform->position, &query.results[0].node->collider->transform->position) > targetDist)
+		if(vec3_distance(&data->collider->node->transform.position, &query.results[0].node->collider->node->transform.position) > targetDist)
 			return;
 
 		Vec3 collidePosition, obstaclePos, avoidDir;
 		vec3_normalize(&vel);
 		Vec3 hit_pos;
-		vec3_add_and_scale(&hit_pos, &pos, &vel, query.results[0].tfirst);
-		vec3_copy(&obstaclePos, &query.results[0].node->collider->transform->position);
-		vec3_add_and_scale(&collidePosition, &pos, &vel, query.results[0].tfirst);
+		vec3_add_and_scale(&pos, &vel, query.results[0].tfirst, &hit_pos);
+		vec3_copy(&query.results[0].node->collider->node->transform.position, &obstaclePos);
+		vec3_add_and_scale(&pos, &vel, query.results[0].tfirst, &collidePosition);
 		vec3_subtract(&avoidDir, &collidePosition, &obstaclePos);
 		vec3_normalize(&avoidDir);
 		
-		vec3_add_and_scale(&data->linearAccel, &data->linearAccel, &avoidDir, data->maxLinearAccel * strength);
+		vec3_add_and_scale(&data->linearAccel, &avoidDir, data->maxLinearAccel * strength, &data->linearAccel);
     }
 }
 void steering_align(Vec3* position, float strength, Vec3* out){} // stubbed

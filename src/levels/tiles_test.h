@@ -15,7 +15,7 @@
 #include "mesh_collection.h"
 
 #include "framework64/vec3.h"
-#include "framework64/level.h"
+#include "level.h"
 #define TILE_ROW_CELLS 3
 #define TILE_COL_CELLS 3
 #define ACTIVE_TILE_COUNT (TILE_ROW_CELLS * TILE_COL_CELLS)

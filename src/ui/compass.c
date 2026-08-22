@@ -32,15 +32,15 @@ void compass_draw(Compass* compass) {
 	static Vec2 compass_pos = { 36.0f, 204.0f }; // 36 from the edges of the screen
 	                                             // offset by -8,-8 to account for drawing the 16x16 images from their top left corner.
 	Vec3 temp_north;
-	vec3_copy(&temp_north, &north);	
+	vec3_copy(&north, &temp_north);	
 	
 	Vec3 home_dir;
 	Vec3 ref_zero = { 0.0f, 0.0f, 0.0f };
-	vec3_copy(&home_dir, &compass->player_pos->position);
+	vec3_copy(&compass->player_pos->position, &home_dir);
 	home_dir.y = 0;
 	vec3_negate(&home_dir);
 	vec3_normalize(&home_dir);
-	vec3_scale(&home_dir, &home_dir, fw64_minf(1.0f, vec3_distance(&compass->player_pos->position, &ref_zero)/100.0f ) * radius);
+	vec3_scale(&home_dir, fw64_minf(1.0f, vec3_distance(&compass->player_pos->position, &ref_zero)/100.0f ) * radius, &home_dir);
 	if(compass->turn_compass) {
 		Quat compass_rotate;
 		quat_set(&compass_rotate, 0.0f, -compass->player_pos->rotation.y, 0.0f, compass->player_pos->rotation.w);

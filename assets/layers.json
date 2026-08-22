@@ -1,0 +1,15 @@
+{
+    "wall": 1,
+    "ground": 2,
+    "pickups": 3,
+    "obstacles": 4,
+    "back": 5,
+    "tree": 6,
+    "left": 7,
+    "right": 8,
+    "front": 9,
+    "entrance": 10,
+    "interactable": 11,
+    "buildings": 12,
+    "player": 13
+}

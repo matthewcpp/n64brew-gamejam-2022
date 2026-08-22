@@ -1,6 +1,5 @@
 #include "player.h"
-#include "framework64/n64/controller_button.h"
-#include "framework64/util/renderer_util.h"
+#include "framework64/controller_mapping/n64.h"
 #include "assets/sound_bank_sounds.h"
 #include "assets/layers.h"
 
@@ -19,21 +18,33 @@ void player_init(Player* player, fw64Engine* engine, fw64Level* level, Projectil
     mapped_input_init(&player->input_map, engine->input);
     weapon_bob_init(&player->weapon_bob);
 
-    movement_controller_init(&player->movement, &player->input_map, &player->weapon_bob, level, player->node->collider);
+    // configure the movement camera
+    // TODO: this should be cleaned up or created in a level?
+    fw64Node* player_camera_node = fw64_allocator_malloc(level_allocator, sizeof(fw64Node));
+    fw64_node_init(player_camera_node);
+    player->player_camera = fw64_allocator_malloc(level_allocator, sizeof(fw64Camera));
+    fw64_camera_init(player->player_camera, player_camera_node, fw64_displays_get_primary(engine->displays));
+
+    movement_controller_init(&player->movement, &player->input_map, &player->weapon_bob, level, player->node->collider, player->player_camera);
     player->movement.height = 5.0f;
     player->movement.collision_mask = FW64_layer_obstacles | FW64_layer_wall | FW64_layer_buildings;
-    player->movement.camera.near = 1.0f;
-    player->movement.camera.far = 225.0f;
-    fw64_camera_update_projection_matrix(&player->movement.camera);
+    player->movement.camera->near = 1.0f;
+    player->movement.camera->far = 225.0f;
+    fw64_camera_update_projection_matrix(player->movement.camera);
 
-    player->aim.position = &player->movement.camera.transform.position;
-    vec3_zero(&player->aim.direction);
+    player->aim.position = &player->movement.camera->node->transform.position;
+    vec3_set_all(&player->aim.direction, 0.0f);
     player->aim.direction.x = player->movement.rotation.x;
     player->aim.direction.y = player->movement.rotation.y;
     player->aim.infinite = 1; //boolean true
 
     // todo: investigate weapon allocator usage
-    weapon_controller_init(&player->weapon_controller, engine, &player->weapon_bob, projectile_controller, audio_controller, level_allocator, &player->input_map, 0);
+    fw64Node* weapon_camera_node = fw64_allocator_malloc(level_allocator, sizeof(fw64Node));
+    fw64_node_init(weapon_camera_node);
+    player->weapon_camera = fw64_allocator_malloc(level_allocator, sizeof(fw64Camera));
+    fw64_camera_init(player->weapon_camera, weapon_camera_node, fw64_displays_get_primary(engine->displays));
+
+    weapon_controller_init(&player->weapon_controller, engine, player->weapon_camera, &player->weapon_bob, projectile_controller, audio_controller, level_allocator, &player->input_map, 0);
     player->weapon_controller.aim = &player->aim;
     weapon_controller_set_weapon(&player->weapon_controller, WEAPON_TYPE_NONE);
     player->current_health = 100;
@@ -56,16 +67,16 @@ void setup_player_node(Player* player) {
     player->node = allocator->malloc(allocator, sizeof(fw64Node));
     fw64_node_init(player->node);
     fw64Collider* collider = allocator->malloc(allocator, sizeof(fw64Node));
-    fw64_node_set_collider(player->node, collider);
+    player->node->collider = collider;
 
     player->node->layer_mask = FW64_layer_player;
-    player->node->data = player;
+    player->node->data = (uintptr_t)player;
 
     Box player_box;
     vec3_set(&player_box.min, -default_player_dimensions.x / 2.0f, 0.0f, -default_player_dimensions.z /2.0f);
     vec3_set(&player_box.max, default_player_dimensions.x / 2.0f, default_player_dimensions.y, default_player_dimensions.z / 2.0f);
 
-    fw64_collider_set_type_box(collider, &player_box);
+    fw64_collider_init_box(collider, player->node, &player_box);
     fw64_level_add_dynamic_node(player->level, player->node);
 }
 
@@ -75,7 +86,7 @@ void player_aim_update(Player* player) {
     quat_from_euler(&q, player->movement.rotation.x, player->movement.rotation.y, 0.0f);
 
     Vec3 forward = { 0.0f, 0.0f, -1.0f };
-    quat_transform_vec3(&player->aim.direction, &q, &forward);
+    quat_transform_vec3(&q, &forward, &player->aim.direction);
 }
 
 void player_update(Player* player) {
@@ -85,7 +96,7 @@ void player_update(Player* player) {
     player_aim_update(player); // should be updated after fps camera
     weapon_controller_update(&player->weapon_controller);
 
-    vec3_copy(&player->node->transform.position, &player->movement.camera.transform.position);
+    vec3_copy(&player->movement.camera->node->transform.position, &player->node->transform.position);
     fw64_node_update(player->node); // todo manual update xform / collider
     if(mapped_input_controller_read(&player->input_map, 0, INPUT_MAP_WEAPON_SWAP, NULL)) {
         weapon_controller_switch_to_next_weapon(&player->weapon_controller);
@@ -96,20 +107,18 @@ void player_update(Player* player) {
         player->damage_overlay_time = 0.0f;
 }
 
-void player_draw(Player* player) {
-    fw64_renderer_set_camera(player->engine->renderer, &player->movement.camera);
-    fw64_level_draw_camera_all(player->level, &player->movement.camera);
+void player_draw(Player* player, fw64RenderPass* renderpass) {
+    fw64_renderpass_set_camera(renderpass, player->player_camera);
+    fw64_level_draw_camera_all(player->level, renderpass, player->player_camera);
 }
 
-void player_draw_weapon(Player* player) {
-    fw64Renderer* renderer = player->engine->renderer;
-
+void player_draw_weapon(Player* player, fw64RenderPass* renderpass ) {
     if (player->weapon_controller.weapon.info->type == WEAPON_TYPE_NONE)
         return;
     
-    fw64_renderer_set_camera(renderer, &player->weapon_controller.weapon_camera);
-    fw64_renderer_util_clear_viewport(renderer, &player->weapon_controller.weapon_camera, FW64_RENDERER_FLAG_CLEAR_DEPTH);
-    weapon_controller_draw(&player->weapon_controller);
+    fw64_renderpass_set_camera(renderpass, player->weapon_controller.weapon_camera);
+    fw64_renderpass_set_clear_flags(renderpass, FW64_CLEAR_FLAG_DEPTH);
+    weapon_controller_draw(&player->weapon_controller, renderpass);
 }
 
 void player_set_weapon(Player* player, WeaponType weapon_type) {
@@ -117,10 +126,10 @@ void player_set_weapon(Player* player, WeaponType weapon_type) {
 }
 
 void player_set_position(Player* player, Vec3* position) {
-    vec3_copy(&player->movement.camera.transform.position, position);
-    vec3_copy(&player->node->transform.position, position);
+    vec3_copy(position, &player->movement.camera->node->transform.position);
+    vec3_copy(position, &player->node->transform.position);
 
-    fw64_camera_update_view_matrix(&player->movement.camera);
+    fw64_camera_update_view_matrix(player->movement.camera);
     fw64_node_update(player->node);
 }
 
@@ -197,13 +206,15 @@ void player_take_damage(Player* player, int amount) {
     }
 }
 
-void player_draw_damage(Player* player) {
+void player_draw_damage(Player* player, fw64RenderPass* renderpass) {
+    //TODO: use spritebatch to draw damage overlay?
+    #if 0
     fw64Renderer* renderer = player->engine->renderer;
     if (player->damage_overlay_time > 0.0f) {
         uint8_t alpha = (uint8_t)(100.0f * (1.0f - ((player->damage_overlay_initial_time - player->damage_overlay_time)/player->damage_overlay_initial_time)));
         fw64_renderer_util_fullscreen_overlay(renderer, 165, 0, 0, alpha);
     }
-    
+    #endif
 }
 
 int player_is_interacting(Player* player) {

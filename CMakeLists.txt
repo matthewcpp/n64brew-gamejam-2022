@@ -8,5 +8,9 @@ else()
     project(dead_ritual)
 endif()
 
+set(Fw64_BUILD_TESTS OFF)
+set(FW64_BUILD_EXAMPLES OFF)
+set(FW64_BUILD_TOOLS OFF)
+
 add_subdirectory(lib/framework64)
 add_subdirectory(src)

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "framework64/level.h"
+#include "level.h"
 
 #define MAX_INTERACTABLE_SIZE 10
 #define INTERACTION_DISTANCE_SQ 80.0f

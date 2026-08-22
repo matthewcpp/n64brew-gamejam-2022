@@ -15,7 +15,7 @@ void interaction_init(Interaction* interaction, fw64Level* level, fw64Transform*
 }
 
 static fw64Scene* get_active_scene(Interaction* interaction) {
-    if (interaction->active_scene && box_contains_point(fw64_scene_get_initial_bounds(interaction->active_scene), &interaction->target->position)) {
+    if (interaction->active_scene && box_contains_point(&interaction->active_scene->bounding_box, &interaction->target->position)) {
         return interaction->active_scene;
     }
 
@@ -24,7 +24,7 @@ static fw64Scene* get_active_scene(Interaction* interaction) {
     for (uint32_t i = 0; i < chunk_count; i++) {
         fw64Scene* scene = fw64_level_get_chunk_by_index(interaction->level, i)->scene;
 
-        if (box_contains_point(fw64_scene_get_initial_bounds(scene), &interaction->target->position)) {
+        if (box_contains_point(&scene->bounding_box, &interaction->target->position)) {
             return scene;
         }
     }

@@ -4,7 +4,7 @@
 #include "framework64/util/bump_allocator.h"
 
 #include "weapon.h"
-#include "framework64/level.h"
+#include "level.h"
 #include "ray.h"
 #include "mapped_input.h"
 #include "projectile_controller.h"
@@ -37,7 +37,7 @@ typedef struct {
     ProjectileController* projectile_controller;
     AudioController* audio_controller;
     fw64BumpAllocator weapon_allocator;
-    fw64Camera weapon_camera;
+    fw64Camera* weapon_camera;
     Ray* aim;
     
     int controller_index;
@@ -67,10 +67,10 @@ typedef struct {
  * this memory is used to manage the weapon assets: Gun + shell casing + muzzle flash
  * Every time the player switches a weapon the bump allocator will be reset and new gun's assets DMA'd from ROM
  */
-void weapon_controller_init(WeaponController* controller, fw64Engine* engine, WeaponBob* weapon_bob, ProjectileController* projectile_controller, AudioController* audio_controller, fw64Allocator* player_allocator, InputMapping* input_map, int controller_index);
+void weapon_controller_init(WeaponController* controller, fw64Engine* engine, fw64Camera* weapon_camera, WeaponBob* weapon_bob, ProjectileController* projectile_controller, AudioController* audio_controller, fw64Allocator* player_allocator, InputMapping* input_map, int controller_index);
 void weapon_controller_uninit(WeaponController* controller);
 void weapon_controller_update(WeaponController* controller);
-void weapon_controller_draw(WeaponController* controller);
+void weapon_controller_draw(WeaponController* controller, fw64RenderPass* renderpass);
 void weapon_controller_set_weapon(WeaponController* controller, WeaponType weapon_type);
 int weapon_controller_raise_weapon(WeaponController* controller, WeaponTransitionFunc callback , void* arg);
 int weapon_controller_lower_weapon(WeaponController* controller, WeaponTransitionFunc callback, void* arg);

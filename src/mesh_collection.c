@@ -8,13 +8,13 @@ void mesh_collection_init(MeshCollection* collection, fw64AssetDatabase* assets,
     memset(collection, 0 , sizeof(MeshCollection));
     collection->assets = assets;
     collection->replacement_layer_mask = replacement_layer_mask;
-    collection->source_scene = fw64_scene_load(assets, source_scene_index, allocator);
+    collection->source_scene = fw64_assets_load_scene(assets, source_scene_index, allocator);
 
     uint32_t node_count = fw64_scene_get_node_count(collection->source_scene);
     for (uint32_t i = 0; i < node_count; i++) {
         fw64Node* node = fw64_scene_get_node(collection->source_scene, i);
 
-        if (!node->mesh)
+        if (!node->mesh_instance)
             continue;
         
         uint32_t source_index = (uint32_t)node->data;
@@ -26,7 +26,7 @@ void mesh_collection_init(MeshCollection* collection, fw64AssetDatabase* assets,
 }
 
 void mesh_collection_uninit(MeshCollection* collection) {
-    fw64_scene_delete(collection->assets, collection->source_scene, fw64_scene_get_allocator(collection->source_scene));
+    fw64_scene_delete(collection->source_scene);
 }
 
 void mesh_collection_set_scene_meshes(MeshCollection* collection, fw64Scene* scene) {
@@ -44,6 +44,8 @@ void mesh_collection_set_scene_meshes(MeshCollection* collection, fw64Scene* sce
         if (data_index == 0 || data_index >= MESH_COLLECTION_CAPACITY)
             continue;
 
+            // TODO: figure this out
+        #if 0
         fw64Node* mesh_node = collection->mesh_nodes[data_index];
         fw64_node_set_mesh(node, mesh_node->mesh);
 
@@ -62,6 +64,7 @@ void mesh_collection_set_scene_meshes(MeshCollection* collection, fw64Scene* sce
             default:
                 fw64_collider_set_type_none(node->collider);
         }
+        #endif
         
     }
 

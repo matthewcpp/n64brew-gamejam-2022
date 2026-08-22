@@ -3,6 +3,8 @@
 #include "player.h"
 #include "framework64/engine.h"
 
+#include "components/fw64_billboard_node.h"
+
 #define MAX_PICKUP_COUNT 8
 #define PICKUP_DISTANCE_SQ 36.0f
 
@@ -20,6 +22,7 @@ typedef enum {
 typedef struct {
     PickupType type;
     uint32_t amount;
+    fw64BillboardNodeHandle billboard_handle;
     fw64Node* node;
 } Pickup;
 
@@ -31,6 +34,7 @@ typedef struct {
     fw64Allocator* allocator;
     fw64Mesh* meshes[PICKUP_TYPE_COUNT];
     Pickup items[MAX_PICKUP_COUNT];
+    fw64BillboardNodes billboard_nodes;
     uint32_t item_count;
     PickupCallback callback;
     void* callback_arg;

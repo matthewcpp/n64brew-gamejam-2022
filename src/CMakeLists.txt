@@ -3,6 +3,7 @@ set(core_files
 	behaviors.h behaviors.c
     interact.h interact.c
 	mapped_input.h mapped_input.c
+    level.h level.c
     mesh_collection.h mesh_collection.c
     movement_controller.h movement_controller.c
     pickups.h pickups.c
@@ -41,6 +42,10 @@ set(game_state_files
     states/playing.h states/playing.c
 )
 
+set(fw64_component_files
+    components/fw64_billboard_node.h components/fw64_billboard_node.c
+)
+
 set(main_game_files
     dead_ritual/game.h dead_ritual/game.c
     game_data.h game_data.c
@@ -48,7 +53,7 @@ set(main_game_files
 
 create_game(
     TARGET dead_ritual
-    SOURCES ${main_game_files} ${core_files} ${level_files} ${game_state_files} ${ui_files} ${main_game_files})
+    SOURCES ${main_game_files} ${core_files} ${level_files} ${game_state_files} ${ui_files} ${fw64_component_files} ${main_game_files})
 
 target_include_directories(dead_ritual PRIVATE dead_ritual)
 

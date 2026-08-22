@@ -1,9 +1,9 @@
 #include "levels/test.h"
 
 #include "assets/assets.h"
-#include "assets/scene_spooky_level.h"
+#include "assets/scene_Spooky_Level.h"
 
-#include "framework64/n64/controller_button.h"
+#include "framework64/controller_mapping/n64.h"
 
 #define ROTATION_SPEED 90.0f
 
@@ -16,24 +16,24 @@ void test_level_init(TestLevel* level, fw64Engine* engine, GameData* game_data, 
     pickups_add_from_scene(&level->base.pickups, scene);
 
     zombie_spawner_init(&level->zombie_spawner, engine, &level->base.level, &level->base.player.movement.camera.transform, level->base.allocator);
-    zombie_spawner_add_node(&level->zombie_spawner, fw64_scene_get_node(scene, FW64_scene_spooky_level_node_Zombie_Spawn));
-    fw64Node* player_spawn_node = fw64_scene_get_node(scene, FW64_scene_spooky_level_node_Player_Spawn);
+    zombie_spawner_add_node(&level->zombie_spawner, fw64_scene_get_node(scene, FW64_scene_Spooky_Level_node_Zombie_Spawn));
+    fw64Node* player_spawn_node = fw64_scene_get_node(scene, FW64_scene_Spooky_Level_node_Player_Spawn);
     player_set_position(&level->base.player, &player_spawn_node->transform.position);
 
     player_add_ammo(&level->base.player, WEAPON_TYPE_1911, 90);
     player_set_weapon(&level->base.player, WEAPON_TYPE_1911);
 
-    fw64Renderer* renderer = engine->renderer;
-    fw64_renderer_set_clear_color(renderer, 20, 4, 40);
-    fw64_renderer_set_fog_color(renderer, 20, 4, 40);
-    fw64_renderer_set_fog_positions(renderer, 0.8, 1.0f);
+    fw64RenderPass* renderpass = level->base.renderpasses[RENDER_PASS_LEVEL];
+    fw64_renderpass_set_clear_color(renderpass, 20, 4, 40);
+    fw64_renderpass_set_fog_color(renderpass, 20, 4, 40);
+    fw64_renderpass_set_fog_positions(renderpass, 0.8, 1.0f);
 }
 
 static fw64Scene* load_scene(TestLevel* level) {
     fw64LevelChunkInfo info;
     fw64_level_chunk_info_init(&info);
 
-    info.scene_id = FW64_ASSET_scene_spooky_level;
+    info.scene_id = FW64_ASSET_scene_Spooky_Level;
     info.allocator = level->base.allocator;
     return fw64_level_load_chunk(&level->base.level, &info)->scene;
 }

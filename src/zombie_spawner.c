@@ -4,7 +4,7 @@
 #include "assert.h"
 
 #include "assets/assets.h"
-#include "assets/scene_spooky_level.h"
+#include "assets/scene_Spooky_Level.h"
 
 static void spawn_next_zombie(ZombieSpawner* spawner);
 static int get_free_slot(ZombieSpawner* spawner);
@@ -19,14 +19,13 @@ void zombie_spawner_init(ZombieSpawner* spawner, fw64Engine* engine, fw64Level* 
     spawner->zombie_slot_active = 0;
     spawner->active_nodes = 0;
 
-    spawner->animation_data = fw64_animation_data_load(engine->assets, FW64_ASSET_animation_data_zombie, allocator);
-    spawner->zombie_mesh = fw64_mesh_load(engine->assets, FW64_ASSET_mesh_zombie, allocator);
+    spawner->zombie_mesh = fw64_assets_load_skinned_mesh(engine->assets, FW64_ASSET_skinnedmesh_zombie, allocator);
 
     for(int i = 0; i < 16; i++)
         spawner->spawner_nodes[i] = NULL;
 
     for (int i = 0; i < ZOMBIE_SPAWNER_MAX_COUNT; i++) {
-        zombie_init(&spawner->zombies[i], spawner->engine, spawner->level, spawner->zombie_mesh, spawner->animation_data, spawner->allocator);
+        zombie_init(&spawner->zombies[i], spawner->engine, spawner->level, spawner->zombie_mesh, spawner->allocator);
     }
 }
 
@@ -35,8 +34,7 @@ void zombie_spawner_uninit(ZombieSpawner* spawner) {
         zombie_uninit(&spawner->zombies[i], spawner->allocator);
     }
 
-    fw64_mesh_delete(spawner->engine->assets, spawner->zombie_mesh, spawner->allocator);
-    fw64_animation_data_delete(spawner->animation_data, spawner->allocator);
+    fw64_skinned_mesh_delete(spawner->zombie_mesh, spawner->engine->assets, spawner->allocator);
 }
 
 void zombie_spawner_add_node(ZombieSpawner* spawner, fw64Node* node) {

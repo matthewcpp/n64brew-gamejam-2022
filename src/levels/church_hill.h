@@ -1,7 +1,7 @@
 #pragma once
 
 #include "framework64/engine.h"
-#include "framework64/level.h"
+#include "level.h"
 
 #include "player.h"
 #include "ui/ui.h"

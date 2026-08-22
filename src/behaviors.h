@@ -1,9 +1,10 @@
 #pragma once
 
 /** \file behaviors.h */
-#include "framework64/level.h"
 #include "framework64/vec3.h"
 #include "framework64/collider.h"
+
+#include "level.h"
 
 #define DEFAULT_MAX_LIN_ACCEL 5.0f
 #define DEFAULT_MAX_ANG_ACCEL 1.0f

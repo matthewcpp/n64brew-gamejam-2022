@@ -2,7 +2,7 @@
 
 #include "framework64/vec2.h"
 #include "framework64/input.h"
-#include "framework64/n64/controller_button.h"
+#include "framework64/controller_mapping/n64.h"
 
 /** \file mapped_input.h */
 

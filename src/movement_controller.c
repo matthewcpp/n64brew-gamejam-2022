@@ -2,7 +2,7 @@
 
 #include "assets/layers.h"
 
-#include "framework64/n64/controller_button.h"
+#include "framework64/controller_mapping/n64.h"
 #include "framework64/math.h"
 
 //#define DOOMGUY_SPEED
@@ -18,7 +18,7 @@
 
 static void movement_controller_get_ground_height(MovementController* controller);
 
-void movement_controller_init(MovementController* controller, InputMapping* input_map, WeaponBob* weapon_bob, fw64Level* level, fw64Collider* collider){
+void movement_controller_init(MovementController* controller, InputMapping* input_map, WeaponBob* weapon_bob, fw64Level* level, fw64Collider* collider, fw64Camera* camera){
     controller->input_map = input_map;
     controller->weapon_bob = weapon_bob;
     controller->level = level;
@@ -33,7 +33,7 @@ void movement_controller_init(MovementController* controller, InputMapping* inpu
     controller->turn_speed.y = DEFAULT_Y_TURN_SPEED;
     controller->player_index = 0;
 
-    fw64_camera_init(&controller->camera);
+    controller->camera = camera;
     vec2_set(&controller->rotation, 0.0f, 0.0f);
 }
 
@@ -42,7 +42,7 @@ static void fps_cam_forward(MovementController* fps, Vec3* out) {
     quat_from_euler(&q, 0.0f, fps->rotation.y, 0.0f);
 
     Vec3 forward = { 0.0f, 0.0f, -1.0f };
-    quat_transform_vec3(out, &q, &forward);
+    quat_transform_vec3(&q, &forward, out);
 }
 
 static void fps_cam_back(MovementController* fps, Vec3* out) {
@@ -76,7 +76,7 @@ static void move_camera(MovementController* controller, float time_delta, Vec2* 
         analog_mod = mapped_input_get_axis(controller->input_map, INPUT_MAP_MOVE_RIGHT, stick);
         fps_cam_right(controller, &temp);
         vec3_normalize(&temp);
-        vec3_add_and_scale(&move, &move, &temp, controller->movement_speed * analog_mod * time_delta);
+        vec3_add_and_scale(&move, &temp, controller->movement_speed * analog_mod * time_delta, &move);
         did_move = 1;
     }
 
@@ -85,7 +85,7 @@ static void move_camera(MovementController* controller, float time_delta, Vec2* 
         analog_mod = mapped_input_get_axis(controller->input_map, INPUT_MAP_MOVE_LEFT, stick);
         fps_cam_left(controller, &temp);
         vec3_normalize(&temp);
-        vec3_add_and_scale(&move, &move, &temp, controller->movement_speed * analog_mod * time_delta);
+        vec3_add_and_scale(&move, &temp, controller->movement_speed * analog_mod * time_delta, &move);
         did_move = 1;
     }
 
@@ -94,7 +94,7 @@ static void move_camera(MovementController* controller, float time_delta, Vec2* 
         analog_mod = mapped_input_get_axis(controller->input_map, INPUT_MAP_MOVE_FORWARD, stick);
         fps_cam_forward(controller, &temp);
         vec3_normalize(&temp);
-        vec3_add_and_scale(&move, &move, &temp, controller->movement_speed * analog_mod * time_delta);
+        vec3_add_and_scale(&move, &temp, controller->movement_speed * analog_mod * time_delta, &move);
         did_move = 1;
     }
 
@@ -103,7 +103,7 @@ static void move_camera(MovementController* controller, float time_delta, Vec2* 
         analog_mod = mapped_input_get_axis(controller->input_map, INPUT_MAP_MOVE_BACKWARD, stick);
         fps_cam_back(controller, &temp);
         vec3_normalize(&temp);
-        vec3_add_and_scale(&move, &move, &temp, controller->movement_speed * analog_mod * time_delta);
+        vec3_add_and_scale(&move, &temp, controller->movement_speed * analog_mod * time_delta, &move);
         did_move = 1;
     }
 
@@ -117,11 +117,11 @@ static void move_camera(MovementController* controller, float time_delta, Vec2* 
     if(vec3_distance(&move, &ref_zero) > (controller->movement_speed * controller->injury_speed_mod * time_delta))
     {
         vec3_normalize(&move);
-        vec3_scale(&move, &move, controller->movement_speed * controller->injury_speed_mod * time_delta);
+        vec3_scale(&move, controller->movement_speed * controller->injury_speed_mod * time_delta, &move);
     }
 
     if(controller->staggered_timer > EPSILON) {
-        vec3_scale(&move, &move, 0.5f);
+        vec3_scale(&move, 0.5f, &move);
         controller->staggered_timer = controller->staggered_timer - time_delta < EPSILON ? 0.0f : controller->staggered_timer - time_delta;
     }
 
@@ -129,24 +129,24 @@ static void move_camera(MovementController* controller, float time_delta, Vec2* 
     fw64IntersectMovingSphereQuery query;
     // test against static objects like walls
     int remaining_checks = 10;
-    while (remaining_checks > 0 && fw64_level_moving_sphere_intersection(controller->level, &controller->camera.transform.position, 1.0f, &move, controller->collision_mask, &query)) {
+    while (remaining_checks > 0 && fw64_level_moving_sphere_intersection(controller->level, &controller->camera->node->transform.position, 1.0f, &move, controller->collision_mask, &query)) {
         remaining_checks--; //prevent weird infinite loop of collisions condition
         Vec3 collision_normal = {0.0f, 0.0f, 0.0f};
         fw64_collision_get_normal_box_point(&query.results[0].point,
                                     &query.results[0].node->collider->bounding,
                                     &collision_normal);
         float strength = fw64_fabsf(vec3_dot(&move, &collision_normal));
-        vec3_add_and_scale(&move, &move, &collision_normal, strength);
+        vec3_add_and_scale(&move, &collision_normal, strength, &move);
     }
 
     // prevent shooting off into space due to weird collision bugs
     if(vec3_distance(&move, &ref_zero) > (controller->movement_speed * controller->injury_speed_mod * time_delta))
     {
         vec3_normalize(&move);
-        vec3_scale(&move, &move, controller->movement_speed * controller->injury_speed_mod * time_delta);
+        vec3_scale(&move, controller->movement_speed * controller->injury_speed_mod * time_delta, &move);
     }
 
-    vec3_add(&controller->camera.transform.position, &controller->camera.transform.position, &move);
+    vec3_add(&controller->camera->node->transform.position, &move, &controller->camera->node->transform.position);
 }
 
 static void tilt_camera(MovementController* fps, float time_delta, Vec2* stick) {
@@ -199,23 +199,23 @@ void movement_controller_update(MovementController* fps, float time_delta) {
 
     Vec3 forward = { 0.0f, 0.0f, -1.0f };
     Vec3 tar;
-    quat_transform_vec3(&tar, &q, &forward);
-    vec3_add(&tar, &fps->camera.transform.position, &tar);
+    quat_transform_vec3(&q, &forward, &tar);
+    vec3_add(&fps->camera->node->transform.position, &tar, &tar);
 
     Vec3 up = {0.0f, 1.0f, 0.0f};
 
-    fw64_transform_look_at(&fps->camera.transform, &tar, &up);
+    fw64_transform_look_at(&fps->camera->node->transform, &tar, &up);
     fw64_camera_update_view_matrix(&fps->camera);
 }
 
 void movement_controller_get_ground_height(MovementController* controller) {
     fw64RaycastHit raycast_hit;
 
-    Vec3 ray_pos = controller->camera.transform.position;
+    Vec3 ray_pos = controller->camera->node->transform.position;
     ray_pos.y = 1000.0f;
     Vec3 ray_dir = {0.0f, -1.0f, 0.0f};
 
     if (fw64_level_raycast(controller->level, &ray_pos, &ray_dir, FW64_layer_ground, &raycast_hit)) {
-        controller->camera.transform.position.y = raycast_hit.point.y + controller->height;
+        controller->camera->node->transform.position.y = raycast_hit.point.y + controller->height;
     }
 }

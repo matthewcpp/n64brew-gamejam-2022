@@ -13,7 +13,7 @@
 #include "level_base.h"
 #include "zombie_spawner.h"
 
-#include "framework64/level.h"
+#include "level.h"
 
 #define ROOM_COUNT 9
 

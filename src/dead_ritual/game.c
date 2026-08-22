@@ -19,11 +19,8 @@ void game_init(Game* game, fw64Engine* engine) {
     // you can optionally set this to the level you want to begin at
     game->game_data.transition_to_level = LEVEL_NONE;
 
-    fw64SoundBank* sound_bank = fw64_sound_bank_load(engine->assets, FW64_ASSET_soundbank_sounds, fw64_default_allocator());
-    fw64MusicBank* music_bank = fw64_music_bank_load(engine->assets, FW64_ASSET_musicbank_music, fw64_default_allocator());
-
-    fw64_audio_set_sound_bank(engine->audio, sound_bank);
-    fw64_audio_set_music_bank(engine->audio, music_bank);
+    fw64_audio_load_musicbank_asset(engine->audio, engine->assets, FW64_ASSET_musicbank_music);
+    fw64_audio_load_soundbank_asset(engine->audio, engine->assets, FW64_ASSET_soundbank_sounds);
 
     game_transition_state(game);
 }
@@ -54,6 +51,10 @@ void game_update(Game* game) {
         case GAME_STATE_COUNT:
             break;
     }
+}
+
+void game_fixed_update(Game* game) {
+    
 }
 
 void game_draw(Game* game) {

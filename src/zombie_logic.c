@@ -1,7 +1,7 @@
 #include "zombie_logic.h"
 #include "framework64/random.h"
 #include "assets/layers.h"
-#include "framework64/level.h"
+#include "level.h"
 #include "zombie.h"
 
 void zombie_ai_init(ZombieAI* zombie_ai, fw64Level* level, fw64Collider* collider, fw64Transform* transform, fw64Transform* target) {	
@@ -12,7 +12,7 @@ void zombie_ai_init(ZombieAI* zombie_ai, fw64Level* level, fw64Collider* collide
 	zombie_ai->transform = transform;
 	zombie_ai->target = target;
 	fw64_transform_init(&zombie_ai->targetPrev);
-	vec3_zero(&zombie_ai->velocity.linear);
+	vec3_set_all(&zombie_ai->velocity.linear, 0.0f);
 	zombie_ai->velocity.angular = 0.0f;
 	zombie_ai->maxVelocity.linear = 0.0f;
 	zombie_ai->maxVelocity.angular = 0.0f;	
@@ -124,8 +124,8 @@ int zombie_get_logic_state(ZombieAI* zombie_ai) {
 void zombie_ai_set_target(ZombieAI* zombie_ai, fw64Transform* target) {
 	zombie_ai->target = target;
 	
-	vec3_copy(&zombie_ai->targetPrev.position, &zombie_ai->target->position);
-	vec3_copy(&zombie_ai->targetPrev.scale, &zombie_ai->target->scale);
+	vec3_copy(&zombie_ai->target->position, &zombie_ai->targetPrev.position);
+	vec3_copy(&zombie_ai->target->scale, &zombie_ai->targetPrev.scale);
 
 	zombie_ai->targetPrev.rotation.x = zombie_ai->target->rotation.x;
 	zombie_ai->targetPrev.rotation.y = zombie_ai->target->rotation.y;
@@ -144,9 +144,9 @@ static int zombie_ai_target_in_view(ZombieAI* zombie_ai, fw64Transform* target) 
 		return 0;
 	}
 	Vec3 zed_pos, target_pos;
-	vec3_copy(&zed_pos, &zombie_ai->transform->position);
+	vec3_copy(&zombie_ai->transform->position, &zed_pos);
 	zed_pos.y = 1;
-	vec3_copy(&target_pos, &target->position);
+	vec3_copy(&target->position, &target_pos);
 	target_pos.y = 1;
 	float dist_sq = vec3_distance_squared(&zed_pos, &target_pos);
 	
@@ -211,9 +211,9 @@ static void zombie_ai_init_wander(ZombieAI* zombie_ai) {
 	vec3_set(&target, fw64_random_float_in_range(-1.0, 1.0), 0.0f, fw64_random_float_in_range(-1.0, 1.0));
 	vec3_normalize(&target);
 	vec3_add_and_scale( &zombie_ai->sb_data.targetPosition,
-						&zombie_ai->sb_data.targetPosition,
 						&target,
-						fw64_random_float_in_range(5.0f, 45.0f));
+						fw64_random_float_in_range(5.0f, 45.0f),
+						&zombie_ai->sb_data.targetPosition);
 	zombie_ai_behavior_set(zombie_ai, SB_WANDER);
 	zombie_ai_behavior_set(zombie_ai, SB_AVOID_OBSTACLE);
 }
@@ -268,9 +268,9 @@ static void zombie_ai_behavior_apply(ZombieAI* zombie_ai, SteeringBehavior behav
 	//TODO: this is a quick fix so wander doesn't just chase the player.
 	Vec3 targetPos;
 	if(zombie_ai->state == ZLS_WANDER) {
-		vec3_copy(&targetPos, &zombie_ai->sb_data.targetPosition);
+		vec3_copy(&zombie_ai->sb_data.targetPosition, &targetPos);
 	} else {
-		vec3_copy(&targetPos, &zombie_ai->target->position);
+		vec3_copy(&zombie_ai->target->position, &targetPos);
 	}
 
 	steering_behavior_data_init(zombie_ai->level,
@@ -299,14 +299,14 @@ static void zombie_ai_behavior_apply(ZombieAI* zombie_ai, SteeringBehavior behav
         case SB_PURSUE: {
 			Vec3 targetVelocity;
             vec3_subtract(&targetVelocity, &zombie_ai->target->position, &zombie_ai->targetPrev.position);
-            vec3_copy(&zombie_ai->targetPrev.position, &zombie_ai->target->position);
+            vec3_copy(&zombie_ai->target->position, &zombie_ai->targetPrev.position);
             steering_pursue(&targetVelocity, 1.0f, &zombie_ai->sb_data);
             break;
 		}
         case SB_EVADE: {
 			Vec3 targetVelocity;
             vec3_subtract(&targetVelocity, &zombie_ai->target->position, &zombie_ai->targetPrev.position);
-            vec3_copy(&zombie_ai->targetPrev.position, &zombie_ai->target->position);
+            vec3_copy(&zombie_ai->target->position, &zombie_ai->targetPrev.position);
             steering_evade(&targetVelocity, 1.0f, &zombie_ai->sb_data);
             break;
 		}
@@ -333,11 +333,10 @@ static void zombie_ai_behavior_apply_all_active(ZombieAI* zombie_ai, float delta
 			zombie_ai_behavior_apply(zombie_ai, (SteeringBehavior)check_bahavior, deltaTime);
         }
     }
-	Vec3 ref_zero;
-    vec3_zero(&ref_zero);
+	Vec3 ref_zero = vec3_zero();
     if(vec3_distance_squared(&ref_zero, &zombie_ai->velocity.linear) > (zombie_ai->maxVelocity.linear * zombie_ai->maxVelocity.linear)) {
         vec3_normalize(&zombie_ai->velocity.linear);
-        vec3_scale(&zombie_ai->velocity.linear, &zombie_ai->velocity.linear, zombie_ai->maxVelocity.linear);
+        vec3_scale(&zombie_ai->velocity.linear, zombie_ai->maxVelocity.linear, &zombie_ai->velocity.linear);
     }
 }
 
