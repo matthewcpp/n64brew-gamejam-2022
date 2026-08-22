@@ -21,6 +21,8 @@ typedef struct {
     fw64Texture* image_tex;
     fw64Camera camera;
     int sound_effect_handle;
+    fw64RenderPass* renderpass;
+    fw64SpriteBatch* spritebatch;
 } Splash;
 
 void game_state_splash_init(Splash* splash, fw64Engine* engine, GameData* game_data);

@@ -15,7 +15,7 @@ void test_level_init(TestLevel* level, fw64Engine* engine, GameData* game_data, 
     fw64Scene* scene = load_scene(level);
     pickups_add_from_scene(&level->base.pickups, scene);
 
-    zombie_spawner_init(&level->zombie_spawner, engine, &level->base.level, &level->base.player.movement.camera.transform, level->base.allocator);
+    zombie_spawner_init(&level->zombie_spawner, engine, &level->base.level, &level->base.player.movement.camera->node->transform, level->base.allocator);
     zombie_spawner_add_node(&level->zombie_spawner, fw64_scene_get_node(scene, FW64_scene_Spooky_Level_node_Zombie_Spawn));
     fw64Node* player_spawn_node = fw64_scene_get_node(scene, FW64_scene_Spooky_Level_node_Player_Spawn);
     player_set_position(&level->base.player, &player_spawn_node->transform.position);
@@ -27,6 +27,7 @@ void test_level_init(TestLevel* level, fw64Engine* engine, GameData* game_data, 
     fw64_renderpass_set_clear_color(renderpass, 20, 4, 40);
     fw64_renderpass_set_fog_color(renderpass, 20, 4, 40);
     fw64_renderpass_set_fog_positions(renderpass, 0.8, 1.0f);
+    fw64_renderpass_set_fog_enabled(renderpass, 1);
 }
 
 static fw64Scene* load_scene(TestLevel* level) {
@@ -54,16 +55,22 @@ void test_level_update(TestLevel* level){
 }
 
 void test_level_draw(TestLevel* level) {
-    fw64Renderer* renderer = level->base.engine->renderer;
 
-    fw64_renderer_set_fog_enabled(renderer, 1);
-    fw64_renderer_begin(renderer, FW64_PRIMITIVE_MODE_TRIANGLES,  FW64_RENDERER_FLAG_CLEAR);
-    player_draw(&level->base.player);
-    pickups_draw(&level->base.pickups);
-    zombie_spawner_draw(&level->zombie_spawner);    
-    fw64_renderer_set_fog_enabled(renderer, 0);
-    player_draw_weapon(&level->base.player);
-    player_draw_damage(&level->base.player);
+    fw64RenderPass* renderpass = level->base.renderpasses[RENDER_PASS_LEVEL];
+    fw64_renderpass_begin(renderpass);
+    player_draw(&level->base.player, renderpass);
+    pickups_draw(&level->base.pickups, renderpass);
+    zombie_spawner_draw(&level->zombie_spawner, renderpass);
+    fw64_renderpass_end(renderpass);
+
+    renderpass = level->base.renderpasses[RENDER_PASS_PLAYER_WEAPON];
+    fw64_renderpass_begin(renderpass);
+    player_draw_weapon(&level->base.player, renderpass);
+    player_draw_damage(&level->base.player, renderpass);
+    fw64_renderpass_end(renderpass);
+
+    renderpass = level->base.renderpasses[RENDER_PASS_UI];
+    fw64_renderpass_begin(renderpass);
     ui_draw(&level->base.ui);
-    fw64_renderer_end(renderer, FW64_RENDERER_FLAG_SWAP);
+    fw64_renderpass_end(renderpass);
 }

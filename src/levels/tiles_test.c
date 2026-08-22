@@ -10,9 +10,9 @@
 #define TILE_COUNT 3
 
 int tile_scenes[TILE_COUNT] = {
-    FW64_ASSET_scene_city_tile_block1,
-    FW64_ASSET_scene_city_tile_block2,
-    FW64_ASSET_scene_city_tile_highrises
+    FW64_ASSET_scene_City_Tile_Block1,
+    FW64_ASSET_scene_City_Tile_Block2,
+    FW64_ASSET_scene_City_Tile_Highrises
 };
 
 #define BUMP_ALLOCATOR_SIZE (16 * 1024)
@@ -27,7 +27,7 @@ static int  get_rand_tile(int32_t x, int32_t y);
 
 void tiles_test_level_init(TilesTestLevel* level, fw64Engine* engine, GameData* game_data, fw64Allocator* state_allocator) {
     level_base_init(&level->base, engine, game_data, state_allocator);
-    mesh_collection_init(&level->mesh_collection, engine->assets, FW64_ASSET_scene_city_mesh_collection, FW64_layer_buildings | FW64_layer_ground, state_allocator);
+    mesh_collection_init(&level->mesh_collection, engine->assets, FW64_ASSET_scene_City_Mesh_Collection, FW64_layer_buildings | FW64_layer_ground, state_allocator);
     
     level->handle_nw = 0;
     level->handle_ne =  TILE_ROW_CELLS  - 1;
@@ -101,13 +101,16 @@ void tiles_test_level_init(TilesTestLevel* level, fw64Engine* engine, GameData* 
         dist = player_x - level->next_row_trigger[WEST];
     }
 
-    compass_init(&level->compass, engine, state_allocator, &level->base.player.movement.camera.transform);
+    compass_init(&level->compass, engine, state_allocator, &level->base.player.movement.camera->node->transform);
 
     level->base.player.movement.rotation.y = 360 - (90.f * player_facing);
 
-    fw64_renderer_set_clear_color(engine->renderer, 20, 4, 40);
-    fw64_renderer_set_fog_color(engine->renderer, 20, 4, 40);
-    fw64_renderer_set_fog_positions(engine->renderer, 0.9, 1.0f);
+    fw64RenderPass* renderpass = level->base.renderpasses[RENDER_PASS_LEVEL];
+    fw64_renderpass_set_clear_color(renderpass, 20, 4, 40);
+    fw64_renderpass_set_fog_color(renderpass, 20, 4, 40);
+    fw64_renderpass_set_fog_positions(renderpass, 0.9, 1.0f);
+    fw64_renderpass_set_fog_enabled(renderpass, 1);
+    fw64_renderpass_set_anti_aliasing_enabled(renderpass, 1);
 }
 
 void tiles_test_load_next_row(TilesTestLevel* level, CompassDirections dir) {
@@ -213,7 +216,7 @@ void tiles_test_load_tile(TilesTestLevel* level, int index, Vec3* pos) {
     int32_t grid_x = pos->x / TILE_SIZE;
     int32_t grid_y = pos->z / TILE_SIZE;
 
-    info.scene_id = (grid_x == 0 && grid_y == 0) ? FW64_ASSET_scene_city_tile_mall : tile_scenes[get_rand_tile(grid_x, grid_y)];
+    info.scene_id = (grid_x == 0 && grid_y == 0) ? FW64_ASSET_scene_City_Tile_Mall : tile_scenes[get_rand_tile(grid_x, grid_y)];
     info.allocator = &level->allocators[index].interface;
 
     level->chunk_handles[index] = fw64_level_load_chunk_at_pos(&level->base.level, &info, pos)->handle;
@@ -299,19 +302,23 @@ void tiles_test_level_update(TilesTestLevel* level) {
 }
 
 void tiles_test_level_draw(TilesTestLevel* level) {
-    fw64Renderer* renderer = level->base.engine->renderer;
+    fw64RenderPass* renderpass = level->base.renderpasses[RENDER_PASS_LEVEL];
 
-    fw64_renderer_set_anti_aliasing_enabled(renderer, 1);
-    fw64_renderer_set_fog_enabled(renderer, 1);
-    fw64_renderer_begin(renderer, FW64_PRIMITIVE_MODE_TRIANGLES,  FW64_RENDERER_FLAG_CLEAR);
-    player_draw(&level->base.player);
-    pickups_draw(&level->base.pickups);
-    fw64_renderer_set_fog_enabled(renderer, 0);
-    player_draw_weapon(&level->base.player);
-    fw64_renderer_set_anti_aliasing_enabled(renderer, 0);
+    fw64_renderpass_begin(renderpass);
+    player_draw(&level->base.player, renderpass);
+    pickups_draw(&level->base.pickups, renderpass);
+    fw64_renderpass_end(renderpass);
+
+    renderpass = level->base.renderpasses[RENDER_PASS_PLAYER_WEAPON];
+    fw64_renderpass_begin(renderpass);
+    player_draw_weapon(&level->base.player, renderpass);
+    fw64_renderpass_end(renderpass);
+
+    renderpass = level->base.renderpasses[RENDER_PASS_UI];
+    fw64_renderpass_begin(renderpass);
     ui_draw(&level->base.ui);
-    compass_draw(&level->compass);    
-    fw64_renderer_end(renderer, FW64_RENDERER_FLAG_SWAP);
+    compass_draw(&level->compass);
+    fw64_renderpass_end(renderpass);
 }
 
 // local function separate from the global rand function since it is meant to be reseeded each use

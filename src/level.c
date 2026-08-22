@@ -149,7 +149,7 @@ int fw64_level_moving_box_intersection(fw64Level* level, Box* box, Vec3* velocit
         Vec3 level_velocity = {0.0f, 0.0f, 0.0f};
         float first, last;
 
-        if (!fw64_collision_test_moving_boxes(box, velocity, fw64_scene_get_initial_bounds(ref->scene), &level_velocity, &first, &last))
+        if (!fw64_collision_test_moving_boxes(box, velocity, &ref->scene->bounding_box, &level_velocity, &first, &last))
             continue;
 
         did_hit |= fw64_scene_moving_box_intersection(ref->scene, box, velocity, mask, result);
@@ -172,7 +172,7 @@ int fw64_level_moving_sphere_intersection(fw64Level* level, Vec3* center, float 
         float out_t;
 
         // rapid rejection test against bounding box of entire scene
-        if(!fw64_collision_test_moving_sphere_box(center, radius, velocity, fw64_scene_get_initial_bounds(ref->scene), &out_point, &out_t))
+        if(!fw64_collision_test_moving_sphere_box(center, radius, velocity, &ref->scene->bounding_box, &out_point, &out_t))
             continue;
 
         did_hit |= fw64_scene_moving_sphere_intersection(ref->scene, center, radius, velocity, mask, result);
@@ -197,7 +197,7 @@ int fw64_level_moving_spheres_dynamic_intersection(fw64Level* level, Vec3* cente
             continue;
         
         Vec3 node_center;
-        vec3_copy(&dynamic_node->collider->transform->position, &node_center);
+        vec3_copy(&dynamic_node->collider->node->transform.position, &node_center);
         Vec3 node_extents;
         box_extents(&dynamic_node->collider->bounding, &node_extents);
         float node_radius = fw64_minf(node_extents.x, node_extents.z); // todo: implement sphere colliders

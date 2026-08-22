@@ -10,9 +10,11 @@ static fw64Scene* setup_level(HillLevel* hill_level);
 void hill_level_init(HillLevel* level, fw64Engine* engine, GameData* game_data, fw64Allocator* level_allocator) {
     level_base_init(&level->base, engine, game_data, level_allocator);
 
-    fw64_renderer_set_clear_color(engine->renderer, 20, 4, 40);
-    fw64_renderer_set_fog_color(engine->renderer, 20, 4, 40);
-    fw64_renderer_set_fog_positions(engine->renderer, 0.8, 1.0f);
+    fw64RenderPass* renderpass = level->base.renderpasses[RENDER_PASS_LEVEL];
+    fw64_rendererpass_set_clear_color(renderpass, 20, 4, 40);
+    fw64_rendererpass_set_fog_color(renderpass, 20, 4, 40);
+    fw64_rendererpass_set_fog_positions(renderpass, 0.8, 1.0f);
+    fw64_renderpass_set_fog_enabled(renderpass, 1);
 
     fw64Scene* scene = setup_level(level);
     setup_sound_trigger(level, scene, HILL_LEVEL_TRIGGER_CROW, FW64_scene_Church_Hill_node_CrowTrigger);
@@ -23,7 +25,7 @@ void hill_level_init(HillLevel* level, fw64Engine* engine, GameData* game_data, 
     player_add_ammo(&level->base.player, WEAPON_TYPE_MP5, 320);
     player_set_weapon(&level->base.player, WEAPON_TYPE_MP5);
 
-    zombie_spawner_init(&level->zombie_spawner, engine, &level->base.level, &level->base.player.movement.camera.transform, level->base.allocator);
+    zombie_spawner_init(&level->zombie_spawner, engine, &level->base.level, &level->base.player.movement.camera->node->transform, level->base.allocator);
     zombie_spawner_add_node(&level->zombie_spawner,fw64_scene_get_node(scene, FW64_scene_Church_Hill_node_Zombie_Spawn_1));
     zombie_spawner_add_node(&level->zombie_spawner,fw64_scene_get_node(scene, FW64_scene_Church_Hill_node_Zombie_Spawn_2));
 }
@@ -69,21 +71,24 @@ void hill_level_update(HillLevel* level) {
 }
 
 void hill_level_draw(HillLevel* level) {
-    fw64Renderer* renderer = level->base.engine->renderer;
+    fw64RenderPass* renderpass = level->base.renderpasses[RENDER_PASS_LEVEL];
+    fw64_renderpass_begin(renderpass);
+    player_draw(&level->base.player, renderpass);
+    zombie_spawner_draw(&level->zombie_spawner, renderpass);
+    fw64_renderpass_end(renderpass);
 
-    fw64_renderer_set_fog_enabled(renderer, 1);
-    fw64_renderer_begin(renderer, FW64_PRIMITIVE_MODE_TRIANGLES,  FW64_RENDERER_FLAG_CLEAR);
-    player_draw(&level->base.player);
-    zombie_spawner_draw(&level->zombie_spawner);
-
-    fw64_renderer_set_fog_enabled(renderer, 0);
-    player_draw_weapon(&level->base.player);
+    renderpass = level->base.renderpasses[RENDER_PASS_PLAYER_WEAPON];
+    fw64_renderpass_begin(renderpass);
+    player_draw_weapon(&level->base.player, renderpass);
+    fw64_renderpass_end(renderpass);
 
     // if (level->base.player.damage_overlay_time > 0.0f){
     //     fw64_renderer_util_fullscreen_overlay(renderer, 165, 0, 0, 100);
     // }
         
 
+    renderpass = level->base.renderpasses[RENDER_PASS_UI];
+    fw64_renderpass_begin(renderpass);
     ui_draw(&level->base.ui);
-    fw64_renderer_end(renderer, FW64_RENDERER_FLAG_SWAP);
+    fw64_renderpass_end(renderpass);
 }

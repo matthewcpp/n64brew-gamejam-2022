@@ -44,8 +44,8 @@ void compass_draw(Compass* compass) {
 	if(compass->turn_compass) {
 		Quat compass_rotate;
 		quat_set(&compass_rotate, 0.0f, -compass->player_pos->rotation.y, 0.0f, compass->player_pos->rotation.w);
-		quat_transform_vec3(&temp_north, &compass_rotate, &temp_north);
-		quat_transform_vec3(&home_dir, &compass_rotate, &home_dir);
+		quat_transform_vec3(&compass_rotate, &temp_north, &temp_north);
+		quat_transform_vec3(&compass_rotate, &home_dir, &home_dir);
 	}
 	fw64_renderer_set_fill_color(compass->engine->renderer, 255, 255, 255, 200);
 	fw64_renderer_draw_sprite(compass->engine->renderer, compass->compass_bg, compass_pos.x - 16.0f, compass_pos.y - 16.0f);

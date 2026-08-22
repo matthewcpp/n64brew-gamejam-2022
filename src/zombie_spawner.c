@@ -126,7 +126,7 @@ void zombie_spawner_update(ZombieSpawner* spawner) {
     // }
 }
 
-void zombie_spawner_draw(ZombieSpawner* spawner) {
+void zombie_spawner_draw(ZombieSpawner* spawner, fw64RenderPass* renderpass) {
     if(spawner->active_zombies < 1)
         return;
 

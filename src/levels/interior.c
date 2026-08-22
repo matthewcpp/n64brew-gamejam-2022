@@ -20,22 +20,22 @@
 
 #define ROOM_SCENE_COUNT 16
 int room_scenes[ROOM_SCENE_COUNT] = {
-	FW64_ASSET_scene_00_l0_r0_t0_b0,
-	FW64_ASSET_scene_01_l0_r0_t0_b1,
-	FW64_ASSET_scene_02_l0_r0_t1_b0,
-	FW64_ASSET_scene_03_l0_r0_t1_b1,
-	FW64_ASSET_scene_04_l0_r1_t0_b0,
-	FW64_ASSET_scene_05_l0_r1_t0_b1,
-	FW64_ASSET_scene_06_l0_r1_t1_b0,
-	FW64_ASSET_scene_07_l0_r1_t1_b1,
-	FW64_ASSET_scene_08_l1_r0_t0_b0,
-	FW64_ASSET_scene_09_l1_r0_t0_b1,
-	FW64_ASSET_scene_10_l1_r0_t1_b0,
-	FW64_ASSET_scene_11_l1_r0_t1_b1,
-	FW64_ASSET_scene_12_l1_r1_t0_b0,
-	FW64_ASSET_scene_13_l1_r1_t0_b1,
-	FW64_ASSET_scene_14_l1_r1_t1_b0,
-	FW64_ASSET_scene_15_l1_r1_t1_b1	
+	FW64_ASSET_scene_00_L0_R0_T0_B0,
+	FW64_ASSET_scene_01_L0_R0_T0_B1,
+	FW64_ASSET_scene_02_L0_R0_T1_B0,
+	FW64_ASSET_scene_03_L0_R0_T1_B1,
+	FW64_ASSET_scene_04_L0_R1_T0_B0,
+	FW64_ASSET_scene_05_L0_R1_T0_B1,
+	FW64_ASSET_scene_06_L0_R1_T1_B0,
+	FW64_ASSET_scene_07_L0_R1_T1_B1,
+	FW64_ASSET_scene_08_L1_R0_T0_B0,
+	FW64_ASSET_scene_09_L1_R0_T0_B1,
+	FW64_ASSET_scene_10_L1_R0_T1_B0,
+	FW64_ASSET_scene_11_L1_R0_T1_B1,
+	FW64_ASSET_scene_12_L1_R1_T0_B0,
+	FW64_ASSET_scene_13_L1_R1_T0_B1,
+	FW64_ASSET_scene_14_L1_R1_T1_B0,
+	FW64_ASSET_scene_15_L1_R1_T1_B1	
 };
 
 #define BUMP_ALLOCATOR_SIZE (16 * 1024)
@@ -74,7 +74,7 @@ void interior_level_init(InteriorLevel* level, fw64Engine* engine, GameData* gam
         level->room_handles[i] = FW64_LEVEL_INVALID_CHUNK_HANDLE;
 		fw64_bump_allocator_init_from_buffer(&level->allocators[i], state_allocator->memalign(state_allocator, 8, BUMP_ALLOCATOR_SIZE), BUMP_ALLOCATOR_SIZE);
     }
-	zombie_spawner_init(&level->zombie_spawner, engine, &level->base.level, &level->base.player.movement.camera.transform, level->base.allocator);
+	zombie_spawner_init(&level->zombie_spawner, engine, &level->base.level, &level->base.player.movement.camera->node->transform, level->base.allocator);
     
 	seed_tile_gen(level);
 	
@@ -174,9 +174,12 @@ void interior_level_init(InteriorLevel* level, fw64Engine* engine, GameData* gam
 	vec3_copy(&starting_pos, &level->exits[BUILDING_EXIT]);
     player_set_position(&level->base.player, &starting_pos);
 
-    fw64_renderer_set_clear_color(engine->renderer, 32, 32, 32);
-	fw64_renderer_set_fog_color(engine->renderer, 32, 32, 32);
-    fw64_renderer_set_fog_positions(engine->renderer, 0.95f, 1.0f);
+	fw64RenderPass* renderpass = level->base.renderpasses[RENDER_PASS_LEVEL];
+	fw64_renderpass_set_anti_aliasing_enabled(renderpass, 1);
+    fw64_renderpass_set_clear_color(renderpass, 32, 32, 32);
+	fw64_renderpass_set_fog_color(renderpass, 32, 32, 32);
+    fw64_renderpass_set_fog_positions(renderpass, 0.95f, 1.0f);
+	fw64_renderpass_set_fog_enabled(renderpass, 1);
 
 	zombie_spawner_spawn_now(&level->zombie_spawner, 10);
 }
@@ -192,52 +195,52 @@ void interior_load_room(InteriorLevel* level, int index, int room_scene, Vec3* p
 	uint32_t node_id;
 	switch(room_scene) {
 		case 0:
-			node_id = FW64_scene_00_l0_r0_t0_b0_node_Plane_017;
+			node_id = FW64_scene_00_L0_R0_T0_B0_node_Plane_017;
 			break;
 		case 1:
-			node_id = FW64_scene_01_l0_r0_t0_b1_node_Plane_005;
+			node_id = FW64_scene_01_L0_R0_T0_B1_node_Plane_005;
 			break;
 		case 2:
-			node_id = FW64_scene_02_l0_r0_t1_b0_node_Plane_004;
+			node_id = FW64_scene_02_L0_R0_T1_B0_node_Plane_004;
 			break;
 		case 3:
-			node_id = FW64_scene_03_l0_r0_t1_b1_node_Plane_010;
+			node_id = FW64_scene_03_L0_R0_T1_B1_node_Plane_010;
 			break;
 		case 4:
-			node_id = FW64_scene_04_l0_r1_t0_b0_node_Plane_003;
+			node_id = FW64_scene_04_L0_R1_T0_B0_node_Plane_003;
 			break;
 		case 5:
-			node_id = FW64_scene_05_l0_r1_t0_b1_node_Plane_011;
+			node_id = FW64_scene_05_L0_R1_T0_B1_node_Plane_011;
 			break;
 		case 6:
-			node_id = FW64_scene_06_l0_r1_t1_b0_node_Plane_009;
+			node_id = FW64_scene_06_L0_R1_T1_B0_node_Plane_009;
 			break;
 		case 7:
-			node_id = FW64_scene_07_l0_r1_t1_b1_node_Plane_012;
+			node_id = FW64_scene_07_L0_R1_T1_B1_node_Plane_012;
 			break;
 		case 8:
-			node_id = FW64_scene_08_l1_r0_t0_b0_node_Plane_002;
+			node_id = FW64_scene_08_L1_R0_T0_B0_node_Plane_002;
 			break;
 		case 9:
-			node_id = FW64_scene_09_l1_r0_t0_b1_node_Plane_013;
+			node_id = FW64_scene_09_L1_R0_T0_B1_node_Plane_013;
 			break;
 		case 10:
-			node_id = FW64_scene_10_l1_r0_t1_b0_node_Plane_014;
+			node_id = FW64_scene_10_L1_R0_T1_B0_node_Plane_014;
 			break;
 		case 11:
-			node_id = FW64_scene_11_l1_r0_t1_b1_node_Plane_015;
+			node_id = FW64_scene_11_L1_R0_T1_B1_node_Plane_015;
 			break;
 		case 12:
-			node_id = FW64_scene_12_l1_r1_t0_b0_node_Plane_006;
+			node_id = FW64_scene_12_L1_R1_T0_B0_node_Plane_006;
 			break;
 		case 13:
-			node_id = FW64_scene_13_l1_r1_t0_b1_node_Plane_016;
+			node_id = FW64_scene_13_L1_R1_T0_B1_node_Plane_016;
 			break;
 		case 14:
-			node_id = FW64_scene_14_l1_r1_t1_b0_node_Plane_007;
+			node_id = FW64_scene_14_L1_R1_T1_B0_node_Plane_007;
 			break;
 		case 15:
-			node_id = FW64_scene_15_l1_r1_t1_b1_node_Plane_008;
+			node_id = FW64_scene_15_L1_R1_T1_B1_node_Plane_008;
 			break;
 		default:
 			break;
@@ -249,7 +252,7 @@ void create_room(InteriorLevel* level, Room* room, int cell_x, int cell_y, int p
 	vec2_set(&room->cell, (float)cell_x, (float)cell_y);
 	room->parent_dir = parent_dir;
 	//vec3_set(&room->pos, &start_room_pos.x + (ROOM_SIZE * room->cell.x), start_room_pos.y, &start_room_pos.z + (ROOM_SIZE * room->cell.y));
-	vec3_zero(&room->pos);
+	vec3_set_all(&room->pos, 0.0f);
 	room->pos.x = ROOM_SIZE * room->cell.x;
 	room->pos.z = ROOM_SIZE * room->cell.y;
 	vec3_add(&room->pos, &room->pos, &start_room_pos);
@@ -288,20 +291,24 @@ void interior_level_update(InteriorLevel* level) {
 }
 
 void interior_level_draw(InteriorLevel* level) {
-    fw64Renderer* renderer = level->base.engine->renderer;
-    fw64_renderer_set_anti_aliasing_enabled(renderer, 1);
-    fw64_renderer_set_fog_enabled(renderer, 1);
-	fw64_renderer_begin(renderer, FW64_PRIMITIVE_MODE_TRIANGLES,  FW64_RENDERER_FLAG_CLEAR);
-    player_draw(&level->base.player);
-    zombie_spawner_draw(&level->zombie_spawner);
-	fw64_renderer_set_fog_enabled(renderer, 0);
-	player_draw_weapon(&level->base.player);
-    fw64_renderer_set_anti_aliasing_enabled(renderer, 0);
-	player_draw_damage(&level->base.player);
-	ui_draw(&level->base.ui);
-    fw64_renderer_end(renderer, FW64_RENDERER_FLAG_SWAP);
-}
+	fw64RenderPass* renderpass = level->base.renderpasses[RENDER_PASS_LEVEL];
 
+	fw64_renderpass_begin(renderpass);
+    player_draw(&level->base.player, renderpass);
+    zombie_spawner_draw(&level->zombie_spawner, renderpass);
+	fw64_renderpass_end(renderpass);
+
+	renderpass = level->base.renderpasses[RENDER_PASS_PLAYER_WEAPON];
+	fw64_renderpass_begin(renderpass);
+	player_draw_weapon(&level->base.player, renderpass);
+	fw64_renderpass_end(renderpass);
+
+	level->base.renderpasses[RENDER_PASS_UI];
+	fw64_renderpass_begin(renderpass);
+	player_draw_damage(&level->base.player, renderpass);
+	ui_draw(&level->base.ui);
+    fw64_renderpass_end(renderpass);
+}
 
 void seed_tile_gen(InteriorLevel* level) {
 	/* 

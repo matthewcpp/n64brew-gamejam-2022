@@ -50,4 +50,4 @@ void pickups_add_from_scene(Pickups* pickups, fw64Scene* scene);
 void pickups_remove_from_scene(Pickups* pickups, fw64Scene* scene);
 
 void pickups_update(Pickups* pickups);
-void pickups_draw(Pickups* pickups);
+void pickups_draw(Pickups* pickups, fw64RenderPass* renderpass);

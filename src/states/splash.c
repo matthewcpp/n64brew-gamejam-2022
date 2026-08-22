@@ -1,5 +1,6 @@
 #include "states/splash.h"
 #include "framework64/texture.h"
+#include <framework64/util/renderpass_util.h>
 
 #include "assets/assets.h"
 #include "assets/sound_bank_sounds.h"
@@ -15,9 +16,18 @@ static void transition_to_next(Splash* splash);
 void game_state_splash_init(Splash* splash, fw64Engine* engine, GameData* game_data) {
     splash->engine = engine;
     splash->game_data = game_data;
-    fw64_camera_init(&splash->camera);
 
-    fw64_bump_allocator_init(&splash->bump_allocator, LEVEL_MEMORY_POOL_SIZE);
+    fw64Display* display = fw64_displays_get_primary(engine->displays);
+    fw64Allocator* allocator = fw64_bump_allocator_init(&splash->bump_allocator, LEVEL_MEMORY_POOL_SIZE);
+
+    fw64Node* camera_node = fw64_allocator_malloc(allocator, sizeof(fw64Node));
+    fw64_node_init(camera_node);
+    fw64_camera_init(&splash->camera, camera_node, display);
+
+    splash->renderpass = fw64_renderpass_create(display, allocator);
+    fw64_renderpass_util_ortho2d(splash->renderpass);
+
+    splash->spritebatch = fw64_spritebatch_create(1, allocator);
 
     splash->image_tex = NULL;
     splash->sound_effect_handle = -1;
@@ -79,6 +89,8 @@ static void transition_to_next(Splash* splash) {
 
 void game_state_splash_uninit(Splash* splash) {
     transition_to_state(splash, SPLASH_STATE_NONE);
+    fw64_renderpass_delete(splash->renderpass);
+    fw64_spritebatch_delete(splash->spritebatch);
     fw64_bump_allocator_uninit(&splash->bump_allocator);
 }
 

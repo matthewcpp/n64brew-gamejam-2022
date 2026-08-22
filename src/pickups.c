@@ -133,7 +133,7 @@ void pickups_update(Pickups* pickups) {
     }
 }
 
-void pickups_draw(Pickups* pickups) {
+void pickups_draw(Pickups* pickups, fw64RenderPass* renderpass) {
     // TODO: do these nodes need to be drawn here?
     fw64_billboard_nodes_update(&pickups->billboard_nodes);
 }
