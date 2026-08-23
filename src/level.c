@@ -229,7 +229,6 @@ void fw64_level_draw_camera(fw64Level* level, fw64RenderPass* renderpass, fw64Ca
     for (uint32_t i = 0; i < level->chunk_ref_count; i++) {
         fw64LevelChunckRef* ref = level->chunk_refs + i;
 
-
         if (!fw64_frustum_intersects_box(&frustum, &ref->scene->bounding_box))
             continue;
 
@@ -238,6 +237,19 @@ void fw64_level_draw_camera(fw64Level* level, fw64RenderPass* renderpass, fw64Ca
         }
 
         fw64_scene_draw_frustrum(ref->scene, renderpass, &frustum, FW64_LAYER_MASK_ALL_LAYERS);
+    }
+
+    for (uint32_t i = 0; i < level->dynamic_node_count; i++) {
+        fw64Node* node = level->dynamic_nodes[i];
+        if (!node->mesh_instance || !fw64_frustum_intersects_box(&frustum, &node->mesh_instance->render_bounds)) {
+            continue;
+        }
+
+        if (fw64_mesh_instance_is_skinned(node->mesh_instance )) {
+            fw64_renderpass_draw_skinned_mesh(renderpass, (fw64SkinnedMeshInstance*)node->mesh_instance);
+        } else {
+            fw64_renderpass_draw_static_mesh(renderpass, node->mesh_instance);
+        }
     }
 }
 
@@ -256,6 +268,19 @@ void fw64_level_draw_camera_all(fw64Level* level, fw64RenderPass* renderpass, fw
         }
 
         fw64_scene_draw_all(ref->scene, renderpass, FW64_LAYER_MASK_ALL_LAYERS);
+    }
+
+    for (uint32_t i = 0; i < level->dynamic_node_count; i++) {
+        fw64Node* node = level->dynamic_nodes[i];
+        if (!node->mesh_instance) {
+            continue;
+        }
+
+        if (fw64_mesh_instance_is_skinned(node->mesh_instance )) {
+            fw64_renderpass_draw_skinned_mesh(renderpass, (fw64SkinnedMeshInstance*)node->mesh_instance);
+        } else {
+            fw64_renderpass_draw_static_mesh(renderpass, node->mesh_instance);
+        }
     }
 }
 

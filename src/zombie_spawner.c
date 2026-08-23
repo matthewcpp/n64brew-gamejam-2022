@@ -21,8 +21,8 @@ void zombie_spawner_init(ZombieSpawner* spawner, fw64Engine* engine, fw64Level* 
 
     spawner->zombie_mesh = fw64_assets_load_skinned_mesh(engine->assets, FW64_ASSET_skinnedmesh_zombie, allocator);
 
-    for(int i = 0; i < 16; i++)
-        spawner->spawner_nodes[i] = NULL;
+    for(int i = 0; i< ZOMBIE_SPAWNER_SPAWN_LOCATION_COUNT; i++) 
+        spawner->spawn_locations[i] = NULL;
 
     for (int i = 0; i < ZOMBIE_SPAWNER_MAX_COUNT; i++) {
         zombie_init(&spawner->zombies[i], spawner->engine, spawner->level, spawner->zombie_mesh, spawner->allocator);
@@ -38,9 +38,9 @@ void zombie_spawner_uninit(ZombieSpawner* spawner) {
 }
 
 void zombie_spawner_add_node(ZombieSpawner* spawner, fw64Node* node) {
-    if(spawner->active_nodes >= 15)
+    if(spawner->active_nodes >= (ZOMBIE_SPAWNER_SPAWN_LOCATION_COUNT - 1))
         return;
-    spawner->spawner_nodes[spawner->active_nodes] = node;
+    spawner->spawn_locations[spawner->active_nodes] = node;
     spawner->active_nodes++;
 }
 
@@ -49,9 +49,9 @@ void zombie_spawner_remove_node(ZombieSpawner* spawner, fw64Node* node) {
         return;
     
     for(int i = 0; i < spawner->active_nodes; i++) {
-        if(spawner->spawner_nodes[i] == node) {
-            spawner->spawner_nodes[i] = spawner->spawner_nodes[spawner->active_nodes - 1];
-            spawner->spawner_nodes[spawner->active_nodes - 1] = 0;
+        if(spawner->spawn_locations[i] == node) {
+            spawner->spawn_locations[i] = spawner->spawn_locations[spawner->active_nodes - 1];
+            spawner->spawn_locations[spawner->active_nodes - 1] = 0;
             spawner->active_nodes--;
             return;
         }
@@ -83,9 +83,9 @@ void spawn_next_zombie(ZombieSpawner* spawner) {
 
     zed->health = 3;
     int node_index = fw64_random_int_in_range(0, spawner->active_nodes - 1);
-    zed->node.transform.position = spawner->spawner_nodes[node_index]->transform.position;
+    zed->node.transform.position = spawner->spawn_locations[node_index]->transform.position;
     float radius = 15.0f; //10.0f + (2.0f * spawner->active_zombies);
-    Vec3 random_offset = {fw64_random_float_in_range(-radius,radius), spawner->spawner_nodes[node_index]->transform.position.y, fw64_random_float_in_range(-radius,radius)};
+    Vec3 random_offset = {fw64_random_float_in_range(-radius,radius), spawner->spawn_locations[node_index]->transform.position.y, fw64_random_float_in_range(-radius,radius)};
     vec3_add(&zed->node.transform.position, &zed->node.transform.position, &random_offset);
     zed->rotation = fw64_random_float_in_range(0.0f, 359.9f);
     quat_from_euler(&zed->node.transform.rotation, 0.0f, zed->rotation, 0.0f);
@@ -124,19 +124,6 @@ void zombie_spawner_update(ZombieSpawner* spawner) {
     // if (zombiesUpdated < ZOMBIE_SPAWNER_SMALL_GROUP) {
     //     spawn_next_zombie(spawner);
     // }
-}
-
-void zombie_spawner_draw(ZombieSpawner* spawner, fw64RenderPass* renderpass) {
-    if(spawner->active_zombies < 1)
-        return;
-
-    for(int i = 0; i < ZOMBIE_SPAWNER_MAX_COUNT; i++) {        
-        if(!((1<<i) & spawner->zombie_slot_active))
-            continue;
-
-        Zombie* zombie = &spawner->zombies[i];
-        zombie_draw(zombie);
-    }
 }
 
 static int get_free_slot(ZombieSpawner* spawner) {

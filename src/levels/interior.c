@@ -159,7 +159,7 @@ void interior_level_init(InteriorLevel* level, fw64Engine* engine, GameData* gam
 
 	// first spawn node should be the first room, remove that one to be fair to the player
 	if(level->zombie_spawner.active_nodes > 0) {
-		level->zombie_spawner.spawner_nodes[0] = level->zombie_spawner.spawner_nodes[level->zombie_spawner.active_nodes - 1];
+		level->zombie_spawner.spawn_locations[0] = level->zombie_spawner.spawn_locations[level->zombie_spawner.active_nodes - 1];
 		level->zombie_spawner.active_nodes--;
 	}
 
@@ -295,7 +295,6 @@ void interior_level_draw(InteriorLevel* level) {
 
 	fw64_renderpass_begin(renderpass);
     player_draw(&level->base.player, renderpass);
-    zombie_spawner_draw(&level->zombie_spawner, renderpass);
 	fw64_renderpass_end(renderpass);
 	fw64_renderer_submit_renderpass(level->base.engine->renderer, renderpass);
 

@@ -53,9 +53,8 @@ typedef struct {
     int is_dry_firing;
 
     Weapon weapon;
-    fw64Transform weapon_transform;
-    fw64Transform casing_transform;
-    fw64Transform muzzle_flash_transform;
+    fw64Node weapon_node, casing_node, muzzle_flash_node;
+    fw64MeshInstance weapon_mesh, casing_mesh, muzzle_flash_mesh;
     
     float transition_time;
     WeaponTransitionFunc transition_callback;

@@ -60,7 +60,6 @@ void test_level_draw(TestLevel* level) {
     fw64_renderpass_begin(renderpass);
     player_draw(&level->base.player, renderpass);
     pickups_draw(&level->base.pickups, renderpass);
-    zombie_spawner_draw(&level->zombie_spawner, renderpass);
     fw64_renderpass_end(renderpass);
 
     renderpass = level->base.renderpasses[RENDER_PASS_PLAYER_WEAPON];

@@ -74,7 +74,6 @@ void hill_level_draw(HillLevel* level) {
     fw64RenderPass* renderpass = level->base.renderpasses[RENDER_PASS_LEVEL];
     fw64_renderpass_begin(renderpass);
     player_draw(&level->base.player, renderpass);
-    zombie_spawner_draw(&level->zombie_spawner, renderpass);
     fw64_renderpass_end(renderpass);
 
     renderpass = level->base.renderpasses[RENDER_PASS_PLAYER_WEAPON];

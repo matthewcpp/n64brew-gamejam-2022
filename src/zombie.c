@@ -12,21 +12,20 @@ static void zombie_move(Zombie* zombie);
 void zombie_init(Zombie* zombie, fw64Engine* engine, fw64Level* level, fw64SkinnedMesh* mesh, fw64Allocator* allocator) {
     zombie->engine = engine;
     zombie->level = level;
-    zombie->mesh = mesh;
+
+    zombie->node.layer_mask = ZOMBIE_LAYER;
+    zombie->node.data = (uintptr_t)zombie;
+
+    fw64_node_init(&zombie->node);
+    Box mesh_bounding = fw64_mesh_get_bounding_box(mesh->mesh);
+    fw64_collider_init_box(&zombie->collider, &zombie->node, &mesh_bounding);
+    fw64_skinned_mesh_instance_init(&zombie->mesh_instance, &zombie->node, mesh, 0, allocator);
 
     zombie_reset(zombie);
-
-    //fw64_animation_controller_init(&zombie->animation_controller, animation_data, zombie_animation_Idle, allocator);
 }
 
 void zombie_reset(Zombie* zombie) {
     zombie->target = NULL;
-    fw64_node_init(&zombie->node);
-    zombie->node.layer_mask = ZOMBIE_LAYER;
-    zombie->node.data = (uintptr_t)zombie;
-    //TODO: mesh instance
-    // fw64_node_set_mesh(&zombie->node, zombie->mesh);
-    // fw64_node_set_box_collider(&zombie->node, &zombie->collider);
 
     vec3_set_all(&zombie->targetVelocity, 0.0f);
     zombie->previous_state = ZOMBIE_STATE_INACTIVE;
@@ -34,11 +33,12 @@ void zombie_reset(Zombie* zombie) {
     zombie->health = ZOMBIE_MAX_HEALTH;
     zombie->rotation = fw64_random_float_in_range(0.0f, 359.9f) * (M_PI / 180.0f);    
     vec3_set_all(&zombie->node.transform.scale, ZOMBIE_SCALE);
+    
     fw64_node_update(&zombie->node);
 }
 
 void zombie_uninit(Zombie* zombie, fw64Allocator* allocator) {
-    fw64_animation_controller_uninit(&zombie->animation_controller, allocator);
+    fw64_skinned_mesh_instance_uninit(&zombie->mesh_instance, allocator);
 }
 
 static void zombie_update_idle(Zombie* zombie) {
@@ -102,7 +102,7 @@ static void zombie_move(Zombie* zombie) {
 }
 
 static void zombie_update_hit_reaction(Zombie* zombie) {
-    if (zombie->animation_controller.state == FW64_ANIMATION_STATE_STOPPED) {
+    if (zombie->mesh_instance.controller.state == FW64_ANIMATION_STATE_STOPPED) {
         zombie_set_new_state(zombie, zombie->previous_state);
     }
 }
@@ -112,7 +112,7 @@ static void zombie_update_moving(Zombie* zombie) {
 }
 
 static void zombie_update_dying(Zombie* zombie) {
-    if (zombie->animation_controller.state == FW64_ANIMATION_STATE_STOPPED) {
+    if (zombie->mesh_instance.controller.state == FW64_ANIMATION_STATE_STOPPED) {
         zombie_set_new_state(zombie, ZOMBIE_STATE_DEAD);
     }
 }
@@ -135,7 +135,7 @@ static void damage_player(Zombie* zombie) {
 
 static void zombie_update_attack(Zombie* zombie) {
     static const float attack_radius = ZOMBIE_ATTACK_RANGE* 1.5f;
-    if(zombie->animation_controller.current_time > (zombie->animation_controller.current_animation->total_time*0.50f)){
+    if(zombie->mesh_instance.controller.current_time > (zombie->mesh_instance.controller.current_animation->total_time*0.50f)){
         if(!zombie->this_attack_hit) {
             Vec3 pos, target_pos;
             vec3_copy(&zombie->node.transform.position, &pos);
@@ -156,7 +156,7 @@ static void zombie_update_attack(Zombie* zombie) {
             }
         }
     }
-    if (zombie->animation_controller.state == FW64_ANIMATION_STATE_STOPPED) {
+    if (zombie->mesh_instance.controller.state == FW64_ANIMATION_STATE_STOPPED) {
         // damage_player(zombie);
         if(zombie->health > 0) {
             zombie_ai_set_logic_state(&zombie->ai, ZLS_AGGRO);
@@ -298,11 +298,6 @@ void zombie_set_new_state(Zombie* zombie, ZombieState new_state) {
     zombie->animation_controller.loop = loop;
     zombie->animation_controller.speed = speed;
     fw64_animation_controller_play(&zombie->animation_controller);
-}
-
-void zombie_draw(Zombie* zombie) {
-    // TODO: mesh instance
-    //fw64_renderer_draw_animated_mesh(zombie->engine->renderer, zombie->mesh, &zombie->animation_controller, &zombie->node.transform);
 }
 
 void zombie_set_target(Zombie* zombie, fw64Transform* target) {

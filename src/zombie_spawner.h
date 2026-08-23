@@ -7,15 +7,19 @@
 #include "zombie.h"
 #include "zombie_logic.h"
 
-#define ZOMBIE_SPAWNER_MAX_COUNT 20 // might be very optimistic
+#define ZOMBIE_SPAWNER_MAX_COUNT 8 // might be very optimistic
 #define ZOMBIE_SPAWNER_SMALL_GROUP 5
 #define ZOMBIE_SPAWNER_BIG_GROUP 20
+
+#define ZOMBIE_SPAWNER_SPAWN_LOCATION_COUNT 8
 
 typedef struct {
     fw64Engine* engine;
     fw64Level* level;
     fw64Allocator* allocator;
-    fw64Node* spawner_nodes[16]; // random guess. 16 active spawn points seems like plenty?
+
+    /// These are nodes that the zombie spawner will spawn zombies in from
+    fw64Node* spawn_locations[ZOMBIE_SPAWNER_SPAWN_LOCATION_COUNT];
     int active_nodes;
     fw64Transform* target;
     Zombie zombies[ZOMBIE_SPAWNER_MAX_COUNT];

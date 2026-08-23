@@ -27,11 +27,10 @@ typedef enum {
 
 typedef struct {
     fw64Engine* engine;
-    fw64SkinnedMesh* mesh;
     fw64Level* level;
     fw64Node node;
     fw64Collider collider;
-    fw64AnimationController animation_controller;
+    fw64SkinnedMeshInstance mesh_instance;
     fw64Transform* target;
     fw64Transform* targetPrevious;
     Vec3 targetVelocity;
@@ -52,7 +51,6 @@ void zombie_reset(Zombie* zombie);
 // returns 1 otherwise
 int zombie_update(Zombie* zombie);
 
-void zombie_draw(Zombie* zombie);
 void zombie_set_target(Zombie* zombie, fw64Transform* target);
 void zombie_hit(Zombie* zombie, WeaponType weapon_type);
 void zombie_set_new_state(Zombie* zombie, ZombieState new_state);

@@ -41,9 +41,9 @@ void weapon_controller_init(WeaponController* controller, fw64Engine* engine, fw
     controller->weapon_camera->fovy = 60.0f;
     fw64_camera_update_projection_matrix(controller->weapon_camera);
 
-    fw64_transform_init(&controller->weapon_transform);
-    fw64_transform_init(&controller->casing_transform);
-    fw64_transform_init(&controller->muzzle_flash_transform);
+    fw64_node_init(&controller->weapon_node);
+    fw64_node_init(&controller->casing_node);
+    fw64_node_init(&controller->muzzle_flash_node);
 
     memset(&controller->weapon_ammo[0], 0, sizeof(WeaponAmmo) * WEAPON_COUNT);
 
@@ -84,21 +84,21 @@ static void weapon_controller_update_casing(WeaponController* controller) {
     float x_scale = 16.0f;
     float y_scale = 8.5f;
 
-    vec3_add(&controller->casing_transform.position, &controller->weapon.info->ejection_port_pos, &controller->weapon_bob->translation);
-    controller->casing_transform.position.x += x * x_scale;
-    controller->casing_transform.position.x += y * y_scale;
+    vec3_add(&controller->casing_node.transform.position, &controller->weapon.info->ejection_port_pos, &controller->weapon_bob->translation);
+    controller->casing_node.transform.position.x += x * x_scale;
+    controller->casing_node.transform.position.x += y * y_scale;
 
-    fw64_transform_update_matrix(&controller->casing_transform);
+    fw64_node_update(&controller->casing_node);
 }
 
 static void weapon_controller_update_muzzle_flash(WeaponController* controller) {
     if (controller->muzzle_flash_time_remaining <= 0)
         return;
 
-    controller->muzzle_flash_transform.position = controller->weapon_transform.position;
-    controller->muzzle_flash_transform.rotation = controller->weapon_transform.rotation;
+    controller->muzzle_flash_node.transform.position = controller->weapon_node.transform.position;
+    controller->muzzle_flash_node.transform.rotation = controller->weapon_node.transform.rotation;
 
-    fw64_transform_update_matrix(&controller->muzzle_flash_transform);
+    fw64_node_update(&controller->muzzle_flash_node);
 
     controller->muzzle_flash_time_remaining -= controller->engine->time->time_delta;
 }
@@ -116,27 +116,27 @@ static void weapon_controller_update_recoil(WeaponController* controller) {
         else { // recoil is finished
             controller->recoil_state = WEAPON_RECOIL_INACTIVE;
             controller->recoil_time = 0.0f;
-            controller->weapon_transform.position = weapon->info->default_position;
-            controller->weapon_transform.rotation = weapon->info->default_rotation;
+            controller->weapon_node.transform.position = weapon->info->default_position;
+            controller->weapon_node.transform.rotation = weapon->info->default_rotation;
         }
     }
 
     float smoothed_time = fw64_smoothstep(0.0f, 1.0f, controller->recoil_time / weapon->info->recoil_time);
 
     if (controller->recoil_state == WEAPON_RECOIL_RECOILING) {
-        vec3_lerp(&weapon->info->default_position, &weapon->info->recoil_pos, smoothed_time, &controller->weapon_transform.position);
+        vec3_lerp(&weapon->info->default_position, &weapon->info->recoil_pos, smoothed_time, &controller->weapon_node.transform.position);
     }
     else if (controller->recoil_state == WEAPON_RECOIL_RECOVERING) {
-        vec3_lerp(&weapon->info->recoil_pos, &weapon->info->default_position, smoothed_time, &controller->weapon_transform.position);
+        vec3_lerp(&weapon->info->recoil_pos, &weapon->info->default_position, smoothed_time, &controller->weapon_node.transform.position);
     }
 
-    vec3_add(&controller->weapon_transform.position, &controller->weapon_transform.position, &controller->weapon_bob->translation);
-    fw64_transform_update_matrix(&controller->weapon_transform);
+    vec3_add(&controller->weapon_node.transform.position, &controller->weapon_node.transform.position, &controller->weapon_bob->translation);
+    fw64_transform_update_matrix(&controller->weapon_node.transform);
 }
 
 static void weapon_controller_update_moving(WeaponController* controller) {
-    vec3_add(&controller->weapon_transform.position, &controller->weapon.info->default_position, &controller->weapon_bob->translation);
-    fw64_transform_update_matrix(&controller->weapon_transform);
+    vec3_add(&controller->weapon_node.transform.position, &controller->weapon.info->default_position, &controller->weapon_bob->translation);
+    fw64_transform_update_matrix(&controller->weapon_node.transform);
 }
 
 static void weapon_controller_update_holding(WeaponController* controller) {
@@ -176,14 +176,14 @@ static void weapon_controller_update_transition(WeaponController* controller, Ve
     controller->transition_time += controller->engine->time->time_delta;
 
     if (controller->transition_time >= 1.0f) {
-        vec3_copy(end, &controller->weapon_transform.position);
+        vec3_copy(end, &controller->weapon_node.transform.position);
     }
     else {
         float t = controller->transition_time / WEAPON_CONTROLLER_TRANSITION_SPEED;
-        vec3_smoothstep(start, end, t, &controller->weapon_transform.position);
+        vec3_smoothstep(start, end, t, &controller->weapon_node.transform.position);
     }
     
-    fw64_transform_update_matrix(&controller->weapon_transform);
+    fw64_transform_update_matrix(&controller->weapon_node.transform);
 }
 
 static void weapon_controller_update_raising(WeaponController* controller) {
@@ -227,15 +227,14 @@ void weapon_controller_draw(WeaponController* controller, fw64RenderPass* render
     fw64Renderer* renderer = controller->engine->renderer;
     Weapon* weapon = &controller->weapon;
 
-    // TODO: mesh instance
-    // fw64_renderer_draw_static_mesh(renderer, &controller->weapon_transform, weapon->mesh);
+    fw64_renderpass_draw_static_mesh(renderpass, controller->weapon_node.mesh_instance);
     
     if (controller->muzzle_flash_time_remaining > 0.0f) {
-        // fw64_renderer_draw_static_mesh(renderer, &controller->muzzle_flash_transform, weapon->muzzle_flash);
+        fw64_renderpass_draw_static_mesh(renderpass, controller->muzzle_flash_node.mesh_instance);
     }
 
     if (controller->time_to_next_fire > 0.0f && weapon->casing && !controller->is_dry_firing) {
-        // fw64_renderer_draw_static_mesh(renderer, &controller->casing_transform, controller->weapon.casing);
+        fw64_renderpass_draw_static_mesh(renderpass, controller->casing_node.mesh_instance);
     }
 }
 
@@ -275,26 +274,44 @@ void weapon_controller_set_weapon(WeaponController* controller, WeaponType weapo
 
     // TODO: does this need to be investigated more?
     if (controller->state == WEAPON_CONTROLLER_LOWERED || previous_weapon_type == WEAPON_TYPE_NONE) {
-        controller->weapon_transform.position = weapon->info->lowered_position;
+        controller->weapon_node.transform.position = weapon->info->lowered_position;
     }
     else if (controller->state == WEAPON_CONTROLLER_HOLDING) {
-        controller->weapon_transform.position = weapon->info->default_position;
+        controller->weapon_node.transform.position = weapon->info->default_position;
     }
     
-    controller->weapon_transform.scale = weapon->info->default_scale;
-    fw64_transform_update_matrix(&controller->weapon_transform);
+    controller->weapon_node.transform.scale = weapon->info->default_scale;
+    fw64_node_update(&controller->weapon_node);
 
     if (weapon->casing) {
         if (weapon->info->type == WEAPON_TYPE_MP5) // temp fix
-            vec3_set_all(&controller->casing_transform.scale, 0.02f);
+            vec3_set_all(&controller->casing_node.transform.scale, 0.02f);
         else
-            controller->casing_transform.scale = weapon->info->default_scale;
+            controller->casing_node.transform.scale = weapon->info->default_scale;
 
-        fw64_transform_update_matrix(&controller->casing_transform);
+        fw64_node_update(&controller->casing_node);
+    }
+
+    if (weapon->mesh) {
+        fw64_mesh_instance_init(&controller->weapon_mesh, &controller->weapon_node, weapon->mesh);
+    } else {
+        controller->weapon_node.mesh_instance = NULL;
+    }
+
+    if (weapon->casing) {
+        fw64_mesh_instance_init(&controller->casing_mesh, &controller->casing_node, weapon->casing);
+    } else {
+        controller->casing_node.mesh_instance = NULL;
+    }
+
+    if (weapon->muzzle_flash) {
+        fw64_mesh_instance_init(&controller->muzzle_flash_mesh, &controller->muzzle_flash_node, weapon->muzzle_flash);
+    } else {
+        controller->muzzle_flash_node.mesh_instance = NULL;
     }
 
     // note other muzzle flash values will be set during update.
-    controller->muzzle_flash_transform.scale = weapon->info->default_scale;
+    controller->muzzle_flash_node.transform.scale = weapon->info->default_scale;
 }
 
 static void weapon_controller_fire(WeaponController* controller) {
@@ -313,8 +330,8 @@ static void weapon_controller_fire(WeaponController* controller) {
     controller->time_to_next_fire = controller->weapon.info->fire_rate;
     controller->is_dry_firing = 0;
 
-    controller->casing_transform.position = controller->weapon.info->ejection_port_pos;
-    fw64_transform_update_matrix(&controller->casing_transform);
+    controller->casing_node.transform.position = controller->weapon.info->ejection_port_pos;
+    fw64_transform_update_matrix(&controller->casing_node.transform);
 
     if(controller->weapon.info->type == WEAPON_TYPE_SHOTGUN)
         projectile_controller_fire_arc(controller->projectile_controller, controller->aim->position, &controller->aim->direction, 30.0f, 20.0f, controller->weapon.info->type);
