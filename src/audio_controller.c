@@ -20,8 +20,9 @@ void audio_controller_update(AudioController* controller) {
 }
 
 int audio_controller_play(AudioController* controller, AudioControllerChannel channel, int sound) {
-    if (controller->channels[channel] >= 0)
+    if (controller->channels[channel] >= 0) {
         fw64_audio_stop_sound(controller->audio, controller->channels[channel]);
+    }
 
     int handle = fw64_audio_play_sound(controller->audio, sound);
     controller->channels[channel] = handle;

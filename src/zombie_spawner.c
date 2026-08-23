@@ -93,8 +93,8 @@ void spawn_next_zombie(ZombieSpawner* spawner) {
     fw64_node_update(&zed->node);
     
     zombie_set_new_state(zed, ZOMBIE_STATE_IDLE);
-    zed->animation_controller.current_time = fw64_random_float();
-    zed->animation_controller.speed = 0.5f + fw64_random_float();
+    zed->mesh_instance.controller.current_time = fw64_random_float();
+    zed->mesh_instance.controller.speed = 0.5f + fw64_random_float();
 
     zombie_ai_set_logic_state(&zed->ai, ZLS_IDLE);
     zed->health = ZOMBIE_MAX_HEALTH;

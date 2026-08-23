@@ -61,15 +61,18 @@ void test_level_draw(TestLevel* level) {
     player_draw(&level->base.player, renderpass);
     pickups_draw(&level->base.pickups, renderpass);
     fw64_renderpass_end(renderpass);
+    fw64_renderer_submit_renderpass(level->base.engine->renderer, renderpass);
 
     renderpass = level->base.renderpasses[RENDER_PASS_PLAYER_WEAPON];
     fw64_renderpass_begin(renderpass);
     player_draw_weapon(&level->base.player, renderpass);
     player_draw_damage(&level->base.player, renderpass);
     fw64_renderpass_end(renderpass);
+    fw64_renderer_submit_renderpass(level->base.engine->renderer, renderpass);
 
     renderpass = level->base.renderpasses[RENDER_PASS_UI];
     fw64_renderpass_begin(renderpass);
     ui_draw(&level->base.ui, renderpass);
     fw64_renderpass_end(renderpass);
+    fw64_renderer_submit_renderpass(level->base.engine->renderer, renderpass);
 }

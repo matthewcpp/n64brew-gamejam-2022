@@ -185,7 +185,7 @@ void zombie_hit(Zombie* zombie, WeaponType weapon_type) {
 }
 
 int zombie_update(Zombie* zombie) {
-    fw64_animation_controller_update(&zombie->animation_controller, zombie->engine->time->time_delta);
+    fw64_skinned_mesh_instance_update(&zombie->mesh_instance, zombie->engine->time->time_delta);
     zombie_ai_update(&zombie->ai, zombie->engine->time->time_delta);
     // TODO: replace this series of polling ifs with an animation state change inside the ai state change
     if(zombie->ai.state == ZLS_IDLE) {
@@ -294,16 +294,16 @@ void zombie_set_new_state(Zombie* zombie, ZombieState new_state) {
         break;
     }
 
-    fw64_animation_controller_set_animation(&zombie->animation_controller, animation);
-    zombie->animation_controller.loop = loop;
-    zombie->animation_controller.speed = speed;
-    fw64_animation_controller_play(&zombie->animation_controller);
+    fw64_animation_controller_set_animation(&zombie->mesh_instance.controller, animation);
+    zombie->mesh_instance.controller.loop = loop;
+    zombie->mesh_instance.controller.speed = speed;
+    fw64_animation_controller_play(&zombie->mesh_instance.controller);
 }
 
 void zombie_set_target(Zombie* zombie, fw64Transform* target) {
     zombie->target = target;
     zombie->targetPrevious = target;
-    fw64_animation_controller_play(&zombie->animation_controller);
+    fw64_animation_controller_play(&zombie->mesh_instance.controller);
 }
 
 void zombie_set_to_ground_height(Zombie* zombie) {

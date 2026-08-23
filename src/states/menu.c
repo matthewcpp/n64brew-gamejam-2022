@@ -30,7 +30,7 @@ void game_state_menu_init(Menu* menu, fw64Engine* engine, GameData* game_data) {
 	menu->renderpass = fw64_renderpass_create(display, allocator);
 	fw64_renderpass_util_ortho2d(menu->renderpass);
 
-	menu->spritebatch = fw64_spritebatch_create(1, allocator);
+	menu->spritebatch = fw64_spritebatch_create(2, allocator);
 
 	char* image_buffer = fw64_allocator_memalign(allocator, 8, IMAGE_ALLOCATOR_BUFFER_SIZE);
 	fw64_bump_allocator_init_from_buffer(&menu->image_allocator, image_buffer, IMAGE_ALLOCATOR_BUFFER_SIZE);
@@ -55,8 +55,10 @@ void game_state_menu_update(Menu* menu) {
 void game_state_menu_draw(Menu* menu) {
 	fw64_spritebatch_begin(menu->spritebatch);
 	fw64_spritebatch_set_color(menu->spritebatch, 224, 224, 224, 255);
+	fw64_spritebatch_set_active_layer(menu->spritebatch, 0);
 	fw64_spritebatch_draw_sprite(menu->spritebatch, menu->bg, 0, 0);
 	
+	fw64_spritebatch_set_active_layer(menu->spritebatch, 1);
 	if(menu->current_menu == MENU_SCREEN_MAIN) {
 		main_menu_draw(menu);
 	} else if (menu->current_menu == MENU_SCREEN_CONTROLS) {
@@ -104,6 +106,9 @@ static void set_menu_screen(Menu* menu, MenuScreen screen) {
 
 		case MENU_SCREEN_CONTROLS:
 			asset_id = FW64_ASSET_image_menu_controls;
+			break;
+
+		case MENU_SCREEN_NONE:
 			break;
 	}
 

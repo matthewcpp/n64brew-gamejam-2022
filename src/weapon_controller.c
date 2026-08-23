@@ -84,7 +84,7 @@ static void weapon_controller_update_casing(WeaponController* controller) {
     float x_scale = 16.0f;
     float y_scale = 8.5f;
 
-    vec3_add(&controller->casing_node.transform.position, &controller->weapon.info->ejection_port_pos, &controller->weapon_bob->translation);
+    vec3_add(&controller->weapon.info->ejection_port_pos, &controller->weapon_bob->translation, &controller->casing_node.transform.position);
     controller->casing_node.transform.position.x += x * x_scale;
     controller->casing_node.transform.position.x += y * y_scale;
 
@@ -130,23 +130,25 @@ static void weapon_controller_update_recoil(WeaponController* controller) {
         vec3_lerp(&weapon->info->recoil_pos, &weapon->info->default_position, smoothed_time, &controller->weapon_node.transform.position);
     }
 
-    vec3_add(&controller->weapon_node.transform.position, &controller->weapon_node.transform.position, &controller->weapon_bob->translation);
-    fw64_transform_update_matrix(&controller->weapon_node.transform);
+    vec3_add(&controller->weapon_node.transform.position, &controller->weapon_bob->translation, &controller->weapon_node.transform.position);
+    fw64_node_update(&controller->weapon_node);
 }
 
 static void weapon_controller_update_moving(WeaponController* controller) {
-    vec3_add(&controller->weapon_node.transform.position, &controller->weapon.info->default_position, &controller->weapon_bob->translation);
-    fw64_transform_update_matrix(&controller->weapon_node.transform);
+    vec3_add(&controller->weapon.info->default_position, &controller->weapon_bob->translation, &controller->weapon_node.transform.position);
+    fw64_node_update(&controller->weapon_node);
 }
 
 static void weapon_controller_update_holding(WeaponController* controller) {
-    if (controller->weapon.info->type == WEAPON_TYPE_NONE)
+    if (controller->weapon.info->type == WEAPON_TYPE_NONE){
         return;
+    }
 
-    if (controller->recoil_state == WEAPON_RECOIL_INACTIVE)
+    if (controller->recoil_state == WEAPON_RECOIL_INACTIVE){
         weapon_controller_update_moving(controller);
-    else
+    } else{
         weapon_controller_update_recoil(controller);
+    }
 
     weapon_controller_update_muzzle_flash(controller);
 
@@ -183,7 +185,7 @@ static void weapon_controller_update_transition(WeaponController* controller, Ve
         vec3_smoothstep(start, end, t, &controller->weapon_node.transform.position);
     }
     
-    fw64_transform_update_matrix(&controller->weapon_node.transform);
+    fw64_node_update(&controller->weapon_node);
 }
 
 static void weapon_controller_update_raising(WeaponController* controller) {
@@ -281,6 +283,11 @@ void weapon_controller_set_weapon(WeaponController* controller, WeaponType weapo
     }
     
     controller->weapon_node.transform.scale = weapon->info->default_scale;
+    if (weapon->mesh) {
+        fw64_mesh_instance_init(&controller->weapon_mesh, &controller->weapon_node, weapon->mesh);
+    } else {
+        controller->weapon_node.mesh_instance = NULL;
+    }
     fw64_node_update(&controller->weapon_node);
 
     if (weapon->casing) {
@@ -289,29 +296,19 @@ void weapon_controller_set_weapon(WeaponController* controller, WeaponType weapo
         else
             controller->casing_node.transform.scale = weapon->info->default_scale;
 
-        fw64_node_update(&controller->casing_node);
-    }
-
-    if (weapon->mesh) {
-        fw64_mesh_instance_init(&controller->weapon_mesh, &controller->weapon_node, weapon->mesh);
-    } else {
-        controller->weapon_node.mesh_instance = NULL;
-    }
-
-    if (weapon->casing) {
         fw64_mesh_instance_init(&controller->casing_mesh, &controller->casing_node, weapon->casing);
+        fw64_node_update(&controller->casing_node);
     } else {
         controller->casing_node.mesh_instance = NULL;
     }
 
+    // note other muzzle flash values will be set during update.
+    controller->muzzle_flash_node.transform.scale = weapon->info->default_scale;
     if (weapon->muzzle_flash) {
         fw64_mesh_instance_init(&controller->muzzle_flash_mesh, &controller->muzzle_flash_node, weapon->muzzle_flash);
     } else {
         controller->muzzle_flash_node.mesh_instance = NULL;
     }
-
-    // note other muzzle flash values will be set during update.
-    controller->muzzle_flash_node.transform.scale = weapon->info->default_scale;
 }
 
 static void weapon_controller_fire(WeaponController* controller) {
