@@ -116,10 +116,10 @@ void game_state_splash_update(Splash* splash) {
 
 void game_state_splash_draw(Splash* splash) {
     if(splash->current_state_time > SPLASH_STATE_FADE_OUT_START) {
-		uint8_t color = (int)(255.0 * ((6.0f - splash->current_state_time) * 0.5f));
+		uint8_t color = (uint8_t)(255.0 * ((6.0f - splash->current_state_time) * 0.5f));
         fw64_spritebatch_set_color(splash->spritebatch, color, color, color, 255);
 	} else if(splash->current_state_time < SPLASH_STATE_FADE_IN_END) {
-		uint8_t color = (int)(255.0 * splash->current_state_time * 0.5f);
+		uint8_t color = (uint8_t)(255.0 * splash->current_state_time * 0.5f);
 		fw64_spritebatch_set_color(splash->spritebatch, color, color, color, 255);
 	}
 

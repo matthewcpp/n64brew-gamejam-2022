@@ -71,6 +71,6 @@ void test_level_draw(TestLevel* level) {
 
     renderpass = level->base.renderpasses[RENDER_PASS_UI];
     fw64_renderpass_begin(renderpass);
-    ui_draw(&level->base.ui);
+    ui_draw(&level->base.ui, renderpass);
     fw64_renderpass_end(renderpass);
 }

@@ -301,7 +301,8 @@ void zombie_set_new_state(Zombie* zombie, ZombieState new_state) {
 }
 
 void zombie_draw(Zombie* zombie) {
-    fw64_renderer_draw_animated_mesh(zombie->engine->renderer, zombie->mesh, &zombie->animation_controller, &zombie->node.transform);
+    // TODO: mesh instance
+    //fw64_renderer_draw_animated_mesh(zombie->engine->renderer, zombie->mesh, &zombie->animation_controller, &zombie->node.transform);
 }
 
 void zombie_set_target(Zombie* zombie, fw64Transform* target) {

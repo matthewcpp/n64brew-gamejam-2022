@@ -120,7 +120,7 @@ void dialogue_window_draw(DialogueWindow* window) {
         if (!window->lines[0].text)
             continue;
 
-        fw64_spritebatch_draw_string_count(window->spritebatch, window->font, draw_x, draw_y, window->lines[i].text, window->lines[i].count);
+        fw64_spritebatch_draw_string_count(window->spritebatch, window->font,  window->lines[i].text, window->lines[i].count, draw_x, draw_y);
 
         draw_y += fw64_font_size(window->font) + 3;
     }

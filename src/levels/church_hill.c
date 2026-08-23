@@ -11,9 +11,9 @@ void hill_level_init(HillLevel* level, fw64Engine* engine, GameData* game_data, 
     level_base_init(&level->base, engine, game_data, level_allocator);
 
     fw64RenderPass* renderpass = level->base.renderpasses[RENDER_PASS_LEVEL];
-    fw64_rendererpass_set_clear_color(renderpass, 20, 4, 40);
-    fw64_rendererpass_set_fog_color(renderpass, 20, 4, 40);
-    fw64_rendererpass_set_fog_positions(renderpass, 0.8, 1.0f);
+    fw64_renderpass_set_clear_color(renderpass, 20, 4, 40);
+    fw64_renderpass_set_fog_color(renderpass, 20, 4, 40);
+    fw64_renderpass_set_fog_positions(renderpass, 0.8, 1.0f);
     fw64_renderpass_set_fog_enabled(renderpass, 1);
 
     fw64Scene* scene = setup_level(level);
@@ -89,6 +89,6 @@ void hill_level_draw(HillLevel* level) {
 
     renderpass = level->base.renderpasses[RENDER_PASS_UI];
     fw64_renderpass_begin(renderpass);
-    ui_draw(&level->base.ui);
+    ui_draw(&level->base.ui, renderpass);
     fw64_renderpass_end(renderpass);
 }

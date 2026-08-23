@@ -62,9 +62,7 @@ void game_state_game_over_update(GameOver* state){
 #define YOU_DIED_BORDER_OFFSET 30
 
 static void draw_you_died_text(GameOver* state) {
-    fw64Renderer* renderer = state->engine->renderer;
-    IVec2 screen_size;
-    fw64_renderer_get_screen_size(renderer, &screen_size);
+    IVec2 screen_size = fw64_display_get_size(fw64_displays_get_primary(state->engine->displays));
 
     if (state->text_effect_time == TEXT_EFFECT_DURATION) {
         int draw_x = (screen_size.x / 2) - (fw64_texture_width(state->you_died_texture) / 2);

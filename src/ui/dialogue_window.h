@@ -36,7 +36,7 @@ typedef struct {
     float character_write_time;
     int current_line_size;
 
-    int current_data_index;
+    uint32_t current_data_index;
 
     IVec2 position, size;
     DialogueWindowDoneCallback done_callback;

@@ -9,13 +9,12 @@
 #define HEALTHBAR_HEIGHT 12
 #define HEALTHBAR_BORDER 1
 
-void healthbar_init(Healthbar* healthbar, Player* player, fw64Font* font, fw64Renderer* renderer) {
+void healthbar_init(Healthbar* healthbar, Player* player, fw64Font* font) {
     healthbar->player = player;
     healthbar->font = font;
-    healthbar->renderer = renderer;
 }
 
-void healthbar_draw(Healthbar* healthbar) {
+void healthbar_draw(Healthbar* healthbar, fw64SpriteBatch* spritebatch) {
     char health_text[8];
     sprintf(&health_text[0], "%d", healthbar->player->current_health);
 
@@ -24,7 +23,12 @@ void healthbar_draw(Healthbar* healthbar) {
     int width = HEALTHBAR_WIDTH;
     int height = HEALTHBAR_HEIGHT;
 
-    fw64_renderer_draw_text(healthbar->renderer, healthbar->font, pos_x, pos_y, &health_text[0]);
+    fw64_spritebatch_draw_string(spritebatch, healthbar->font, &health_text[0], pos_x, pos_y);
+    
+    // TODO: Figure out how to pass in a filled texture
+    (void)width;
+    (void)height;
+    #if 0
     pos_y += fw64_font_size(healthbar->font) + 4;
 
     // draw border
@@ -55,4 +59,5 @@ void healthbar_draw(Healthbar* healthbar) {
         fw64_renderer_set_fill_color(healthbar->renderer, 255, 0, 0, 255);
 
     fw64_renderer_draw_filled_rect(healthbar->renderer, pos_x, pos_y, width, height);
+    #endif
 }

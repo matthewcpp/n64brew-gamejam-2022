@@ -297,17 +297,20 @@ void interior_level_draw(InteriorLevel* level) {
     player_draw(&level->base.player, renderpass);
     zombie_spawner_draw(&level->zombie_spawner, renderpass);
 	fw64_renderpass_end(renderpass);
+	fw64_renderer_submit_renderpass(level->base.engine->renderer, renderpass);
 
 	renderpass = level->base.renderpasses[RENDER_PASS_PLAYER_WEAPON];
 	fw64_renderpass_begin(renderpass);
 	player_draw_weapon(&level->base.player, renderpass);
 	fw64_renderpass_end(renderpass);
+	fw64_renderer_submit_renderpass(level->base.engine->renderer, renderpass);
 
-	level->base.renderpasses[RENDER_PASS_UI];
+	renderpass = level->base.renderpasses[RENDER_PASS_UI];
 	fw64_renderpass_begin(renderpass);
 	player_draw_damage(&level->base.player, renderpass);
-	ui_draw(&level->base.ui);
+	ui_draw(&level->base.ui, renderpass);
     fw64_renderpass_end(renderpass);
+	fw64_renderer_submit_renderpass(level->base.engine->renderer, renderpass);
 }
 
 void seed_tile_gen(InteriorLevel* level) {

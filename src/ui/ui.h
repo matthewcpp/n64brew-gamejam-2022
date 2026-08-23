@@ -16,6 +16,7 @@ typedef struct {
 
     fw64Font* interaction_font;
     fw64Texture* interaction_button;
+    fw64SpriteBatch* spritebatch;
     uint32_t interaction_image_frame;
     uint32_t interaction_loaded_frame;
     char interaction_text[16];
@@ -23,7 +24,7 @@ typedef struct {
 
 void ui_init(UI* ui, fw64Engine* engine, fw64Allocator* allocator, LevelBase* level);
 void ui_uninit(UI* ui);
-void ui_draw(UI* ui);
+void ui_draw(UI* ui, fw64RenderPass* renderpass);
 
 void ui_set_interaction_text(UI* ui, const char* text, uint32_t icon_index);
 void ui_clear_interaction_text(UI* ui);

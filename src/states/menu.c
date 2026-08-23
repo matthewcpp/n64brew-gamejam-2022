@@ -223,37 +223,36 @@ void main_menu_draw(Menu* menu) {
 	char text[20] = {0};
 
 	if(menu->menu_choice == MAIN_MENU_START) {
-		fw64_renderer_set_fill_color(menu->engine->renderer, 192, 192, 0, 255);
+		fw64_spritebatch_set_color(menu->spritebatch, 192, 192, 0, 255);
 	} else {
-		fw64_renderer_set_fill_color(menu->engine->renderer, 224, 224, 224, 255);
+		fw64_spritebatch_set_color(menu->spritebatch, 224, 224, 224, 255);
 	}
 		
 	sprintf(text, "Start Game");
-	fw64_renderer_draw_text(menu->engine->renderer, menu->font, x, y, text);
+	fw64_spritebatch_draw_string(menu->spritebatch, menu->font, text, x, y);
 
 	if(menu->menu_choice == MAIN_MENU_CONTROLS) {
-		fw64_renderer_set_fill_color(menu->engine->renderer, 192, 192, 0, 255);
+		fw64_spritebatch_set_color(menu->spritebatch, 192, 192, 0, 255);
 	} else {
-		fw64_renderer_set_fill_color(menu->engine->renderer, 224, 224, 224, 255);
+		fw64_spritebatch_set_color(menu->spritebatch, 224, 224, 224, 255);
 	}
 
 	sprintf(text, "Controls");
-	fw64_renderer_draw_text(menu->engine->renderer, menu->font, x, y + y_advance, text);
+	fw64_spritebatch_draw_string(menu->spritebatch, menu->font, text, x, y + y_advance);
 
 	if(menu->menu_choice == MAIN_MENU_PRACTICE) {
-		fw64_renderer_set_fill_color(menu->engine->renderer, 192, 192, 0, 255);
+		fw64_spritebatch_set_color(menu->spritebatch, 192, 192, 0, 255);
 	} else {
-		fw64_renderer_set_fill_color(menu->engine->renderer, 224, 224, 224, 255);
+		fw64_spritebatch_set_color(menu->spritebatch, 224, 224, 224, 255);
 	}
 
 	sprintf(text, "Practice Range");
-	fw64_renderer_draw_text(menu->engine->renderer, menu->font, x, y + (y_advance * 2), text);
+	fw64_spritebatch_draw_string(menu->spritebatch, menu->font, text, x, y + (y_advance * 2));
 
 }
 
 void controls_menu_draw(Menu* menu) {
-	IVec2 screen_size;
-	fw64_renderer_get_screen_size(menu->engine->renderer, &screen_size);
+	IVec2 screen_size = fw64_display_get_size(fw64_displays_get_primary(menu->engine->displays));
 	int x;
 	int y = 20;
 	int y_advance = 24;
@@ -262,7 +261,7 @@ void controls_menu_draw(Menu* menu) {
 	sprintf(text, "Control Scheme:");
 	IVec2 dimensions = fw64_font_measure_text(menu->font, text);
 	x = (screen_size.x / 2) - (dimensions.x / 2);
-	fw64_renderer_draw_text(menu->engine->renderer, menu->font, x, y, text);
+	fw64_spritebatch_draw_string(menu->spritebatch, menu->font, text, x, y);
 
 	switch(menu->control_scheme) {
 		case INPUT_MAP_LAYOUT_PERFECTEYE:
@@ -280,5 +279,5 @@ void controls_menu_draw(Menu* menu) {
 
 	dimensions = fw64_font_measure_text(menu->font, text);
 	x = (screen_size.x / 2) - (dimensions.x / 2);
-	fw64_renderer_draw_text(menu->engine->renderer, menu->font, x, y + y_advance, text);
+	fw64_spritebatch_draw_string(menu->spritebatch, menu->font, text, x, y + y_advance);
 }

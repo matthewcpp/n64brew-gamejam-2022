@@ -227,14 +227,15 @@ void weapon_controller_draw(WeaponController* controller, fw64RenderPass* render
     fw64Renderer* renderer = controller->engine->renderer;
     Weapon* weapon = &controller->weapon;
 
-    fw64_renderer_draw_static_mesh(renderer, &controller->weapon_transform, weapon->mesh);
+    // TODO: mesh instance
+    // fw64_renderer_draw_static_mesh(renderer, &controller->weapon_transform, weapon->mesh);
     
     if (controller->muzzle_flash_time_remaining > 0.0f) {
-        fw64_renderer_draw_static_mesh(renderer, &controller->muzzle_flash_transform, weapon->muzzle_flash);
+        // fw64_renderer_draw_static_mesh(renderer, &controller->muzzle_flash_transform, weapon->muzzle_flash);
     }
 
     if (controller->time_to_next_fire > 0.0f && weapon->casing && !controller->is_dry_firing) {
-        fw64_renderer_draw_static_mesh(renderer, &controller->casing_transform, controller->weapon.casing);
+        // fw64_renderer_draw_static_mesh(renderer, &controller->casing_transform, controller->weapon.casing);
     }
 }
 

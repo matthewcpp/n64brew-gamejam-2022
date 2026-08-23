@@ -2,7 +2,7 @@
 
 #include "framework64/animation_controller.h"
 #include "framework64/engine.h"
-#include "framework64/level.h"
+#include "level.h"
 
 #include "arcball_camera.h"
 #include "zombie_config.h"
