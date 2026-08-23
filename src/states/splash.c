@@ -20,10 +20,6 @@ void game_state_splash_init(Splash* splash, fw64Engine* engine, GameData* game_d
     fw64Display* display = fw64_displays_get_primary(engine->displays);
     fw64Allocator* allocator = fw64_bump_allocator_init(&splash->bump_allocator, LEVEL_MEMORY_POOL_SIZE);
 
-    fw64Node* camera_node = fw64_allocator_malloc(allocator, sizeof(fw64Node));
-    fw64_node_init(camera_node);
-    fw64_camera_init(&splash->camera, camera_node, display);
-
     splash->renderpass = fw64_renderpass_create(display, allocator);
     fw64_renderpass_util_ortho2d(splash->renderpass);
 

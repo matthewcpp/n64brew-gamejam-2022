@@ -27,13 +27,8 @@ void game_state_menu_init(Menu* menu, fw64Engine* engine, GameData* game_data) {
 	fw64Display* display = fw64_displays_get_primary(engine->displays);
 	fw64Allocator* allocator = fw64_bump_allocator_init(&menu->bump_allocator, LEVEL_MEMORY_POOL_SIZE);
 
-	fw64Node* camera_node = fw64_allocator_malloc(allocator, sizeof(fw64Node));
-	fw64_node_init(camera_node);
-	fw64_camera_init(&menu->camera, camera_node, display);
-
 	menu->renderpass = fw64_renderpass_create(display, allocator);
 	fw64_renderpass_util_ortho2d(menu->renderpass);
-	fw64_renderpass_set_camera(menu->renderpass, &menu->camera);
 
 	menu->spritebatch = fw64_spritebatch_create(1, allocator);
 
@@ -59,6 +54,7 @@ void game_state_menu_update(Menu* menu) {
 }
 void game_state_menu_draw(Menu* menu) {
 	fw64_spritebatch_begin(menu->spritebatch);
+	fw64_spritebatch_set_color(menu->spritebatch, 224, 224, 224, 255);
 	fw64_spritebatch_draw_sprite(menu->spritebatch, menu->bg, 0, 0);
 	
 	if(menu->current_menu == MENU_SCREEN_MAIN) {

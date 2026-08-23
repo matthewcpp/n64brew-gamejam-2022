@@ -22,7 +22,6 @@ typedef struct {
 	fw64Engine* engine;
 	fw64BumpAllocator bump_allocator;
 	fw64BumpAllocator image_allocator;
-	fw64Camera camera;
 	GameData* game_data;
 	fw64Texture* bg;
 	fw64RenderPass* renderpass;

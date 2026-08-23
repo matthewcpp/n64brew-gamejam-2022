@@ -19,7 +19,6 @@ typedef struct {
     SplashState current_state;
     float current_state_time;
     fw64Texture* image_tex;
-    fw64Camera camera;
     int sound_effect_handle;
     fw64RenderPass* renderpass;
     fw64SpriteBatch* spritebatch;
