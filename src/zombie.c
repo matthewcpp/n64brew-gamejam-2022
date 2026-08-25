@@ -96,7 +96,7 @@ static void zombie_move(Zombie* zombie) {
 
     float strength = fw64_fabsf(vec3_dot(&delta_vel, &collision_normal));
     vec3_add_and_scale(&delta_vel, &collision_normal, strength, &delta_vel);
-    vec3_add(&zombie->node.transform.position, &zombie->node.transform.position, &delta_vel);   
+    vec3_add(&zombie->node.transform.position, &delta_vel, &zombie->node.transform.position);   
     zombie_set_to_ground_height(zombie);
     fw64_node_update(&zombie->node);
 }

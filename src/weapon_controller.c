@@ -81,12 +81,12 @@ static void weapon_controller_update_casing(WeaponController* controller) {
     float x = fly_time;
     float y = (-((0.5f * x - 1.5f) * (0.5f * x - 1.5f)) + 2.0f) * 0.5f;
 
-    float x_scale = 16.0f;
-    float y_scale = 8.5f;
+    float x_scale = 15.0f;
+    float y_scale = 1.1f;
 
     vec3_add(&controller->weapon.info->ejection_port_pos, &controller->weapon_bob->translation, &controller->casing_node.transform.position);
     controller->casing_node.transform.position.x += x * x_scale;
-    controller->casing_node.transform.position.x += y * y_scale;
+    controller->casing_node.transform.position.y += y * y_scale;
 
     fw64_node_update(&controller->casing_node);
 }

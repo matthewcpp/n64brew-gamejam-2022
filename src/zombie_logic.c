@@ -4,6 +4,8 @@
 #include "level.h"
 #include "zombie.h"
 
+#include <framework64/log.h>
+
 void zombie_ai_init(ZombieAI* zombie_ai, fw64Level* level, fw64Collider* collider, fw64Transform* transform, fw64Transform* target) {	
 	zombie_ai->level = level;
 	zombie_ai->state = ZLS_INACTIVE;
@@ -62,28 +64,33 @@ void zombie_ai_set_logic_state(ZombieAI* zombie_ai, ZombieLogicState newState) {
 		case ZLS_IDLE:			
 			zombie_ai->maxVelocity.linear = 0.0f;
 			zombie_ai->maxVelocity.angular = 0.0f;
+			fw64_log_message("Zombie AI State: Inactive");
 			break;
 		case ZLS_WANDER:
 			zombie_ai->maxVelocity.linear = ZOMBIE_WALK_SPEED;
 			zombie_ai->maxVelocity.angular = 1.0f;
 			zombie_ai_init_wander(zombie_ai);
+			fw64_log_message("Zombie AI State: Wander");
 			break;
 		case ZLS_MEET:
 			zombie_ai->maxVelocity.linear = ZOMBIE_WALK_SPEED;
 			zombie_ai->maxVelocity.angular = 1.0f;
 			zombie_ai_init_meet(zombie_ai);
+			fw64_log_message("Zombie AI State: Meet");
 			break;
 		case ZLS_EXPLORE:
 			zombie_ai->maxVelocity.linear = ZOMBIE_WALK_SPEED;
 			zombie_ai->maxVelocity.angular = 1.0f;
 			zombie_ai_behavior_set(zombie_ai, SB_WANDER);
 			zombie_ai_behavior_set(zombie_ai, SB_AVOID_OBSTACLE);
+			fw64_log_message("Zombie AI State: Explore");
 			break;
 		case ZLS_HERD:
 			zombie_ai->maxVelocity.linear = ZOMBIE_WALK_SPEED;
 			zombie_ai->maxVelocity.angular = 1.0f;
 			zombie_ai_behavior_set(zombie_ai, SB_FLOCK);
 			zombie_ai_behavior_set(zombie_ai, SB_AVOID_OBSTACLE);
+			fw64_log_message("Zombie AI State: Herd");
 			break;
 		case ZLS_FOLLOW:
 			zombie_ai->maxVelocity.linear = ZOMBIE_WALK_SPEED;
@@ -91,11 +98,13 @@ void zombie_ai_set_logic_state(ZombieAI* zombie_ai, ZombieLogicState newState) {
 			zombie_ai_init_follow(zombie_ai);
 			zombie_ai_behavior_set(zombie_ai, SB_FLOCK);
 			zombie_ai_behavior_set(zombie_ai, SB_AVOID_OBSTACLE);
+			fw64_log_message("Zombie AI State: Follow");
 			break;
 		case ZLS_LEAD:
 			zombie_ai->maxVelocity.linear = ZOMBIE_WALK_SPEED;
 			zombie_ai->maxVelocity.angular = 1.0f;
 			zombie_ai_init_lead(zombie_ai);
+			fw64_log_message("Zombie AI State: Lead");
 			break;
 		case ZLS_AGGRO:
 			zombie_ai->maxVelocity.linear = ZOMBIE_RUN_SPEED;
@@ -107,10 +116,12 @@ void zombie_ai_set_logic_state(ZombieAI* zombie_ai, ZombieLogicState newState) {
 			}
 			zombie_ai_behavior_set(zombie_ai, SB_SEEK);
 			zombie_ai_behavior_set(zombie_ai, SB_AVOID_OBSTACLE);
+			fw64_log_message("Zombie AI State: Aggro");
 			break;
 		case ZLS_ATTACK:
 			zombie_ai->maxVelocity.linear = 0.0f;
 			zombie_ai->maxVelocity.angular = 0.0f;
+			fw64_log_message("Zombie AI State: Attack");
 			break;
 		default:
 			break;
