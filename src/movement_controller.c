@@ -147,6 +147,7 @@ static void move_camera(MovementController* controller, float time_delta, Vec2* 
     }
 
     vec3_add(&controller->camera->node->transform.position, &move, &controller->camera->node->transform.position);
+    fw64_node_update(controller->camera->node);
 }
 
 static void tilt_camera(MovementController* fps, float time_delta, Vec2* stick) {

@@ -66,7 +66,7 @@ void projectile_controller_fire_arc(ProjectileController* controller, Vec3* orig
         if (vec3_distance_squared(&zombie_center, origin) > distance_squared)
             continue;
 
-        vec3_subtract(&zombie_dir,  &zombie_center, origin);
+        vec3_subtract(&zombie_center, origin, &zombie_dir);
         vec3_normalize(&zombie_dir);
 
         float d = vec3_dot(direction, &zombie_dir);
