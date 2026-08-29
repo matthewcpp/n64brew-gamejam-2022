@@ -145,7 +145,7 @@ static void zombie_update_attack(Zombie* zombie) {
             float dist_sq = vec3_distance_squared(&pos, &target_pos);
             if(dist_sq <= attack_radius*attack_radius) {
                 Vec3 dir;
-                vec3_subtract(&dir, &target_pos, &pos);
+                vec3_subtract(&target_pos, &pos, &dir);
                 vec3_normalize(&dir);
                 Vec3 facing = {0.0f, 0.0f, 1.0f};
                 quat_transform_vec3(&zombie->node.transform.rotation, &facing, &facing);

@@ -309,14 +309,14 @@ static void zombie_ai_behavior_apply(ZombieAI* zombie_ai, SteeringBehavior behav
 		}
         case SB_PURSUE: {
 			Vec3 targetVelocity;
-            vec3_subtract(&targetVelocity, &zombie_ai->target->position, &zombie_ai->targetPrev.position);
+            vec3_subtract(&zombie_ai->target->position, &zombie_ai->targetPrev.position, &targetVelocity);
             vec3_copy(&zombie_ai->target->position, &zombie_ai->targetPrev.position);
             steering_pursue(&targetVelocity, 1.0f, &zombie_ai->sb_data);
             break;
 		}
         case SB_EVADE: {
 			Vec3 targetVelocity;
-            vec3_subtract(&targetVelocity, &zombie_ai->target->position, &zombie_ai->targetPrev.position);
+            vec3_subtract(&zombie_ai->target->position, &zombie_ai->targetPrev.position, &targetVelocity);
             vec3_copy(&zombie_ai->target->position, &zombie_ai->targetPrev.position);
             steering_evade(&targetVelocity, 1.0f, &zombie_ai->sb_data);
             break;
@@ -332,7 +332,7 @@ static void zombie_ai_behavior_apply(ZombieAI* zombie_ai, SteeringBehavior behav
 		}
         default: break;
     }
-    vec3_add(&zombie_ai->velocity.linear, &zombie_ai->velocity.linear, &zombie_ai->sb_data.linearAccel);
+    vec3_add(&zombie_ai->velocity.linear, &zombie_ai->sb_data.linearAccel, &zombie_ai->velocity.linear);
 	zombie_ai->velocity.linear.y = 0.0f;
 	zombie_ai->velocity.angular += zombie_ai->sb_data.angularAccel;
 }
@@ -394,7 +394,6 @@ static void zombie_ai_update_follow(ZombieAI* zombie_ai, float deltaTime) {}
 static void zombie_ai_update_lead(ZombieAI* zombie_ai, float deltaTime) {}
 
 static void zombie_ai_update_aggro(ZombieAI* zombie_ai, float deltaTime) {
-	
 	if(vec3_distance_squared(&zombie_ai->transform->position, &zombie_ai->target->position) < ZOMBIE_ATTACK_RANGE * ZOMBIE_ATTACK_RANGE) {
 		if(zombie_ai->attack_cooldown <= 0.0f) {
 			// attack!

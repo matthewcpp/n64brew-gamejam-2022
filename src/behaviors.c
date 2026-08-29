@@ -30,7 +30,7 @@ void steering_behavior_data_init(fw64Level* level,
 void steering_seek(float strength, SteeringBehaviorData* data) {
 	data->angularAccel = 0.0f;
 	Vec3 seekAccel;
-	vec3_subtract(&seekAccel, &data->targetPosition, &data->position);
+	vec3_subtract(&data->targetPosition, &data->position, &seekAccel);
 	vec3_normalize(&seekAccel);
 	vec3_scale(&seekAccel, data->maxLinearAccel, &seekAccel);
 	vec3_add_and_scale(&data->linearAccel, &seekAccel, strength, &data->linearAccel);
@@ -40,7 +40,7 @@ void steering_seek(float strength, SteeringBehaviorData* data) {
 void steering_flee(float strength, SteeringBehaviorData* data) {
 	data->angularAccel = 0.0f;
 	Vec3 fleeAccel;
-	vec3_subtract(&fleeAccel, &data->position, &data->targetPosition);
+	vec3_subtract(&data->position, &data->targetPosition, &fleeAccel);
 	vec3_normalize(&fleeAccel);
 	vec3_scale(&fleeAccel, data->maxLinearAccel, &fleeAccel);
 	vec3_add_and_scale(&data->linearAccel, &fleeAccel, strength, &data->linearAccel);
@@ -66,14 +66,14 @@ void steering_arrive(float slowRadius, float stopRadius, float strength, Steerin
 
 // seek towards the target's estimated future position
 void steering_pursue(Vec3* targetVelocity, float strength, SteeringBehaviorData* data){
-	vec3_add(&data->targetPosition, &data->targetPosition, targetVelocity);
+	vec3_add(&data->targetPosition, targetVelocity, &data->targetPosition);
 	data->targetPosition.y = data->position.y;
 	steering_seek(strength, data);
 }
 
 // flee from the target's estimated future position
 void steering_evade(Vec3* targetVelocity, float strength, SteeringBehaviorData* data){
-	vec3_add(&data->targetPosition, &data->targetPosition, targetVelocity);
+	vec3_add(&data->targetPosition, targetVelocity, &data->targetPosition);
 	data->targetPosition.y = data->position.y;
 	steering_flee(strength, data);
 }
