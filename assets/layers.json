@@ -11,5 +11,6 @@
     "entrance": 10,
     "interactable": 11,
     "buildings": 12,
-    "player": 13
+    "player": 13,
+    "zombies": 14
 }

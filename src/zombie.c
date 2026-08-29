@@ -13,10 +13,10 @@ void zombie_init(Zombie* zombie, fw64Engine* engine, fw64Level* level, fw64Skinn
     zombie->engine = engine;
     zombie->level = level;
 
-    zombie->node.layer_mask = ZOMBIE_LAYER;
+    fw64_node_init(&zombie->node);
+    zombie->node.layer_mask = FW64_layer_zombies;
     zombie->node.data = (uintptr_t)zombie;
 
-    fw64_node_init(&zombie->node);
     Box mesh_bounding = fw64_mesh_get_bounding_box(mesh->mesh);
     fw64_collider_init_box(&zombie->collider, &zombie->node, &mesh_bounding);
     fw64_skinned_mesh_instance_init(&zombie->mesh_instance, &zombie->node, mesh, 0, allocator);
@@ -74,7 +74,7 @@ static void zombie_move(Zombie* zombie) {
     int hit_statics = fw64_level_moving_sphere_intersection( zombie->level,
                                                             &zombie->node.transform.position,
                                                             2.5f, &delta_vel, mask, &statics_query);
-    mask = (uint32_t)ZOMBIE_LAYER;
+    mask = (uint32_t)FW64_layer_zombies;
     int hit_dynamics = fw64_level_moving_spheres_dynamic_intersection( zombie->level,
                                                                       &zombie->node.transform.position,
                                                                       0.5f, &delta_vel, mask, &dynamics_query);

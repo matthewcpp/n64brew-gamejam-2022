@@ -19,7 +19,7 @@ void projectile_controller_fire_ray(ProjectileController* controller, Vec3* orig
     for (uint32_t i = 0; i < dynamic_node_count; i++) {
         fw64Node* dynamic_node = fw64_level_get_dynamic_node(controller->level, i);
 
-        if (dynamic_node->layer_mask & ZOMBIE_LAYER) {
+        if (dynamic_node->layer_mask & FW64_layer_zombies) {
             Zombie* zombie = (Zombie*)dynamic_node->data;
             if (zombie->health > 0 && zombie->state != ZOMBIE_FLYING_BACK) {
                 Vec3 out_hitpoint;
@@ -51,7 +51,7 @@ void projectile_controller_fire_arc(ProjectileController* controller, Vec3* orig
     for (uint32_t i = 0; i < dynamic_node_count; i++) {
         fw64Node* dynamic_node = fw64_level_get_dynamic_node(controller->level, i);
 
-        if (!(dynamic_node->layer_mask & ZOMBIE_LAYER)) 
+        if (!(dynamic_node->layer_mask & FW64_layer_zombies)) 
             continue;
 
         Zombie* zombie = (Zombie*)dynamic_node->data;
