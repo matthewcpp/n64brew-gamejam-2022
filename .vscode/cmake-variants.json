@@ -30,11 +30,11 @@
                     "FW64_PLATFORM_DESKTOP": "ON"
                 }
             },
-            "n64": {
+            "n64_libultra": {
                 "short": "N64-libultra",
                 "long": "N64-libultra",
                 "settings": {
-                    "FW64_PLATFORM_N64": "ON"
+                    "FW64_PLATFORM_N64_LIBULTRA": "ON"
                 }
             }
         }

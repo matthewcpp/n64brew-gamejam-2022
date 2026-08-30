@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 
 include(lib/framework64/cmake/configure_platform.cmake REQUIRED)
 
-if (FW64_PLATFORM_N64)
+if (FW64_PLATFORM_N64_LIBULTRA)
     project(dead_ritual C)
 else()
     project(dead_ritual)
