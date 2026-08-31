@@ -23,6 +23,7 @@ set(ui_files
     ui/healthbar.h ui/healthbar.c
     ui/dialogue_window.h ui/dialogue_window.c
     ui/compass.h ui/compass.c
+    ui/pause_menu.h ui/pause_menu.c
 )
 
 set(level_files

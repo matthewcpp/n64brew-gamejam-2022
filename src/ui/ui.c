@@ -23,6 +23,7 @@ void ui_init(UI* ui, fw64Engine* engine, fw64Allocator* allocator, LevelBase* le
     ui->interaction_loaded_frame = 0;
 
     ui->spritebatch = fw64_spritebatch_create(1, allocator);
+    pause_menu_init(&ui->pause_menu, engine, ui->interaction_font, level->game_data);
 }
 
 void ui_uninit(UI* ui) {
@@ -32,6 +33,12 @@ void ui_uninit(UI* ui) {
     fw64_texture_delete(ui->interaction_button, ui->allocator);
     fw64_spritebatch_delete(ui->spritebatch);
 }
+
+
+void ui_update(UI* ui) {
+    pause_menu_update(&ui->pause_menu);
+}
+
 
 static void ui_draw_player_weapon_crosshair(UI* ui, IVec2* screen_center) {
     fw64Texture* crosshair = ui->level->player.weapon_controller.weapon.crosshair;
@@ -97,6 +104,7 @@ void ui_draw(UI* ui, fw64RenderPass* renderpass) {
         ui_draw_interaction_indicator(ui, &screen_center);
 
     healthbar_draw(&ui->healthbar, ui->spritebatch);
+    pause_menu_draw(&ui->pause_menu, ui->spritebatch);
     fw64_spritebatch_end(ui->spritebatch);
 
     fw64_renderpass_draw_sprite_batch(renderpass, ui->spritebatch);

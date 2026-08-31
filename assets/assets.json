@@ -212,7 +212,7 @@
             "src": "texgyreadventor-bold.ttf",
             "size": 12,
             "name": "ui_interact",
-            "sourceString": "EnterReload"
+            "sourceString": "EnterReloadPausedCloseExit"
         },
         {
             "src": "texgyreadventor-bold.ttf",
