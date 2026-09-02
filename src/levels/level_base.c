@@ -58,6 +58,12 @@ static void update_ui_interaction_text(LevelBase* level) {
 }
 
 void level_base_update(LevelBase* level) {
+    ui_update(&level->ui);
+
+    if (ui_pause_menu_active(&level->ui)) {
+        return;
+    }
+
     audio_controller_update(&level->audio_controller);
     player_update(&level->player);
     pickups_update(&level->pickups);

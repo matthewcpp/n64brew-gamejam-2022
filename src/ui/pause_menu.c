@@ -12,13 +12,9 @@ void pause_menu_init(PauseMenu* pause_menu, fw64Engine* engine, fw64Font* font, 
 
 void pause_menu_update(PauseMenu* pause_menu) {
     pause_menu->prev_active = pause_menu->active;
-
-    if (pause_menu->active) {
-        
-    } else {
-        if (fw64_input_controller_button_pressed(pause_menu->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_START)) {
-            pause_menu->active = 1;
-        }
+    if (fw64_input_controller_button_pressed(pause_menu->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_START)) {
+         pause_menu->active = !pause_menu->active;
+         return;
     }
 }
 
@@ -26,6 +22,4 @@ void pause_menu_draw(PauseMenu* pause_menu, fw64SpriteBatch* spritebatch) {
     if (!pause_menu->active) {
         return;
     }
-
-
 }

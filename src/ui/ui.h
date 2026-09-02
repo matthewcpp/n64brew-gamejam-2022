@@ -31,3 +31,5 @@ void ui_update(UI* ui);
 
 void ui_set_interaction_text(UI* ui, const char* text, uint32_t icon_index);
 void ui_clear_interaction_text(UI* ui);
+
+#define ui_pause_menu_active(ui) ((ui)->pause_menu.active)
