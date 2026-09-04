@@ -24,6 +24,7 @@ set(ui_files
     ui/dialogue_window.h ui/dialogue_window.c
     ui/compass.h ui/compass.c
     ui/pause_menu.h ui/pause_menu.c
+    ui/fw64_ui_navigation.h ui/fw64_ui_navigation.c
 )
 
 set(level_files
