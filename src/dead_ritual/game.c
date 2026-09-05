@@ -26,10 +26,6 @@ void game_init(Game* game, fw64Engine* engine) {
 }
 
 void game_update(Game* game) {
-    if (game->game_data.transition_to_state) {
-        game_transition_state(game);
-    }
-
     switch(game->current_state) {
         case GAME_STATE_MENU:
             game_state_menu_update(&game->states.menu);
@@ -50,6 +46,10 @@ void game_update(Game* game) {
         case GAME_STATE_NONE:
         case GAME_STATE_COUNT:
             break;
+    }
+
+    if (game->game_data.transition_to_state) {
+        game_transition_state(game);
     }
 }
 

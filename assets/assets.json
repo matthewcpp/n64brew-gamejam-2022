@@ -120,6 +120,12 @@
             "vslices": 1
         },
         {
+            "src": "fill.png",
+            "format": "CI4",
+            "hslices": 1,
+            "vslices": 1
+        },
+        {
             "name": "n64_buttons",
             "comment": "12x12 image atlas",
             "frames": [
@@ -212,7 +218,7 @@
             "src": "texgyreadventor-bold.ttf",
             "size": 12,
             "name": "ui_interact",
-            "sourceString": "EnterReloadPausedCloseExit"
+            "sourceString": "EnterReloadPausedResumeExit"
         },
         {
             "src": "texgyreadventor-bold.ttf",

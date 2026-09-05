@@ -16,6 +16,7 @@ typedef struct {
     Healthbar healthbar;
 
     fw64Font* interaction_font;
+    fw64Texture* background_tex;
     fw64Texture* interaction_button;
     fw64SpriteBatch* spritebatch;
     uint32_t interaction_image_frame;

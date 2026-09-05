@@ -50,7 +50,7 @@ void game_state_game_over_uninit(GameOver* state) {
 
 void game_state_game_over_update(GameOver* state){
     fw64AudioStatus sound_status = fw64_audio_get_sound_status(state->engine->audio, state->sound_handle);
-    if (sound_status == FW64_AUDIO_STOPPED && fw64_input_controller_button_pressed(state->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_START)) {
+    if (sound_status == FW64_AUDIO_STOPPED && fw64_input_controller_button_released(state->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_START)) {
         state->game_data->transition_to_state = GAME_STATE_MENU;
     }
 

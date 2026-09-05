@@ -1,6 +1,7 @@
 #include "ui.h"
 
 #include "levels/level_base.h"
+#include "framework64/util/texture_util.h"
 
 #include "assets/assets.h"
 
@@ -12,6 +13,7 @@ void ui_init(UI* ui, fw64Engine* engine, fw64Allocator* allocator, LevelBase* le
     ui->allocator = allocator;
     ui->level = level;
 
+    ui->background_tex = fw64_texture_util_create_from_loaded_image(engine->assets, FW64_ASSET_image_fill, allocator);
     ui->hud_font = fw64_assets_load_font(ui->engine->assets, FW64_ASSET_font_ui_hud, ui->allocator);
     healthbar_init(&ui->healthbar, &ui->level->player, ui->hud_font);
 
@@ -23,17 +25,16 @@ void ui_init(UI* ui, fw64Engine* engine, fw64Allocator* allocator, LevelBase* le
     ui->interaction_loaded_frame = 0;
 
     ui->spritebatch = fw64_spritebatch_create(1, allocator);
-    pause_menu_init(&ui->pause_menu, engine, ui->interaction_font, level->game_data);
+    pause_menu_init(&ui->pause_menu, engine, ui->interaction_font, ui->background_tex, level->game_data);
 }
 
 void ui_uninit(UI* ui) {
     fw64_font_delete(ui->engine->assets, ui->hud_font, ui->allocator);
     fw64_font_delete(ui->engine->assets, ui->interaction_font, ui->allocator);
-    fw64_image_delete(ui->engine->assets, fw64_texture_get_image(ui->interaction_button), ui->allocator);
-    fw64_texture_delete(ui->interaction_button, ui->allocator);
+    fw64_texture_util_delete_tex_and_image(ui->interaction_button, ui->engine->assets, ui->allocator);
+    fw64_texture_util_delete_tex_and_image(ui->background_tex, ui->engine->assets, ui->allocator);
     fw64_spritebatch_delete(ui->spritebatch);
 }
-
 
 void ui_update(UI* ui) {
     pause_menu_update(&ui->pause_menu);

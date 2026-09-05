@@ -134,8 +134,8 @@ static void start_playing(Menu* menu, Level level) {
 void process_input(Menu* menu) {
 	switch(menu->current_menu) {
 		case MENU_SCREEN_MAIN: {
-				int go  = fw64_input_controller_button_pressed(menu->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_A);
-					go |= fw64_input_controller_button_pressed(menu->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_START);
+				int go  = fw64_input_controller_button_released(menu->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_A);
+					go |= fw64_input_controller_button_released(menu->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_START);
 
 				if(go) {
 					switch(menu->menu_choice) {
@@ -156,12 +156,12 @@ void process_input(Menu* menu) {
 				static Vec2 prev_stick = {0.0f, 0.0f};
 				Vec2 stick = {0.0f, 0.0f};
 				fw64_input_controller_stick(menu->engine->input, 0, &stick);
-				int move_cursor_up  = fw64_input_controller_button_pressed(menu->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_DPAD_UP);
-					move_cursor_up |= fw64_input_controller_button_pressed(menu->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_C_UP);
+				int move_cursor_up  = fw64_input_controller_button_released(menu->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_DPAD_UP);
+					move_cursor_up |= fw64_input_controller_button_released(menu->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_C_UP);
 					if(prev_stick.y <= 0.5f)
 						move_cursor_up |= !!(stick.y > 0.5f);
-				int move_cursor_down  = fw64_input_controller_button_pressed(menu->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_DPAD_DOWN);
-					move_cursor_down |= fw64_input_controller_button_pressed(menu->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_C_DOWN);
+				int move_cursor_down  = fw64_input_controller_button_released(menu->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_DPAD_DOWN);
+					move_cursor_down |= fw64_input_controller_button_released(menu->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_C_DOWN);
 					if(prev_stick.y >= -0.5f)
 						move_cursor_down |= !!(stick.y < -0.5f);
 
@@ -180,8 +180,8 @@ void process_input(Menu* menu) {
 			break;
 		}
 		case MENU_SCREEN_CONTROLS: {
-			 	int go  = fw64_input_controller_button_pressed(menu->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_B);
-					go |= fw64_input_controller_button_pressed(menu->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_START);
+			 	int go  = fw64_input_controller_button_released(menu->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_B);
+					go |= fw64_input_controller_button_released(menu->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_START);
 				if(go) {
 					mapped_input_set_map_layout(&menu->game_data->player_data.input_map, menu->control_scheme);
 					set_menu_screen(menu, MENU_SCREEN_MAIN);
@@ -189,12 +189,12 @@ void process_input(Menu* menu) {
 				static Vec2 prev_stick = {0.0f, 0.0f};
 				Vec2 stick = {0.0f, 0.0f};
 				fw64_input_controller_stick(menu->engine->input, 0, &stick);
-				int move_cursor_left  = fw64_input_controller_button_pressed(menu->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_DPAD_LEFT);
-					move_cursor_left |= fw64_input_controller_button_pressed(menu->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_C_LEFT);
+				int move_cursor_left  = fw64_input_controller_button_released(menu->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_DPAD_LEFT);
+					move_cursor_left |= fw64_input_controller_button_released(menu->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_C_LEFT);
 					if(prev_stick.x >= -0.5f)
 						move_cursor_left |= !!(stick.x < -0.5f);
-				int move_cursor_right  = fw64_input_controller_button_pressed(menu->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_DPAD_RIGHT);
-					move_cursor_right |= fw64_input_controller_button_pressed(menu->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_C_RIGHT);
+				int move_cursor_right  = fw64_input_controller_button_released(menu->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_DPAD_RIGHT);
+					move_cursor_right |= fw64_input_controller_button_released(menu->engine->input, 0, FW64_N64_CONTROLLER_BUTTON_C_RIGHT);
 					if(prev_stick.x <= 0.5f)
 						move_cursor_right |= !!(stick.x > 0.5f);
 
