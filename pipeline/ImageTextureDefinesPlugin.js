@@ -4,13 +4,10 @@ const Util = require("../lib/framework64/pipeline/Util");
 
 class ImageTextureDefinesPlugin
 {
-    assetBundle;
-    baseDirectory;
-    outputDirectory;
-    assetIncludeDirectory;
-    platform;
+    _environment
 
-    initialize(assetBundle, baseDirectory, outputDirectory, assetIncludeDirectory, platform) {
+    initialize(environment) {
+        this._environment = environment;
         this.assetBundle = assetBundle;
         this.baseDirectory = baseDirectory;
         this.outputDirectory = outputDirectory;
