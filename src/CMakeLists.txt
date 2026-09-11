@@ -61,3 +61,5 @@ create_game(
 target_include_directories(dead_ritual PRIVATE dead_ritual)
 
 add_subdirectory(zombie_config)
+
+target_include_directories(zombie_config PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
