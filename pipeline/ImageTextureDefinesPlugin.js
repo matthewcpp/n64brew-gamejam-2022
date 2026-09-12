@@ -36,8 +36,8 @@ class ImageTextureDefinesPlugin {
         fs.writeSync(file, "#pragma once\n\n");
     
         imageToTextureMap.forEach((textureArray, imageIndex) => {
-            const image = gltfLoader.images[imageIndex]
-            const imageName = Util.safeDefineName(Object.hasOwnProperty(image, "name") ? image.name : path.basename(image.src));
+            const image = gltfLoader.images[imageIndex];
+            const imageName = Util.safeDefineName(Object.hasOwnProperty(image, "name") ? image.name : path.basename(image.src, path.extname(image.src)));
     
             for (let i = 0; i < textureArray.length; i++) {
                 fs.writeSync(file, `#define ${name}_image_${imageName}_texture_${i} ${textureArray[i]}\n`);

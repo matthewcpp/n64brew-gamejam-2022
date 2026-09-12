@@ -2,24 +2,14 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug N64 Asset Pipeline",
+            "name": "Debug Asset Pipeline",
             "program": "${workspaceFolder}/lib/framework64/scripts/PrepareGameAssets.js",
             "request": "launch",
             "skipFiles": [
                 "<node_internals>/**"
             ],
             "type": "node",
-            "args":["n64", "--plugins", "pipeline"]
-        },
-        {
-            "name": "Debug Desktop Asset Pipeline",
-            "program": "${workspaceFolder}/lib/framework64/scripts/PrepareGameAssets.js",
-            "request": "launch",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
-            "type": "node",
-            "args":["desktop", "--plugins", "pipeline"]
+            "args":["desktop", "zombie_config"]
         },
         {
             "type": "by-gdb",

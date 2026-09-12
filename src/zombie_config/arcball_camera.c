@@ -1,25 +1,24 @@
 #include "arcball_camera.h"
 
-#include "framework64/n64/controller_button.h"
+#include "framework64/controller_mapping/n64.h"
 
 #define ARCBALL_ORBIT_SPEED 180.0f
 #define ARCBALL_ZOOM_SPEED 1.0f
 #define ARCBALL_DEAD_ZONE 0.2f
 
-static void _arcball_reset(fw64ArcballCamera* arcball) {
+void fw64_arcball_init(fw64ArcballCamera* arcball, fw64Input* input, fw64Camera* camera) {
+    arcball->camera = camera;
+    arcball->_input = input;
+    arcball->_diagonal = 1.0f;
+
+    fw64_arcball_reset(arcball);
+    vec3_set_zero(&arcball->_target);
+}
+
+void fw64_arcball_reset(fw64ArcballCamera* arcball) {
     arcball->_rot_x = 0.0f;
     arcball->_rot_y = 0.0f;
     arcball->_distance = arcball->_diagonal * 2.0f;
-}
-
-void fw64_arcball_init(fw64ArcballCamera* arcball, fw64Input* input) {
-    arcball->_input = input;
-
-    fw64_camera_init(&arcball->camera);
-
-    arcball->_diagonal = 1.0f;
-    _arcball_reset(arcball);
-    vec3_zero(&arcball->_target);
 }
 
 void _arcball_update_camera_position(fw64ArcballCamera* arcball) {
@@ -31,25 +30,27 @@ void _arcball_update_camera_position(fw64ArcballCamera* arcball) {
     Quat q;
     quat_from_euler(&q, arcball->_rot_x, arcball->_rot_y, 0.0f);
 
-    Vec3 up = {0.0f, 1.0f, 0.0f};
-    quat_transform_vec3(&up, &q, &up);
+    Vec3 up = vec3_up();
+    quat_transform_vec3(&q, &up, &up);
     vec3_normalize(&up);
 
-    Vec3 orbit_pos = {0.0f, 0.0f, 1.0f};
-    quat_transform_vec3(&orbit_pos, &q, &orbit_pos);
+    Vec3 orbit_pos = vec3_back();
+    quat_transform_vec3(&q, &orbit_pos, &orbit_pos);
     vec3_normalize(&orbit_pos);
-    vec3_scale(&orbit_pos, &orbit_pos, arcball->_distance);
+    vec3_scale(&orbit_pos, arcball->_distance, &orbit_pos);
 
-    vec3_add(&arcball->camera.transform.position, &arcball->_target, &orbit_pos);
+    fw64Transform* transform = &arcball->camera->node->transform;
+    vec3_add(&arcball->_target, &orbit_pos, &transform->position);
 
-    fw64_transform_look_at(&arcball->camera.transform, &arcball->_target, &up);
-    fw64_camera_update_view_matrix(&arcball->camera);
+    fw64_transform_look_at(transform, &arcball->_target, &up);
+    fw64_camera_update_view_matrix(arcball->camera);
+    fw64_node_update(arcball->camera->node);
 }
 
 void fw64_arcball_set_initial(fw64ArcballCamera* arcball, Box* box) {
     box_center(box, &arcball->_target);
     arcball->_diagonal = vec3_distance(&box->min, &box->max);
-    _arcball_reset(arcball);
+    fw64_arcball_reset(arcball);
 
     _arcball_update_camera_position(arcball);
 }
@@ -80,7 +81,7 @@ void fw64_arcball_update(fw64ArcballCamera* arcball, float time_delta) {
     } 
 
     if (fw64_input_controller_button_pressed(arcball->_input, 0, FW64_N64_CONTROLLER_BUTTON_START)) {
-        _arcball_reset(arcball);
+        fw64_arcball_reset(arcball);
     }
 
     _arcball_update_camera_position(arcball);

@@ -140,7 +140,7 @@ void process_input(Menu* menu) {
 				if(go) {
 					switch(menu->menu_choice) {
 						case MAIN_MENU_START:
-							start_playing(menu, LEVEL_TILES);
+							start_playing(menu, LEVEL_CHURCH_HILL);
 							break;
 						case MAIN_MENU_PRACTICE:
 							start_playing(menu, LEVEL_TEST);

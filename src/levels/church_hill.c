@@ -28,6 +28,8 @@ void hill_level_init(HillLevel* level, fw64Engine* engine, GameData* game_data, 
     zombie_spawner_init(&level->zombie_spawner, engine, &level->base.level, &level->base.player.movement.camera->node->transform, level->base.allocator);
     zombie_spawner_add_node(&level->zombie_spawner,fw64_scene_get_node(scene, FW64_scene_Church_Hill_node_Zombie_Spawn_1));
     zombie_spawner_add_node(&level->zombie_spawner,fw64_scene_get_node(scene, FW64_scene_Church_Hill_node_Zombie_Spawn_2));
+
+    zombie_spawner_spawn_now(&level->zombie_spawner, 5);
 }
 
 fw64Scene* setup_level(HillLevel* level) {
@@ -75,11 +77,13 @@ void hill_level_draw(HillLevel* level) {
     fw64_renderpass_begin(renderpass);
     player_draw(&level->base.player, renderpass);
     fw64_renderpass_end(renderpass);
+    fw64_renderer_submit_renderpass(level->base.engine->renderer, renderpass);
 
     renderpass = level->base.renderpasses[RENDER_PASS_PLAYER_WEAPON];
     fw64_renderpass_begin(renderpass);
     player_draw_weapon(&level->base.player, renderpass);
     fw64_renderpass_end(renderpass);
+    fw64_renderer_submit_renderpass(level->base.engine->renderer, renderpass);
 
     // if (level->base.player.damage_overlay_time > 0.0f){
     //     fw64_renderer_util_fullscreen_overlay(renderer, 165, 0, 0, 100);
@@ -90,4 +94,5 @@ void hill_level_draw(HillLevel* level) {
     fw64_renderpass_begin(renderpass);
     ui_draw(&level->base.ui, renderpass);
     fw64_renderpass_end(renderpass);
+    fw64_renderer_submit_renderpass(level->base.engine->renderer, renderpass);
 }
