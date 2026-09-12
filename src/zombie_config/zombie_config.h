@@ -26,6 +26,7 @@ typedef struct {
     fw64RenderPass* renderpasses[ZOMBIE_CONFIG_RENDERPASS_COUNT];
     fw64Headlight headlight;
     fw64Allocator* allocator;
+    ZombieAppearance zombie_appearance;
 } ZombieConfig;
 
 void zombie_config_init(ZombieConfig* config, fw64Engine* engine, fw64Allocator* allocator);

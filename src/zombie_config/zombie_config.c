@@ -34,8 +34,10 @@ fw64Display* display = fw64_displays_get_primary(engine->displays);
     Box mesh_bounding = fw64_mesh_get_bounding_box(zombie->mesh);
     fw64_arcball_set_initial(&config->arcball, &config->zombie_mesh_instance->mesh_instance.render_bounds);
 
+    zombie_appearance_init(&config->zombie_appearance, engine, config->zombie_mesh_instance, allocator);
+
     // note zombie config will be initialized in the ui init call
-    zombie_config_ui_init(&config->ui, engine, config->zombie_mesh_instance, allocator);
+    zombie_config_ui_init(&config->ui, engine, config->zombie_mesh_instance, &config->zombie_appearance, allocator);
 
     config->renderpasses[ZOMBIE_CONFIG_RENDERPASS_WORLD] = fw64_renderpass_create(display, allocator);
     config->renderpasses[ZOMBIE_CONFIG_RENDERPASS_UI] = fw64_renderpass_create(display, allocator);
@@ -46,6 +48,8 @@ fw64Display* display = fw64_displays_get_primary(engine->displays);
 
 void zombie_config_uninit(ZombieConfig* config){
     zombie_config_ui_uninit(&config->ui);
+
+    zombie_appearance_uninit(&config->zombie_appearance);
 
     for (int i = 0; i < ZOMBIE_CONFIG_RENDERPASS_COUNT; i++) {
         fw64_renderpass_delete(config->renderpasses[i]);

@@ -1,11 +1,32 @@
 #include "zombie_appearance.h"
 
+#include "assets/assets.h"
 
-void zombie_appearance_set_face_image(fw64MeshInstance* mesh_instance, fw64Image* face_image) {
+void zombie_appearance_init(ZombieAppearance* appearance, fw64Engine* engine, fw64SkinnedMeshInstance* zombie_instance, fw64Allocator* allocator) {
+    appearance->engine = engine;
+    appearance->allocator = allocator;
+    
+    //initialize the face images and setup the config
+    fw64MaterialCollection* material_collection = fw64_mesh_instance_get_material_collection(&zombie_instance->mesh_instance);
+    fw64Material* initial_face_material = fw64_material_collection_get_material(material_collection, ZOMBIE_FACE_PRIM_INDEX);
+    appearance->face_images[0] = fw64_texture_get_image(fw64_material_get_texture(initial_face_material));
+    appearance->face_images[1] = fw64_assets_load_image(engine->assets, FW64_ASSET_image_Z_Face02, allocator);
+    appearance->face_images[2] = fw64_assets_load_image(engine->assets, FW64_ASSET_image_Z_Face03, allocator);
+    appearance->face_images[3] = fw64_assets_load_image(engine->assets, FW64_ASSET_image_Z_Face01_alt, allocator);
+}
+
+void zombie_appearance_uninit(ZombieAppearance* appearance) {
+    // note: we dont delete the first face image that came with the model!
+    for (int i = 1; i <= 3; i++) {
+        fw64_image_delete(appearance->engine->assets, appearance->face_images[i], appearance->allocator);
+    }
+}
+
+void zombie_appearance_set_face_image(ZombieAppearance* appearance, fw64MeshInstance* mesh_instance, int face_image_index) {
     fw64MaterialCollection* material_collection = fw64_mesh_instance_get_material_collection(mesh_instance);
     fw64Material* face_material = fw64_material_collection_get_material(material_collection, ZOMBIE_FACE_PRIM_INDEX);
     fw64Texture* face_texture = fw64_material_get_texture(face_material);
-    fw64_texture_set_image(face_texture, face_image);
+    fw64_texture_set_image(face_texture, appearance->face_images[face_image_index]);
 }
 
 #define SHIRT_PRIM_INDICIES_COUNT 6
@@ -27,10 +48,10 @@ static void zombie_appearance_set_prim_material_palettes(fw64MeshInstance* mesh_
     }
 }
 
-void zombie_appearance_set_shirt_palette(fw64MeshInstance* mesh_instance, int shirt_palette) {
+void zombie_appearance_set_shirt_palette(ZombieAppearance* appearance, fw64MeshInstance* mesh_instance, int shirt_palette) {
     zombie_appearance_set_prim_material_palettes(mesh_instance, &shirt_prim_indicies[0], SHIRT_PRIM_INDICIES_COUNT, shirt_palette);
 }
 
-void zombie_appearance_set_pants_palette(fw64MeshInstance* mesh_instance, int pants_palette) {
+void zombie_appearance_set_pants_palette(ZombieAppearance* appearance, fw64MeshInstance* mesh_instance, int pants_palette) {
     zombie_appearance_set_prim_material_palettes(mesh_instance, &pants_prim_indices[0], PANTS_PRIM_INDICIES_COUNT, pants_palette);
 }

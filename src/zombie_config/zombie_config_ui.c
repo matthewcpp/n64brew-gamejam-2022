@@ -3,7 +3,7 @@
 #include "assets/assets.h"
 #include "assets/zombie_animation.h"
 #include "assets/zombie_image_texture_defs.h"
-#include "zombie_appearance.h"
+
 
 #include "framework64/controller_mapping/n64.h"
 
@@ -15,10 +15,11 @@ const char* option_names[OPTION_COUNT] = {"Animation", "Top"};
 static void change_selected_option(ZombieConfigUi* ui, int direction);
 static void change_selected_option_value(ZombieConfigUi* ui, int direction);
 
-void zombie_config_ui_init(ZombieConfigUi* ui, fw64Engine* engine, fw64SkinnedMeshInstance* zombie_instance, fw64Allocator* allocator) {
+void zombie_config_ui_init(ZombieConfigUi* ui, fw64Engine* engine, fw64SkinnedMeshInstance* zombie_insatance, ZombieAppearance* zombie_appearance, fw64Allocator* allocator) {
     ui->allocator = allocator;
     ui->engine = engine;
-    ui->zombie_instance = zombie_instance;
+    ui->zombie_instance = zombie_insatance;
+    ui->zombie_appearance = zombie_appearance;
     ui->font = fw64_assets_load_font(engine->assets, FW64_ASSET_font_zombie_config, allocator);
 
     ui->selected_option = OPTION_ANIMATION;
@@ -27,24 +28,12 @@ void zombie_config_ui_init(ZombieConfigUi* ui, fw64Engine* engine, fw64SkinnedMe
     ui->shirt_palette = 0;
     ui->pants_palette = 0;
 
-    //initialize the face images and setup the config
-    fw64MaterialCollection* material_collection = fw64_mesh_instance_get_material_collection(&zombie_instance->mesh_instance);
-    fw64Material* initial_face_material = fw64_material_collection_get_material(material_collection, ZOMBIE_FACE_PRIM_INDEX);
-    ui->face_images[0] = fw64_texture_get_image(fw64_material_get_texture(initial_face_material));
-    ui->face_images[1] = fw64_assets_load_image(ui->engine->assets, FW64_ASSET_image_Z_Face02, allocator);
-    ui->face_images[2] = fw64_assets_load_image(ui->engine->assets, FW64_ASSET_image_Z_Face03, allocator);
-    ui->face_images[3] = fw64_assets_load_image(ui->engine->assets, FW64_ASSET_image_Z_Face01_alt, allocator);
-
     ui->spritebatch = fw64_spritebatch_create(1, allocator);
 }
 
 void zombie_config_ui_uninit(ZombieConfigUi* ui) {
     fw64_font_delete(ui->engine->assets, ui->font, ui->allocator);
     fw64_spritebatch_delete(ui->spritebatch);
-
-    for (int i = 1; i <= 3; i++) {
-        fw64_image_delete(ui->engine->assets, ui->face_images[i], ui->allocator);
-    }
 }
 
 void zombie_config_ui_update(ZombieConfigUi* ui) {
@@ -159,7 +148,7 @@ static void change_face_image(ZombieConfigUi* ui, int direction) {
         ui->current_face_image = ZOMBIE_FACE_IMAGE_COUNT - 1;
     }
 
-    zombie_appearance_set_face_image(&ui->zombie_instance->mesh_instance, ui->face_images[ui->current_face_image]);
+    zombie_appearance_set_face_image(ui->zombie_appearance, &ui->zombie_instance->mesh_instance, ui->current_face_image);
 }
 
 void change_selected_option_value(ZombieConfigUi* ui, int direction) {
@@ -174,13 +163,13 @@ void change_selected_option_value(ZombieConfigUi* ui, int direction) {
 
         case OPTION_SHIRT_PALETTE: {
             ui->shirt_palette = change_texture_palette(ui, direction, ZOMBIE_SHIRT_PRIM_INDEX);
-            zombie_appearance_set_shirt_palette(&ui->zombie_instance->mesh_instance, ui->shirt_palette);
+            zombie_appearance_set_shirt_palette(ui->zombie_appearance, &ui->zombie_instance->mesh_instance, ui->shirt_palette);
             break;
         }
 
         case OPTION_PANTS_PALETTE: {
             ui->pants_palette = change_texture_palette(ui, direction, ZOMBIE_PANTS_PRIM_INDEX);
-            zombie_appearance_set_pants_palette(&ui->zombie_instance->mesh_instance, ui->pants_palette);
+            zombie_appearance_set_pants_palette(ui->zombie_appearance, &ui->zombie_instance->mesh_instance, ui->pants_palette);
             break;
         }
     }
