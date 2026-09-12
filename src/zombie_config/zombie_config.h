@@ -1,16 +1,35 @@
 #pragma once
 
-#include <framework64/mesh_instance.h>
+#include "arcball_camera.h"
+#include "zombie_appearance.h"
+#include "zombie_config_ui.h"
 
-#define ZOMBIE_FACE_PRIM_INDEX 12
-#define ZOMBIE_SHIRT_PRIM_INDEX 0
-#define ZOMBIE_PANTS_PRIM_INDEX 5
+#include <framework64/engine.h>
 
+#include "components/fw64_headlight.h"
+
+typedef enum {
+    ZOMBIE_CONFIG_RENDERPASS_WORLD,
+    ZOMBIE_CONFIG_RENDERPASS_UI,
+    ZOMBIE_CONFIG_RENDERPASS_COUNT
+} ZombieConfigRenderPass;
+
+/** Game state which allows for viewing all the different looks of the zombies */
 typedef struct {
-    
-
+    fw64Engine* engine;
+    fw64ArcballCamera arcball;
+    fw64Node* zombie_node;
+    fw64Node* camera_node;
+    fw64SkinnedMeshInstance* zombie_mesh_instance;
+    fw64Camera* camera;
+    ZombieConfigUi ui;
+    fw64RenderPass* renderpasses[ZOMBIE_CONFIG_RENDERPASS_COUNT];
+    fw64Headlight headlight;
+    fw64Allocator* allocator;
 } ZombieConfig;
 
-void zombie_config_set_face_image(fw64MeshInstance* mesh_instance, fw64Image* face_image);
-void zombie_config_set_shirt_palette(fw64MeshInstance* mesh_instance, int shirt_palette);
-void zombie_config_set_pants_palette(fw64MeshInstance* mesh_instance, int pants_palette);
+void zombie_config_init(ZombieConfig* config, fw64Engine* engine, fw64Allocator* allocator);
+void zombie_config_uninit(ZombieConfig* config);
+
+void zombie_config_update(ZombieConfig* config);
+void zombie_config_draw(ZombieConfig* config);

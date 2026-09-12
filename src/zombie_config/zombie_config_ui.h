@@ -3,8 +3,6 @@
 #include <framework64/animation_controller.h>
 #include <framework64/engine.h>
 
-#include "zombie_config.h"
-
 typedef enum {
     OPTION_ANIMATION,
     OPTION_FACE_IMAGE,
@@ -24,7 +22,6 @@ typedef struct {
     int current_face_image;
     int shirt_palette;
     int pants_palette;
-    ZombieConfig* config;
     fw64Image* face_images[ZOMBIE_FACE_IMAGE_COUNT];
     fw64SpriteBatch* spritebatch;
     fw64Allocator* allocator;

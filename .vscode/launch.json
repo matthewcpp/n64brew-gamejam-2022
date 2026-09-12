@@ -9,7 +9,7 @@
                 "<node_internals>/**"
             ],
             "type": "node",
-            "args":["desktop", "zombie_config"]
+            "args":["desktop"]
         },
         {
             "type": "by-gdb",
