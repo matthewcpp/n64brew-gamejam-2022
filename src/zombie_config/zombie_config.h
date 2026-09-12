@@ -7,7 +7,7 @@
 #define ZOMBIE_PANTS_PRIM_INDEX 5
 
 typedef struct {
-    fw64Image* face_image;
+    
 
 } ZombieConfig;
 

@@ -30,7 +30,7 @@ typedef struct {
     fw64Allocator* allocator;
 } ZombieConfigUi;
 
-void zombie_config_ui_init(ZombieConfigUi* ui, fw64Engine* engine, fw64SkinnedMeshInstance* zombie_instance, ZombieConfig* config, fw64Allocator* allocator);
+void zombie_config_ui_init(ZombieConfigUi* ui, fw64Engine* engine, fw64SkinnedMeshInstance* zombie_instance, fw64Allocator* allocator);
 void zombie_config_ui_uninit(ZombieConfigUi* ui);
 void zombie_config_ui_update(ZombieConfigUi* ui);
 void zombie_config_ui_draw(ZombieConfigUi* ui, fw64RenderPass* renderpass);

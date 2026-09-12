@@ -5,7 +5,7 @@
 #include "level.h"
 
 #include "arcball_camera.h"
-#include "zombie_config.h"
+#include "zombie_appearance.h"
 #include "zombie_config_ui.h"
 
 #include "components/fw64_headlight.h"
@@ -24,7 +24,6 @@ typedef struct {
     fw64SkinnedMeshInstance* zombie_mesh_instance;
     fw64Camera* camera;
     ZombieConfigUi ui;
-    ZombieConfig zombie_config;
     fw64RenderPass* renderpasses[ZOMBIE_CONFIG_RENDERPASS_COUNT];
     fw64Headlight headlight;
 } Game;

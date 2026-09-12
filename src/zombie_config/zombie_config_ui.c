@@ -3,6 +3,7 @@
 #include "assets/assets.h"
 #include "assets/zombie_animation.h"
 #include "assets/zombie_image_texture_defs.h"
+#include "zombie_appearance.h"
 
 #include "framework64/controller_mapping/n64.h"
 
@@ -14,11 +15,10 @@ const char* option_names[OPTION_COUNT] = {"Animation", "Top"};
 static void change_selected_option(ZombieConfigUi* ui, int direction);
 static void change_selected_option_value(ZombieConfigUi* ui, int direction);
 
-void zombie_config_ui_init(ZombieConfigUi* ui, fw64Engine* engine, fw64SkinnedMeshInstance* zombie_instance, ZombieConfig* config, fw64Allocator* allocator) {
+void zombie_config_ui_init(ZombieConfigUi* ui, fw64Engine* engine, fw64SkinnedMeshInstance* zombie_instance, fw64Allocator* allocator) {
     ui->allocator = allocator;
     ui->engine = engine;
     ui->zombie_instance = zombie_instance;
-    ui->config = config;
     ui->font = fw64_assets_load_font(engine->assets, FW64_ASSET_font_zombie_config, allocator);
 
     ui->selected_option = OPTION_ANIMATION;
@@ -159,7 +159,7 @@ static void change_face_image(ZombieConfigUi* ui, int direction) {
         ui->current_face_image = ZOMBIE_FACE_IMAGE_COUNT - 1;
     }
 
-    zombie_config_set_face_image(&ui->zombie_instance->mesh_instance, ui->face_images[ui->current_face_image]);
+    zombie_appearance_set_face_image(&ui->zombie_instance->mesh_instance, ui->face_images[ui->current_face_image]);
 }
 
 void change_selected_option_value(ZombieConfigUi* ui, int direction) {
@@ -174,13 +174,13 @@ void change_selected_option_value(ZombieConfigUi* ui, int direction) {
 
         case OPTION_SHIRT_PALETTE: {
             ui->shirt_palette = change_texture_palette(ui, direction, ZOMBIE_SHIRT_PRIM_INDEX);
-            zombie_config_set_shirt_palette(&ui->zombie_instance->mesh_instance, ui->shirt_palette);
+            zombie_appearance_set_shirt_palette(&ui->zombie_instance->mesh_instance, ui->shirt_palette);
             break;
         }
 
         case OPTION_PANTS_PALETTE: {
             ui->pants_palette = change_texture_palette(ui, direction, ZOMBIE_PANTS_PRIM_INDEX);
-            zombie_config_set_pants_palette(&ui->zombie_instance->mesh_instance, ui->pants_palette);
+            zombie_appearance_set_pants_palette(&ui->zombie_instance->mesh_instance, ui->pants_palette);
             break;
         }
     }

@@ -39,7 +39,7 @@ void game_init(Game* game, fw64Engine* engine) {
     fw64_arcball_set_initial(&game->arcball, &game->zombie_mesh_instance->mesh_instance.render_bounds);
 
     // note zombie config will be initialized in the ui init call
-    zombie_config_ui_init(&game->ui, engine, game->zombie_mesh_instance, &game->zombie_config, allocator);
+    zombie_config_ui_init(&game->ui, engine, game->zombie_mesh_instance, allocator);
 
     game->renderpasses[ZOMBIE_CONFIG_RENDERPASS_WORLD] = fw64_renderpass_create(display, allocator);
     game->renderpasses[ZOMBIE_CONFIG_RENDERPASS_UI] = fw64_renderpass_create(display, allocator);
