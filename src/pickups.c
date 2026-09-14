@@ -55,7 +55,9 @@ int pickups_add(Pickups* pickups, PickupType weapon_type, uint32_t amount, fw64N
     pickup->type = weapon_type;
     pickup->amount = amount;
     pickup->node = node;
-    fw64_billboard_nodes_create(&pickups->billboard_nodes, node, pickups->player->player_camera, &pickup->billboard_handle);
+    
+    //TEMP: disable for n64 demo
+    //fw64_billboard_nodes_create(&pickups->billboard_nodes, node, pickups->player->player_camera, &pickup->billboard_handle);
 
     pickups->item_count += 1;
 
@@ -88,7 +90,8 @@ void pickups_add_from_scene(Pickups* pickups, fw64Scene* scene) {
             return;
         }
 
-        fw64_mesh_instance_set_mesh(node->mesh_instance, pickups->meshes[pickup_type]);
+        // TEMP: disable for n64 demo
+        //fw64_mesh_instance_set_mesh(node->mesh_instance, pickups->meshes[pickup_type]);
     }
 }
 
