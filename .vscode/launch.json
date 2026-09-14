@@ -12,38 +12,18 @@
             "args":["desktop"]
         },
         {
-            "type": "by-gdb",
-            "name": "CEN64 Debug ROM Windows / Mac",
+            "name": "GDB Debug Rom",
+            "type": "cppdbg",
             "request": "launch",
-            "debuggerPath": "gdb-multiarch",
-            "program": "${workspaceFolder}/build_n64/src/zombie_config.elf",
-            "remote": {
-                "enabled": true,
-                "address": "host.docker.internal:8080",
-                "mode": "remote",
-                "execfile": "${workspaceFolder}/build_n64/src/zombie_config.elf"
-            },
-            "commandsBeforeExec": [
-                "set arch mips:4300",
-            ],
+            "program": "${workspaceFolder}/build_n64_libultra/src/dead_ritual.elf",
             "cwd": "${workspaceRoot}",
-        },
-        {
-            "type": "by-gdb",
-            "name": "CEN64 Debug ROM Linux",
-            "request": "launch",
-            "debuggerPath": "gdb-multiarch",
-            "program": "${workspaceFolder}/build_n64/src/spooky.elf",
-            "remote": {
-                "enabled": true,
-                "address": "localhost:8080",
-                "mode": "remote",
-                "execfile": "${workspaceFolder}/build_n64/src/spooky.elf"
-            },
-            "commandsBeforeExec": [
-                "set arch mips:4300",
-            ],
-            "cwd": "${workspaceRoot}",
+            "MIMode": "gdb",
+            "miDebuggerPath": "gdb-multiarch",
+            "miDebuggerServerAddress": "host.docker.internal:8080", // enable for Windows / Mac
+            // "miDebuggerServerAddress": "localhost:8080", // enable for Linux
+            "setupCommands": [{
+                "text": "set arch mips:4300"
+            }]
         }
     ]
 }

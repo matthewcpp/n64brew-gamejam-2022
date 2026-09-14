@@ -59,21 +59,19 @@
 						"POSITION":0,
 						"NORMAL":1,
 						"TEXCOORD_0":2,
-						"COLOR_0":3,
-						"COLOR_1":4
+						"COLOR_0":3
 					},
-					"indices":5,
+					"indices":4,
 					"material":0
 				},
 				{
 					"attributes":{
-						"POSITION":6,
-						"NORMAL":7,
-						"TEXCOORD_0":8,
-						"COLOR_0":9,
-						"COLOR_1":10
+						"POSITION":5,
+						"NORMAL":6,
+						"TEXCOORD_0":7,
+						"COLOR_0":8
 					},
-					"indices":11,
+					"indices":9,
 					"material":1
 				}
 			]
@@ -132,25 +130,19 @@
 		},
 		{
 			"bufferView":3,
-			"componentType":5121,
+			"componentType":5123,
 			"count":4,
 			"normalized":true,
 			"type":"VEC4"
 		},
 		{
 			"bufferView":4,
-			"componentType":5126,
-			"count":4,
-			"type":"VEC3"
-		},
-		{
-			"bufferView":5,
 			"componentType":5123,
 			"count":6,
 			"type":"SCALAR"
 		},
 		{
-			"bufferView":6,
+			"bufferView":5,
 			"componentType":5126,
 			"count":4,
 			"max":[
@@ -166,32 +158,26 @@
 			"type":"VEC3"
 		},
 		{
-			"bufferView":7,
+			"bufferView":6,
 			"componentType":5126,
 			"count":4,
 			"type":"VEC3"
 		},
 		{
-			"bufferView":8,
+			"bufferView":7,
 			"componentType":5126,
 			"count":4,
 			"type":"VEC2"
 		},
 		{
-			"bufferView":9,
-			"componentType":5121,
+			"bufferView":8,
+			"componentType":5123,
 			"count":4,
 			"normalized":true,
 			"type":"VEC4"
 		},
 		{
-			"bufferView":10,
-			"componentType":5126,
-			"count":4,
-			"type":"VEC3"
-		},
-		{
-			"bufferView":11,
+			"bufferView":9,
 			"componentType":5123,
 			"count":6,
 			"type":"SCALAR"
@@ -218,32 +204,32 @@
 		},
 		{
 			"buffer":0,
-			"byteLength":16,
+			"byteLength":32,
 			"byteOffset":128,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":48,
-			"byteOffset":144,
-			"target":34962
-		},
-		{
-			"buffer":0,
 			"byteLength":12,
-			"byteOffset":192,
+			"byteOffset":160,
 			"target":34963
 		},
 		{
 			"buffer":0,
 			"byteLength":48,
-			"byteOffset":204,
+			"byteOffset":172,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":48,
-			"byteOffset":252,
+			"byteOffset":220,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":32,
+			"byteOffset":268,
 			"target":34962
 		},
 		{
@@ -254,20 +240,8 @@
 		},
 		{
 			"buffer":0,
-			"byteLength":16,
-			"byteOffset":332,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":48,
-			"byteOffset":348,
-			"target":34962
-		},
-		{
-			"buffer":0,
 			"byteLength":12,
-			"byteOffset":396,
+			"byteOffset":332,
 			"target":34963
 		}
 	],
@@ -279,7 +253,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":408,
+			"byteLength":344,
 			"uri":"shotgun_pickup.bin"
 		}
 	]

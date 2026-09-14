@@ -109,7 +109,8 @@ void player_update(Player* player) {
 
 void player_draw(Player* player, fw64RenderPass* renderpass) {
     fw64_renderpass_set_camera(renderpass, player->player_camera);
-    fw64_level_draw_camera_all(player->level, renderpass, player->player_camera);
+    // fw64_level_draw_camera_all(player->level, renderpass, player->player_camera);
+   fw64_level_draw_camera_layer_mask(player->level, renderpass, player->player_camera, FW64_layer_pickups);
 }
 
 void player_draw_weapon(Player* player, fw64RenderPass* renderpass ) {

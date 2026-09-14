@@ -66,10 +66,9 @@ void pickups_remove(Pickups* pickups, fw64Node* node) {
     for (uint32_t i = 0; i < pickups->item_count; i++) {
         Pickup* pickup = &pickups->items[i];
 
-        if (pickup->node != node)
+        if (pickup->node != node) {
             continue;
-
-        
+        }
 
         Pickup* swap = &pickups->items[pickups->item_count - 1];
         memcpy(pickup, swap, sizeof(Pickup));
@@ -85,8 +84,9 @@ void pickups_add_from_scene(Pickups* pickups, fw64Scene* scene) {
         fw64Node* node = pickup_nodes[i];
         PickupType pickup_type = (PickupType)node->data;
 
-        if (!pickups_add(pickups, pickup_type, get_pickup_amount(pickup_type), node))
+        if (!pickups_add(pickups, pickup_type, get_pickup_amount(pickup_type), node)) {
             return;
+        }
 
         fw64_mesh_instance_set_mesh(node->mesh_instance, pickups->meshes[pickup_type]);
     }
@@ -119,8 +119,9 @@ void pickups_update(Pickups* pickups) {
         if (dist_squared <= PICKUP_DISTANCE_SQ) {
             int picked_up = process_pickup(pickups, pickup);
 
-            if (!picked_up) 
+            if (!picked_up) {
                 continue;
+            }
 
             if (pickups->callback)
                 pickups->callback(pickup, pickups->callback_arg);

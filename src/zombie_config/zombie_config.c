@@ -2,6 +2,8 @@
 
 #include "assets/assets.h"
 
+#include <framework64/util/renderpass_util.h>
+
 // TODO: move this into a common file
 #define ZOMBIE_SCALE 0.025f
 

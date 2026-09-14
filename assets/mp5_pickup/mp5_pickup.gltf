@@ -44,10 +44,9 @@
 						"POSITION":0,
 						"NORMAL":1,
 						"TEXCOORD_0":2,
-						"COLOR_0":3,
-						"COLOR_1":4
+						"COLOR_0":3
 					},
-					"indices":5,
+					"indices":4,
 					"material":0
 				}
 			]
@@ -97,19 +96,13 @@
 		},
 		{
 			"bufferView":3,
-			"componentType":5121,
+			"componentType":5123,
 			"count":4,
 			"normalized":true,
 			"type":"VEC4"
 		},
 		{
 			"bufferView":4,
-			"componentType":5126,
-			"count":4,
-			"type":"VEC3"
-		},
-		{
-			"bufferView":5,
 			"componentType":5123,
 			"count":6,
 			"type":"SCALAR"
@@ -136,20 +129,14 @@
 		},
 		{
 			"buffer":0,
-			"byteLength":16,
+			"byteLength":32,
 			"byteOffset":128,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":48,
-			"byteOffset":144,
-			"target":34962
-		},
-		{
-			"buffer":0,
 			"byteLength":12,
-			"byteOffset":192,
+			"byteOffset":160,
 			"target":34963
 		}
 	],
@@ -161,7 +148,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":204,
+			"byteLength":172,
 			"uri":"mp5_pickup.bin"
 		}
 	]
