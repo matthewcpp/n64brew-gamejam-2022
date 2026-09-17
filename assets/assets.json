@@ -121,7 +121,6 @@
         },
         {
             "src": "fill.png",
-            "format": "CI4",
             "hslices": 1,
             "vslices": 1
         },
