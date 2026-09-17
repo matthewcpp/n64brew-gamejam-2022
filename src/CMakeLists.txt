@@ -46,6 +46,7 @@ set(game_state_files
 
 set(fw64_component_files
     components/fw64_billboard_node.h components/fw64_billboard_node.c
+    components/fw64_headlight.h components/fw64_headlight.c
 )
 
 set(main_game_files

@@ -15,7 +15,6 @@ void level_base_init(LevelBase* level, fw64Engine* engine, GameData* game_data, 
 
     projectile_controller_init(&level->projectile_controller, &level->level);
     player_init(&level->player, engine, &level->level, &level->projectile_controller, &level->audio_controller, level->allocator);
-
     pickups_init(&level->pickups, engine, &level->player, allocator);
 
     ui_init(&level->ui, engine, level->allocator, level);
@@ -27,6 +26,8 @@ void level_base_init(LevelBase* level, fw64Engine* engine, GameData* game_data, 
     }
 
     fw64_renderpass_util_ortho2d(level->renderpasses[RENDER_PASS_UI]);
+
+    fw64_headlight_init(&level->player_headlight, level->renderpasses[RENDER_PASS_LEVEL], 0, &level->player.player_camera->node->transform);
 }
 
 void level_base_uninit(LevelBase* level) {
@@ -66,6 +67,7 @@ void level_base_update(LevelBase* level) {
 
     audio_controller_update(&level->audio_controller);
     player_update(&level->player);
+    fw64_headlight_update(&level->player_headlight);
     pickups_update(&level->pickups);
     interaction_update(&level->interaction);
     update_ui_interaction_text(level);

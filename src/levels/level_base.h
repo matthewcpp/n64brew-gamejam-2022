@@ -6,6 +6,8 @@
 #include "pickups.h"
 #include "interact.h"
 
+#include "components/fw64_headlight.h"
+
 typedef enum {
     RENDER_PASS_LEVEL,
     RENDER_PASS_PLAYER_WEAPON,
@@ -21,6 +23,7 @@ typedef struct LevelBase{
     fw64Engine* engine;
     GameData* game_data;
     Player player;
+    fw64Headlight player_headlight;
     ProjectileController projectile_controller;
     UI ui;
     AudioController audio_controller;
