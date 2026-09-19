@@ -88,9 +88,10 @@ static void zombie_move(Zombie* zombie) {
                                     &statics_query.results[0].node->collider->bounding,
                                     &collision_normal);
     } else if (hit_dynamics) { // use node 1 for dynamics, collision 0 is always self
-        vec3_subtract(&collision_normal,
+        vec3_subtract(
                 &dynamics_query.results[1].point,
-                &dynamics_query.results[1].node->transform.position);
+                &dynamics_query.results[1].node->transform.position,
+                &collision_normal);
         vec3_normalize(&collision_normal);
     }
 
