@@ -26,7 +26,7 @@ void test_level_init(TestLevel* level, fw64Engine* engine, GameData* game_data, 
     fw64RenderPass* renderpass = level->base.renderpasses[RENDER_PASS_LEVEL];
     fw64_renderpass_set_clear_color(renderpass, 20, 4, 40);
     fw64_renderpass_set_fog_color(renderpass, 20, 4, 40);
-    fw64_renderpass_set_fog_positions(renderpass, 0.8, 1.0f);
+    fw64_renderpass_set_fog_positions(renderpass, 0.98, 1.0f);
     fw64_renderpass_set_fog_enabled(renderpass, 1);
 }
 
